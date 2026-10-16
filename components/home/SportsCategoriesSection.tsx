@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SportsCategory } from '@/types/database';
@@ -24,123 +24,186 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
   const displayList: SportsCategory[] =
     activeDb.length > 0 ? activeDb : DEFAULT_REFERENCE_SPORTS;
 
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const firstSetRef = useRef<HTMLDivElement>(null);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeftPos, setScrollLeftPos] = useState(0);
-  const [hasDragged, setHasDragged] = useState(false);
 
-  // Enable seamless loop when multiple categories exist
+  // Position and physics refs (keeps 60/120 FPS buttery smooth without React re-render overhead)
+  const xPosRef = useRef<number>(0);
+  const setWidthRef = useRef<number>(0);
+  const velocityRef = useRef<number>(0);
+  const isHoveredRef = useRef<boolean>(false);
+  const isDraggingRef = useRef<boolean>(false);
+  const dragStartXRef = useRef<number>(0);
+  const dragStartPosRef = useRef<number>(0);
+  const lastDragXRef = useRef<number>(0);
+  const lastDragTimeRef = useRef<number>(0);
+  const dragVelocityRef = useRef<number>(0);
+  const hasDraggedRef = useRef<boolean>(false);
+
+  const [isCursorGrabbing, setIsCursorGrabbing] = useState(false);
+
   const shouldLoop = displayList.length >= 3;
 
-  // Initialize scroll position to the middle set for seamless infinite gliding
-  useEffect(() => {
-    if (!shouldLoop || !sliderRef.current || !firstSetRef.current) return;
-    const setWidth = firstSetRef.current.offsetWidth;
-    if (setWidth > 0) {
-      sliderRef.current.scrollLeft = setWidth;
-    }
-  }, [shouldLoop, displayList.length]);
+  // Measure single set width with ResizeObserver
+  const updateWidth = useCallback(() => {
+    if (firstSetRef.current) {
+      const measured = firstSetRef.current.offsetWidth;
+      if (measured > 0) {
+        const oldWidth = setWidthRef.current;
+        setWidthRef.current = measured;
 
-  // Continuous silky smooth auto-sliding transition (60FPS requestAnimationFrame)
+        // Initialize position on first measurement to -measured
+        if (oldWidth === 0 || xPosRef.current === 0) {
+          xPosRef.current = -measured;
+          if (trackRef.current) {
+            trackRef.current.style.transform = `translate3d(${xPosRef.current.toFixed(2)}px, 0, 0)`;
+          }
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    updateWidth();
+    const ro = new ResizeObserver(() => updateWidth());
+    if (firstSetRef.current) {
+      ro.observe(firstSetRef.current);
+    }
+    return () => ro.disconnect();
+  }, [updateWidth, displayList.length]);
+
+  // High-performance continuous infinite marquee loop via requestAnimationFrame
   useEffect(() => {
     if (!shouldLoop) return;
 
     let animId: number;
     let lastTime = performance.now();
 
-    const stepAnimate = (currentTime: number) => {
+    const loop = (currentTime: number) => {
       const dt = Math.min((currentTime - lastTime) / 1000, 0.1); // clamp delta
       lastTime = currentTime;
 
-      if (!isHovered && !isMouseDown && sliderRef.current && firstSetRef.current) {
-        const setWidth = firstSetRef.current.offsetWidth;
-        if (setWidth > 0) {
-          // Smooth, relaxed gliding pace: ~35px per second
-          const moveBy = 35 * dt;
-          sliderRef.current.scrollLeft += moveBy;
+      const setWidth = setWidthRef.current;
 
-          // Seamless wrap-around with zero jump
-          if (sliderRef.current.scrollLeft >= setWidth * 2) {
-            sliderRef.current.scrollLeft -= setWidth;
+      if (setWidth > 0 && trackRef.current) {
+        let delta = 0;
+
+        // Steady relaxed marquee drift speed (~38px/sec) when not hovered and not dragging
+        if (!isHoveredRef.current && !isDraggingRef.current) {
+          delta -= 38 * dt;
+        }
+
+        // Apply any impulse velocity (from left/right arrows or touch/mouse fling)
+        if (Math.abs(velocityRef.current) > 0.5) {
+          delta += velocityRef.current * dt;
+          // Smooth exponential velocity decay
+          velocityRef.current *= Math.pow(0.04, dt);
+        } else {
+          velocityRef.current = 0;
+        }
+
+        if (delta !== 0 && !isDraggingRef.current) {
+          xPosRef.current += delta;
+
+          // Infinite seamless wrap-around in both directions (zero visual jump)
+          while (xPosRef.current <= -setWidth * 2) {
+            xPosRef.current += setWidth;
           }
+          while (xPosRef.current > -setWidth) {
+            xPosRef.current -= setWidth;
+          }
+
+          trackRef.current.style.transform = `translate3d(${xPosRef.current.toFixed(2)}px, 0, 0)`;
         }
       }
 
-      animId = requestAnimationFrame(stepAnimate);
+      animId = requestAnimationFrame(loop);
     };
 
-    animId = requestAnimationFrame(stepAnimate);
+    animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [isHovered, isMouseDown, shouldLoop]);
+  }, [shouldLoop]);
 
-  // Smooth scroll using navigation arrows (with wrap-around support)
-  const handleScrollArrow = (direction: 'left' | 'right') => {
-    if (!sliderRef.current) return;
-    const scrollAmount = 240;
+  // Arrow button navigation: adds a silky smooth surge in the direction of the arrow
+  const handleArrowClick = (direction: 'left' | 'right') => {
+    if (!shouldLoop) return;
+    const impulse = direction === 'left' ? 360 : -360;
+    velocityRef.current += impulse * 2.8;
+  };
 
-    if (!shouldLoop || !firstSetRef.current) {
-      sliderRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
-      return;
+  // Mouse Drag / Touch Swiping handlers
+  const handleDragStart = (clientX: number) => {
+    if (!shouldLoop) return;
+    isDraggingRef.current = true;
+    dragStartXRef.current = clientX;
+    dragStartPosRef.current = xPosRef.current;
+    lastDragXRef.current = clientX;
+    lastDragTimeRef.current = performance.now();
+    dragVelocityRef.current = 0;
+    hasDraggedRef.current = false;
+    velocityRef.current = 0;
+    setIsCursorGrabbing(true);
+  };
+
+  const handleDragMove = (clientX: number) => {
+    if (!isDraggingRef.current || !trackRef.current) return;
+
+    const deltaX = clientX - dragStartXRef.current;
+    if (Math.abs(deltaX) > 6) {
+      hasDraggedRef.current = true;
     }
 
-    const setWidth = firstSetRef.current.offsetWidth;
+    const now = performance.now();
+    const dt = (now - lastDragTimeRef.current) / 1000;
+    if (dt > 0.01) {
+      dragVelocityRef.current = (clientX - lastDragXRef.current) / dt;
+      lastDragXRef.current = clientX;
+      lastDragTimeRef.current = now;
+    }
+
+    const setWidth = setWidthRef.current;
+    let nextPos = dragStartPosRef.current + deltaX;
+
     if (setWidth > 0) {
-      if (direction === 'left' && sliderRef.current.scrollLeft <= setWidth * 0.3) {
-        sliderRef.current.scrollLeft += setWidth;
-      } else if (direction === 'right' && sliderRef.current.scrollLeft >= setWidth * 1.8) {
-        sliderRef.current.scrollLeft -= setWidth;
+      while (nextPos <= -setWidth * 2) {
+        nextPos += setWidth;
+        dragStartPosRef.current += setWidth;
+      }
+      while (nextPos > -setWidth) {
+        nextPos -= setWidth;
+        dragStartPosRef.current -= setWidth;
       }
     }
 
-    sliderRef.current.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth',
-    });
+    xPosRef.current = nextPos;
+    trackRef.current.style.transform = `translate3d(${nextPos.toFixed(2)}px, 0, 0)`;
   };
 
-  // Mouse Drag handlers for desktop
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!sliderRef.current) return;
-    setIsMouseDown(true);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeftPos(sliderRef.current.scrollLeft);
-    setHasDragged(false);
-  };
+  const handleDragEnd = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    setIsCursorGrabbing(false);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isMouseDown || !sliderRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.4;
-    if (Math.abs(walk) > 5) {
-      setHasDragged(true);
+    // Transfer release fling speed into smooth decay
+    if (Math.abs(dragVelocityRef.current) > 40) {
+      velocityRef.current = Math.max(-1200, Math.min(1200, dragVelocityRef.current));
     }
-    sliderRef.current.scrollLeft = scrollLeftPos - walk;
   };
 
-  const handleMouseUpOrLeave = () => {
-    setIsMouseDown(false);
-  };
-
-  // Prevent link click when dragging
+  // Prevent navigating when user was dragging
   const handleItemClick = (e: React.MouseEvent) => {
-    if (hasDragged) {
+    if (hasDraggedRef.current) {
       e.preventDefault();
       e.stopPropagation();
     }
   };
 
   return (
-    <section id="categories" className="bg-white py-7 sm:py-9 border-b border-[#F2F4F7] overflow-hidden">
+    <section id="categories" className="bg-white py-6 sm:py-8 border-b border-[#F2F4F7] overflow-hidden select-none">
       <div className="w-full max-w-[1440px] 2xl:max-w-[1536px] mx-auto px-4 sm:px-8 lg:px-12">
         {/* Section Header: Minimal & Centered */}
-        <div className="text-center mb-5 sm:mb-7">
+        <div className="text-center mb-5 sm:mb-6">
           <div className="flex items-center justify-center gap-2 mb-1.5 sm:mb-2">
             <span className="w-5 sm:w-6 h-[2px] bg-[#E11D2A] rounded-full" />
             <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#E11D2A] uppercase">
@@ -158,106 +221,127 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
         {/* Minimal Box-free Slider Row flanked by Small Circular Arrows */}
         <div
           className="relative flex items-center gap-2 sm:gap-3 lg:gap-4"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => {
-            setIsHovered(false);
-            setIsMouseDown(false);
+          onMouseEnter={() => {
+            isHoveredRef.current = true;
           }}
-          onTouchStart={() => setIsHovered(true)}
-          onTouchEnd={() => setIsHovered(false)}
+          onMouseLeave={() => {
+            isHoveredRef.current = false;
+            handleDragEnd();
+          }}
         >
           {/* Left Navigation Arrow */}
           <button
             type="button"
-            onClick={() => handleScrollArrow('left')}
+            onClick={() => handleArrowClick('left')}
             aria-label="Previous sports categories"
-            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#E11D2A] hover:bg-red-50/70 hover:border-[#E11D2A]/30 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-10"
+            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#E11D2A] hover:bg-red-50/70 hover:border-[#E11D2A]/30 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-20"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#E11D2A]" />
           </button>
 
-          {/* Horizontal Slider Track - Continuous Silky-Smooth Auto-Sliding */}
+          {/* Marquee Viewport with subtle edge gradient fades */}
           <div
-            ref={sliderRef}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUpOrLeave}
-            className={`flex-1 overflow-x-auto no-scrollbar flex items-center ${
-              !shouldLoop ? 'justify-center' : 'justify-start'
-            } gap-4 sm:gap-6 lg:gap-8 py-2 select-none touch-pan-x ${
-              isMouseDown ? 'cursor-grabbing' : 'cursor-grab'
+            ref={viewportRef}
+            onMouseDown={(e) => handleDragStart(e.clientX)}
+            onMouseMove={(e) => handleDragMove(e.clientX)}
+            onMouseUp={handleDragEnd}
+            onTouchStart={(e) => {
+              isHoveredRef.current = true;
+              if (e.touches[0]) handleDragStart(e.touches[0].clientX);
+            }}
+            onTouchMove={(e) => {
+              if (e.touches[0]) handleDragMove(e.touches[0].clientX);
+            }}
+            onTouchEnd={() => {
+              isHoveredRef.current = false;
+              handleDragEnd();
+            }}
+            className={`relative flex-1 overflow-hidden py-2 ${
+              isCursorGrabbing ? 'cursor-grabbing' : 'cursor-grab'
             }`}
           >
-            {shouldLoop ? (
-              // 3 Sets for seamless, infinite gliding without jumps or snaps
-              [0, 1, 2].map((setIdx) => (
-                <div
-                  key={`set-${setIdx}`}
-                  ref={setIdx === 0 ? firstSetRef : undefined}
-                  className="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-shrink-0"
-                  aria-hidden={setIdx > 0}
-                >
-                  {displayList.map((category, catIdx) => (
-                    <Link
-                      key={`cat-${setIdx}-${category.id || category.slug}-${catIdx}`}
-                      href={category.slug ? `/programs/${category.slug}` : '/programs'}
-                      onClick={handleItemClick}
-                      tabIndex={setIdx > 0 ? -1 : undefined}
-                      className="group flex flex-col items-center justify-start flex-shrink-0 cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 w-[82px] xs:w-[92px] sm:w-[108px] md:w-[118px] lg:w-[126px] xl:w-[132px]"
-                      title={`Explore ${category.name}`}
-                    >
-                      {/* Stickman / Category Graphic: 55-70px tall on desktop, proportionally smaller on mobile */}
-                      <div className="h-[48px] xs:h-[54px] sm:h-[62px] md:h-[68px] w-full flex items-center justify-center pointer-events-none">
-                        <img
-                          src={getSportIconUrl(category.icon, category.slug)}
-                          alt={category.name}
-                          className="h-full w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none"
-                          loading="lazy"
-                          draggable={false}
-                        />
-                      </div>
+            {/* Subtle soft edge fades for smooth entry/exit */}
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white to-transparent z-10" />
 
-                      {/* Clean, medium-weight font directly beneath */}
-                      <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-[#E11D2A] mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
-                        {category.name}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              ))
+            {shouldLoop ? (
+              // Continuous Hardware-Accelerated Infinite Marquee Track (4 identical sets for all screens)
+              <div
+                ref={trackRef}
+                className="flex items-center will-change-transform"
+                style={{ transform: 'translate3d(0px, 0, 0)' }}
+              >
+                {[0, 1, 2, 3].map((setIdx) => (
+                  <div
+                    key={`set-${setIdx}`}
+                    ref={setIdx === 0 ? firstSetRef : undefined}
+                    className="flex items-center gap-5 sm:gap-7 lg:gap-9 flex-shrink-0 pr-5 sm:pr-7 lg:pr-9"
+                    aria-hidden={setIdx > 0}
+                  >
+                    {displayList.map((category, catIdx) => (
+                      <Link
+                        key={`cat-${setIdx}-${category.id || category.slug}-${catIdx}`}
+                        href={category.slug ? `/programs/${category.slug}` : '/programs'}
+                        onClick={handleItemClick}
+                        tabIndex={setIdx > 0 ? -1 : undefined}
+                        className="group flex flex-col items-center justify-start flex-shrink-0 cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 w-[82px] xs:w-[92px] sm:w-[108px] md:w-[118px] lg:w-[126px] xl:w-[132px]"
+                        title={`Explore ${category.name}`}
+                      >
+                        {/* Stickman / Category Graphic: 55-70px tall on desktop, proportionally smaller on mobile */}
+                        <div className="h-[48px] xs:h-[54px] sm:h-[62px] md:h-[68px] w-full flex items-center justify-center pointer-events-none">
+                          <img
+                            src={getSportIconUrl(category.icon, category.slug)}
+                            alt={category.name}
+                            className="h-full w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none"
+                            loading="lazy"
+                            draggable={false}
+                          />
+                        </div>
+
+                        {/* Clean, medium-weight font directly beneath */}
+                        <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-[#E11D2A] mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
+                          {category.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
             ) : (
               // Centered static layout when 1 or 2 items
-              displayList.map((category) => (
-                <Link
-                  key={category.id || category.slug}
-                  href={category.slug ? `/programs/${category.slug}` : '/programs'}
-                  onClick={handleItemClick}
-                  className="group flex flex-col items-center justify-start flex-shrink-0 cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 w-[82px] xs:w-[92px] sm:w-[108px] md:w-[118px] lg:w-[126px] xl:w-[132px]"
-                  title={`Explore ${category.name}`}
-                >
-                  <div className="h-[48px] xs:h-[54px] sm:h-[62px] md:h-[68px] w-full flex items-center justify-center pointer-events-none">
-                    <img
-                      src={getSportIconUrl(category.icon, category.slug)}
-                      alt={category.name}
-                      className="h-full w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none"
-                      loading="lazy"
-                      draggable={false}
-                    />
-                  </div>
-                  <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-[#E11D2A] mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
-                    {category.name}
-                  </span>
-                </Link>
-              ))
+              <div className="flex items-center justify-center gap-5 sm:gap-7 lg:gap-9 py-2">
+                {displayList.map((category) => (
+                  <Link
+                    key={category.id || category.slug}
+                    href={category.slug ? `/programs/${category.slug}` : '/programs'}
+                    onClick={handleItemClick}
+                    className="group flex flex-col items-center justify-start flex-shrink-0 cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 w-[82px] xs:w-[92px] sm:w-[108px] md:w-[118px] lg:w-[126px] xl:w-[132px]"
+                    title={`Explore ${category.name}`}
+                  >
+                    <div className="h-[48px] xs:h-[54px] sm:h-[62px] md:h-[68px] w-full flex items-center justify-center pointer-events-none">
+                      <img
+                        src={getSportIconUrl(category.icon, category.slug)}
+                        alt={category.name}
+                        className="h-full w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none"
+                        loading="lazy"
+                        draggable={false}
+                      />
+                    </div>
+                    <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-[#E11D2A] mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
+                      {category.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
             )}
           </div>
 
           {/* Right Navigation Arrow */}
           <button
             type="button"
-            onClick={() => handleScrollArrow('right')}
+            onClick={() => handleArrowClick('right')}
             aria-label="Next sports categories"
-            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#E11D2A] hover:bg-red-50/70 hover:border-[#E11D2A]/30 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-10"
+            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#E11D2A] hover:bg-red-50/70 hover:border-[#E11D2A]/30 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-20"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#E11D2A]" />
           </button>
