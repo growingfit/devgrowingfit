@@ -9,13 +9,19 @@ interface CookieItem {
 
 export function createClient() {
   const cookieStore = cookies();
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  const supabaseAnonKey =
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || '';
+  const supabaseAnonKey = (
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    '';
+    ''
+  ).trim();
 
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  const safeUrl = supabaseUrl && supabaseUrl.startsWith('http')
+    ? supabaseUrl
+    : 'https://placeholder.supabase.co';
+  const safeKey = supabaseAnonKey || 'placeholder-anon-key';
+
+  return createServerClient(safeUrl, safeKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
