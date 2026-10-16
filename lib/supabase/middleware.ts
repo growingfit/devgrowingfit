@@ -12,8 +12,14 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/admin/login');
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
+  const pathname = request.nextUrl.pathname;
+  const isAdminRoute = pathname.startsWith('/admin');
+  const isAuthRoute = pathname.startsWith('/admin/login');
+
+  // Immediately return for public routes (no auth needed) to prevent latency and middleware failures
+  if (!isAdminRoute) {
+    return supabaseResponse;
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || '';
   const supabaseAnonKey = (
@@ -22,7 +28,7 @@ export async function updateSession(request: NextRequest) {
     ''
   ).trim();
 
-  // If Supabase credentials are not configured or invalid, allow public routes and protect admin
+  // If Supabase credentials are not configured or invalid, protect admin area
   let isValidUrl = false;
   try {
     if (supabaseUrl && supabaseUrl.startsWith('http')) {
@@ -34,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (!isValidUrl || !supabaseAnonKey) {
-    if (isAdminRoute && !isAuthRoute) {
+    if (!isAuthRoute) {
       const url = request.nextUrl.clone();
       url.pathname = '/admin/login';
       return NextResponse.redirect(url);
@@ -69,10 +75,10 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     // Route protection for /admin routes (except /admin/login)
-    if (isAdminRoute && !isAuthRoute && !user) {
+    if (!isAuthRoute && !user) {
       const url = request.nextUrl.clone();
       url.pathname = '/admin/login';
-      url.searchParams.set('redirectTo', request.nextUrl.pathname);
+      url.searchParams.set('redirectTo', pathname);
       return NextResponse.redirect(url);
     }
 
@@ -82,9 +88,8 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
   } catch (error) {
-    // Graceful fallback: prevent 500 MIDDLEWARE_INVOCATION_FAILED
     console.error('Middleware updateSession caught error:', error);
-    if (isAdminRoute && !isAuthRoute) {
+    if (!isAuthRoute) {
       const url = request.nextUrl.clone();
       url.pathname = '/admin/login';
       return NextResponse.redirect(url);
