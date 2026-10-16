@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="100%" height="100%">
+  <!-- Circular Multi-ring Emblem -->
+  <g id="emblem" transform="translate(80, 80)">
+    <!-- Outer Red Ring -->
+    <circle r="72" fill="#E5202C" />
+    <circle r="60" fill="#FFFFFF" />
+    
+    <!-- Yellow Ring -->
+    <circle r="60" fill="#F8BC18" />
+    <circle r="46" fill="#FFFFFF" />
+    
+    <!-- Green Ring -->
+    <circle r="46" fill="#00A651" />
+    <circle r="34" fill="#FFFFFF" />
+    
+    <!-- Inner Purple Circle -->
+    <circle r="34" fill="#67238A" />
+    
+    <!-- White Active Figure Silhouette (arms up, star pose) -->
+    <g fill="#FFFFFF">
+      <!-- Head -->
+      <circle cx="0" cy="-35" r="9.5" />
+      <!-- Torso, Arms & Legs -->
+      <path d="M -4 -22 
+               C -2 -22 2 -22 4 -22 
+               L 30 -58 
+               C 32 -61 28 -64 25 -61 
+               L 8 -30 
+               C 7 -22 6 -15 6 -5 
+               L 23 48 
+               C 24 53 20 55 17 52 
+               L 0 14 
+               L -17 52 
+               C -20 55 -24 53 -23 48 
+               L -6 -5 
+               C -6 -15 -7 -22 -8 -30 
+               L -25 -61 
+               C -28 -64 -32 -61 -30 -58 
+               Z" />
+    </g>
+  </g>
+
+  <!-- Wordmark "Growing Fit" -->
+  <g id="wordmark" transform="translate(170, 20)">
+    <!-- Custom stylized Typography matching reference -->
+    <text x="0" y="68" font-family="'Outfit', 'Fredoka', 'Poppins', 'Inter', sans-serif" font-size="64" font-weight="800" fill="#67238A" letter-spacing="-1">
+      Growing Fit
+    </text>
+    
+    <!-- Purple Ribbon Banner -->
+    <g transform="translate(0, 82)">
+      <!-- Ribbon body with swallowtail notches -->
+      <path d="M 0 0 
+               L 330 0 
+               L 340 13 
+               L 330 26 
+               L 0 26 
+               L 10 13 
+               Z" fill="#67238A" />
+      <!-- White Ribbon Eyebrow Text -->
+      <text x="170" y="18" text-anchor="middle" font-family="'Inter', -apple-system, sans-serif" font-size="11.5" font-weight="700" fill="#FFFFFF" letter-spacing="1.8">
+        SCHOOL OF HEALTH &amp; PHYSICAL EDUCATION
+      </text>
+    </g>
+  </g>
+</svg>

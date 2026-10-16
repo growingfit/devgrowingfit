@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Cricket Stickman Batsman -->
+  <circle cx="26" cy="14" r="5" fill="#172033" />
+  <path d="M26 19 L24 35" stroke="#172033" stroke-width="4.5" stroke-linecap="round" />
+  <path d="M24 35 L28 44 L32 54" stroke="#172033" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M24 35 L18 43 L15 54" stroke="#172033" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M25 24 L31 23 L36 17" stroke="#172033" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M25 27 L33 25" stroke="#172033" stroke-width="3.5" stroke-linecap="round" />
+  <!-- Cricket Bat Handle & Blade -->
+  <line x1="36" y1="17" x2="41" y2="12" stroke="#172033" stroke-width="3" stroke-linecap="round" />
+  <path d="M41 12 L51 3 C51.5 2.5 52.5 2.5 53 3 L54.5 4.5 C55 5 55 6 54.5 6.5 L44.5 15.5 Z" fill="#172033" />
+  <!-- Ball -->
+  <circle cx="48" cy="36" r="3.2" fill="#172033" />
+</svg>

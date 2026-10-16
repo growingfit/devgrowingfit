@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-purple: #67238A;
+    --brand-red: #F21F2B;
+    --brand-navy: #172033;
+    --brand-gray: #667085;
+    --brand-border: #E8E8EC;
+  }
+
+  body {
+    color: #172033;
+    background-color: #FFFFFF;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-white-chevron {
+    clip-path: polygon(0% 0%, 93% 0%, 100% 40%, 86% 100%, 0% 100%);
+  }
+}
+
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAFAFC;
+}
+::-webkit-scrollbar-thumb {
+  background: #D0D5DD;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E11D2A;
+}
+
+/* Automatic Infinite Sliding Marquee for Sports Categories */
+@keyframes sportsMarqueeSlide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.sports-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: sportsMarqueeSlide 35s linear infinite;
+}
+
+.sports-marquee-container:hover .sports-marquee-track,
+.sports-marquee-track.is-paused {
+  animation-play-state: paused;
+}
+
+.sports-marquee-track.is-reversed {
+  animation-direction: reverse;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
