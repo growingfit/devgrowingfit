@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { getGalleryAction } from '@/lib/actions/cms';
 import { GalleryImage } from '@/types/database';
 
 interface GallerySectionProps {
@@ -42,16 +42,11 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
     }
   }, [images]);
 
-  // Always query Supabase directly on the client to ensure recently uploaded admin images appear immediately
+  // Query server action to ensure recently uploaded admin images appear immediately
   useEffect(() => {
-    async function fetchGalleryFromSupabase() {
+    async function fetchGallery() {
       try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from('gallery_images')
-          .select('*')
-          .order('sort_order', { ascending: true });
-
+        const data = await getGalleryAction();
         if (data && data.length > 0) {
           const fresh = mapImagesToItems(data);
           if (fresh.length > 0) {
@@ -65,7 +60,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
       }
     }
 
-    fetchGalleryFromSupabase();
+    fetchGallery();
   }, []);
 
   // Keyboard navigation for lightbox modal
@@ -106,8 +101,8 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8">
           <div className="space-y-3 sm:space-y-3.5 lg:pl-3 xl:pl-6">
             <div className="flex items-center gap-2.5">
-              <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-              <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+              <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+              <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
                 OUR GALLERY
               </span>
             </div>
@@ -120,7 +115,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
           <div className="flex items-center gap-3 sm:gap-4 self-start sm:self-end">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#E11D2A] hover:text-[#C9141F] transition-colors group"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#172033] hover:text-black transition-colors group"
             >
               <span>View Gallery</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -130,7 +125,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
               <button
                 type="button"
                 onClick={() => setSelectedIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : 0))}
-                className="w-8 h-8 rounded-full border border-slate-200 hover:border-[#E11D2A] hover:bg-red-50/50 text-slate-600 hover:text-[#E11D2A] flex items-center justify-center transition-colors shadow-2xs"
+                className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-[#172033] hover:text-black hover:border-black/40 flex items-center justify-center transition-colors shadow-2xs"
                 aria-label="Previous gallery image"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -138,7 +133,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
               <button
                 type="button"
                 onClick={() => setSelectedIndex((prev) => (prev !== null && prev < displayItems.length - 1 ? prev + 1 : 0))}
-                className="w-8 h-8 rounded-full border border-slate-200 hover:border-[#E11D2A] hover:bg-red-50/50 text-slate-600 hover:text-[#E11D2A] flex items-center justify-center transition-colors shadow-2xs"
+                className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-[#172033] hover:text-black hover:border-black/40 flex items-center justify-center transition-colors shadow-2xs"
                 aria-label="Next gallery image"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -186,7 +181,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
                     </span>
                   </div>
                   <div>
-                    <span className="inline-block text-[9px] font-bold tracking-wider uppercase text-white bg-[#E11D2A] px-2 py-0.5 rounded-full mb-1">
+                    <span className="inline-block text-[9px] font-bold tracking-wider uppercase text-white bg-[#172033] px-2 py-0.5 rounded-full mb-1">
                       {item.category}
                     </span>
                     <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 text-white leading-tight">
@@ -215,7 +210,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
             {/* Modal Header */}
             <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-white">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FFF1F2] border border-[#FFE4E6] text-[10px] font-bold text-[#E11D2A] uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] text-[10px] font-bold text-[#172033] uppercase tracking-wider">
                   {activeItem.category}
                 </span>
                 <span className="text-xs text-slate-400">
@@ -270,7 +265,7 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
               <Link
                 href="#contact"
                 onClick={() => setSelectedIndex(null)}
-                className="inline-flex items-center gap-1.5 bg-[#E11D2A] hover:bg-[#C9141F] text-white font-bold text-xs px-4 py-2 rounded-full shadow-2xs hover:shadow-xs transition-all"
+                className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-[#172033] hover:text-black border border-[#D0D5DD] font-bold text-xs px-4 py-2 rounded-full shadow-2xs hover:shadow-xs transition-all"
               >
                 <span>Enquire For Admissions</span>
                 <ArrowRight className="w-3 h-3" />

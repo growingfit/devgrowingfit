@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { ImageUploader } from '@/components/admin/ImageUploader';
-import { createClient } from '@/lib/supabase/client';
 import {
   getAboutSectionAction,
+  getAboutFeaturesAction,
   updateAboutSectionAction,
   updateAboutFeatureAction,
   seedAdminImagesAction,
@@ -55,14 +55,13 @@ export default function AdminAboutPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const supabase = createClient();
-        const [aboutData, featuresRes] = await Promise.all([
+        const [aboutData, featuresData] = await Promise.all([
           getAboutSectionAction(),
-          supabase.from('about_features').select('*').order('sort_order', { ascending: true }),
+          getAboutFeaturesAction(),
         ]);
 
         if (aboutData) setAbout(aboutData);
-        if (featuresRes.data) setFeatures(featuresRes.data);
+        if (featuresData && Array.isArray(featuresData)) setFeatures(featuresData);
       } catch (err) {
         console.error('Failed to load about section data in admin:', err);
       } finally {
@@ -70,6 +69,8 @@ export default function AdminAboutPage() {
       }
     }
     loadData();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleAboutSubmit = async (e: React.FormEvent) => {
@@ -80,6 +81,8 @@ export default function AdminAboutPage() {
     const result = await updateAboutSectionAction(about);
     if (result.success) {
       setMessage({ type: 'success', text: result.message || 'About section and page images updated.' });
+      const data = await getAboutSectionAction();
+      if (data) setAbout((prev) => ({ ...prev, ...data }));
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to update about section.' });
     }
@@ -99,6 +102,8 @@ export default function AdminAboutPage() {
         image_url: '/images/user-admin-about.png',
       }));
       setMessage({ type: 'success', text: 'All 3 images and homepage banner seeded successfully into Admin & Database!' });
+      const data = await getAboutSectionAction();
+      if (data) setAbout((prev) => ({ ...prev, ...data }));
     } else {
       setMessage({ type: 'error', text: res.error || 'Failed to seed images.' });
     }
@@ -115,6 +120,8 @@ export default function AdminAboutPage() {
     });
     if (result.success) {
       setMessage({ type: 'success', text: `Feature "${feature.title}" updated.` });
+      const featuresData = await getAboutFeaturesAction();
+      if (featuresData && Array.isArray(featuresData)) setFeatures(featuresData);
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to update feature.' });
     }
@@ -217,7 +224,7 @@ export default function AdminAboutPage() {
                 <div className="space-y-3 pt-2">
                   <ImageUploader
                     label="Hero Image (Cloudinary or URL)"
-                    value={about.hero_image_url || '/images/about-hero-banner.png'}
+                    value={about.hero_image_url || ''}
                     publicId={about.hero_image_public_id}
                     onChange={(url, publicId) =>
                       setAbout({
@@ -251,7 +258,7 @@ export default function AdminAboutPage() {
                 <div className="space-y-3 pt-2">
                   <ImageUploader
                     label="Philosophy Image (Cloudinary or URL)"
-                    value={about.philosophy_image_url || '/images/about-philosophy-card.jpg'}
+                    value={about.philosophy_image_url || ''}
                     publicId={about.philosophy_image_public_id}
                     onChange={(url, publicId) =>
                       setAbout({
@@ -285,7 +292,7 @@ export default function AdminAboutPage() {
                 <div className="space-y-3 pt-2">
                   <ImageUploader
                     label="CTA Card Visual (Cloudinary or URL)"
-                    value={about.cta_image_url || '/images/about-cta-banner.png'}
+                    value={about.cta_image_url || ''}
                     publicId={about.cta_image_public_id}
                     onChange={(url, publicId) =>
                       setAbout({

@@ -13,9 +13,9 @@ const ALLOWED_MIME_TYPES = [
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Authorize: Admin only
+    // 1. Authorize: Admin only (allow in development for local CMS editing)
     const admin = await getAdminUser();
-    if (!admin) {
+    if (!admin && process.env.NODE_ENV !== 'development') {
       return NextResponse.json(
         { error: 'Unauthorized. Administrator credentials required.' },
         { status: 401 }

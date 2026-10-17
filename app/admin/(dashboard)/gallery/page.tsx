@@ -3,8 +3,7 @@
 import React, { useState, useEffect, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { ImageUploader } from '@/components/admin/ImageUploader';
-import { createClient } from '@/lib/supabase/client';
-import { saveGalleryImageAction, deleteGalleryImageAction } from '@/lib/actions/cms';
+import { getGalleryAction, saveGalleryImageAction, deleteGalleryImageAction } from '@/lib/actions/cms';
 import { GalleryImage } from '@/types/database';
 import { Plus, Trash2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -24,20 +23,20 @@ export default function AdminGalleryPage() {
   });
 
   const fetchGallery = async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from('gallery_images')
-      .select('*')
-      .order('sort_order', { ascending: true });
-
-    if (data) {
-      setImages(data);
+    try {
+      const data = await getGalleryAction();
+      if (data && Array.isArray(data)) setImages(data);
+    } catch (err) {
+      console.error('Failed to load gallery images in admin:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchGallery();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

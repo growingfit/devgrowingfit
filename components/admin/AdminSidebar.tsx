@@ -9,15 +9,13 @@ import {
   Dumbbell,
   Info,
   Eye,
-  BarChart3,
   Image as ImageIcon,
   MessageSquareQuote,
   MapPin,
-  PhoneCall,
-  PanelBottom,
   Settings,
   ExternalLink,
   LogOut,
+  GraduationCap,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -27,17 +25,16 @@ export function AdminSidebar() {
 
   const navItems = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard },
-    { label: 'Hero Banner', href: '/admin/hero', icon: Sparkles },
+    { label: 'School Page CMS', href: '/admin/school-page', icon: GraduationCap },
+    { label: 'Homepage Sections', href: '/admin/homepage-sections', icon: Sparkles },
+    { label: 'Hero Banner', href: '/admin/hero', icon: ImageIcon },
     { label: 'Categories', href: '/admin/categories', icon: Trophy },
     { label: 'Programs', href: '/admin/programs', icon: Dumbbell },
     { label: 'About Us CMS', href: '/admin/about', icon: Info },
     { label: 'Vision & Mission', href: '/admin/vision', icon: Eye },
-    { label: 'Statistics', href: '/admin/statistics', icon: BarChart3 },
     { label: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
     { label: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
-    { label: 'Centres', href: '/admin/centres', icon: MapPin },
-    { label: 'Contact & Social', href: '/admin/contact', icon: PhoneCall },
-    { label: 'Footer & Legal', href: '/admin/footer', icon: PanelBottom },
+    { label: 'Contact & Centres', href: '/admin/contact', icon: MapPin },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
@@ -49,9 +46,9 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#172033] text-white flex flex-col min-h-screen border-r border-slate-800">
+    <aside className="fixed inset-y-0 left-0 w-64 bg-[#172033] text-white flex flex-col h-screen border-r border-slate-800 z-40">
       {/* Brand Header */}
-      <div className="h-20 flex items-center px-6 border-b border-slate-800">
+      <div className="h-20 flex-shrink-0 flex items-center px-6 border-b border-slate-800">
         <Link href="/admin" className="flex items-center gap-3">
           <div className="bg-white px-2 py-1.5 rounded-lg flex items-center justify-center shadow-xs">
             <img src="/growfit logo.png" alt="Growing Fit" className="h-7 w-auto object-contain" />
@@ -86,7 +83,7 @@ export function AdminSidebar() {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-slate-800 space-y-2">
+      <div className="p-4 flex-shrink-0 border-t border-slate-800 space-y-2">
         <Link
           href="/"
           target="_blank"

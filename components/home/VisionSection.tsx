@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getVisionSectionAction } from '@/lib/actions/cms';
 import { VisionSection as VisionSectionType } from '@/types/database';
-import { createClient } from '@/lib/supabase/client';
 
 interface VisionSectionProps {
   data?: VisionSectionType | null;
@@ -19,15 +19,9 @@ export function VisionSection({ data }: VisionSectionProps) {
   useEffect(() => {
     async function loadFreshVision() {
       try {
-        const supabase = createClient();
-        const { data: dbData } = await supabase
-          .from('vision_sections')
-          .select('*')
-          .eq('id', 1)
-          .maybeSingle();
-
-        if (dbData) {
-          setVisionData((prev) => ({ ...prev, ...dbData }));
+        const res = await getVisionSectionAction();
+        if (res) {
+          setVisionData((prev) => ({ ...prev, ...res }));
         }
       } catch (err) {
         console.error('Failed to load fresh vision in VisionSection:', err);
@@ -55,7 +49,7 @@ export function VisionSection({ data }: VisionSectionProps) {
   const imageUrl =
     visionData?.image_url && visionData.image_url.trim().length > 0
       ? visionData.image_url.trim()
-      : '/images/vision-karate-girl.png?v=4';
+      : null;
 
   const isVisible = visionData?.is_visible ?? true;
   if (!isVisible) return null;
@@ -65,7 +59,7 @@ export function VisionSection({ data }: VisionSectionProps) {
       const parts = heading.split('&');
       return (
         <>
-          {parts[0]}&amp; <span className="text-[#E11D2A]">{parts.slice(1).join('&').trim()}</span>
+          {parts[0]}&amp; <span className="text-[#172033]">{parts.slice(1).join('&').trim()}</span>
         </>
       );
     }
@@ -79,8 +73,8 @@ export function VisionSection({ data }: VisionSectionProps) {
         {/* Section Header on Top of the Card */}
         <div className="space-y-3 sm:space-y-3.5 mb-6 sm:mb-8 text-left lg:pl-3 xl:pl-6">
           <div className="flex items-center gap-2.5">
-            <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-            <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+            <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+            <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
               {eyebrow}
             </span>
           </div>
@@ -92,32 +86,61 @@ export function VisionSection({ data }: VisionSectionProps) {
           </p>
         </div>
 
-        {/* The Card - Wide Full Width with Compact Height */}
-        <div className="relative w-full rounded-3xl overflow-hidden min-h-[260px] sm:min-h-[280px] md:min-h-[300px] lg:h-[320px] xl:h-[330px] bg-white border border-[#E8E8EC]/80 shadow-xs">
+        {/* The Card - Enlarged Prominent Card */}
+        <div className="relative w-full rounded-3xl lg:rounded-[36px] overflow-hidden bg-white border border-[#E8E8EC] shadow-sm hover:shadow-md transition-shadow">
 
-          {/* Background Image Layer: Full wide cover */}
-          <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
-            <img
-              src={imageUrl}
-              alt="Growing Fit Mission & Vision"
-              className="w-full h-full object-cover object-center transition-all duration-300"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/images/vision-karate-girl.png';
-              }}
-            />
-          </div>
-
-          {/* Foreground Layer: 3-column split (Mission on Left, Centered Girl Spacer, Vision on Right) */}
-          <div className="relative z-10 w-full h-full grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center py-5 sm:py-6 lg:py-4 px-6 sm:px-10 lg:px-12 xl:px-16">
-
-            {/* Left Column: Mission */}
-            <div className="lg:col-span-4 space-y-2 sm:space-y-2.5 bg-white/95 lg:bg-transparent p-5 sm:p-6 lg:p-0 rounded-2xl lg:rounded-none backdrop-blur-xs lg:backdrop-blur-none shadow-sm lg:shadow-none border border-[#E8E8EC]/80 lg:border-0 lg:pr-2">
-              {/* Header with circular icon & compact title */}
+          {/* ========================================================
+              MOBILE & TABLET VIEW (< lg):
+              Vertical format: Vision Text on Top -> Image on Center -> Mission Text on Bottom
+          ======================================================== */}
+          <div className="block lg:hidden p-6 sm:p-8 space-y-6">
+            
+            {/* 1. TOP: Vision Text */}
+            <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center flex-shrink-0 shadow-2xs">
-                  {/* Target / Bullseye icon with diagonal arrow */}
+                <div className="w-11 h-11 rounded-2xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center flex-shrink-0 shadow-2xs">
                   <svg
-                    className="w-5 h-5 text-[#E11D2A]"
+                    className="w-5 h-5 text-[#172033]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#172033]" />
+                  <h3 className="text-sm font-black tracking-[0.16em] uppercase text-[#172033]">
+                    OUR <span className="text-[#172033]">{visionTitle}</span>
+                  </h3>
+                </div>
+              </div>
+              <p className="text-xs sm:text-sm text-[#475467] leading-relaxed pl-1">
+                {visionDesc}
+              </p>
+            </div>
+
+            {/* 2. CENTER: Image */}
+            {imageUrl && (
+              <div className="relative w-full h-56 sm:h-72 rounded-2xl overflow-hidden border border-[#E8E8EC] bg-slate-50 shadow-xs">
+                <img
+                  src={imageUrl}
+                  alt="Growing Fit Karate Girl"
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            )}
+
+            {/* 3. BOTTOM: Mission Text */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                  <svg
+                    className="w-5 h-5 text-[#172033]"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -133,55 +156,105 @@ export function VisionSection({ data }: VisionSectionProps) {
                   </svg>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E11D2A]" />
-                  <h3 className="text-xs sm:text-sm font-black tracking-[0.16em] uppercase text-[#172033]">
-                    OUR <span className="text-[#E11D2A]">{missionTitle}</span>
+                  <span className="w-2 h-2 rounded-full bg-[#172033]" />
+                  <h3 className="text-sm font-black tracking-[0.16em] uppercase text-[#172033]">
+                    OUR <span className="text-[#172033]">{missionTitle}</span>
                   </h3>
                 </div>
               </div>
-
-              {/* Description */}
-              <p className="text-xs sm:text-[12.5px] text-[#475467] leading-relaxed max-w-xs sm:max-w-sm">
+              <p className="text-xs sm:text-sm text-[#475467] leading-relaxed pl-1">
                 {missionDesc}
               </p>
             </div>
 
-            {/* Center Column Spacer: Leaves the Karate Girl in Background Unobstructed */}
-            <div className="hidden lg:block lg:col-span-4 h-full pointer-events-none" aria-hidden="true" />
+          </div>
 
-            {/* Right Column: Vision */}
-            <div className="lg:col-span-4 space-y-2 sm:space-y-2.5 bg-white/95 lg:bg-transparent p-5 sm:p-6 lg:p-0 rounded-2xl lg:rounded-none backdrop-blur-xs lg:backdrop-blur-none shadow-sm lg:shadow-none border border-[#E8E8EC]/80 lg:border-0 lg:pl-6 xl:pl-8">
-              {/* Header with circular icon & compact title */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center flex-shrink-0 shadow-2xs">
-                  {/* Eye / Vision Icon */}
-                  <svg
-                    className="w-5 h-5 text-[#E11D2A]"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
+          {/* ========================================================
+              DESKTOP VIEW (>= lg):
+              Clean 3-column split with NO box cards on text
+          ======================================================== */}
+          <div className="hidden lg:block relative min-h-[440px] xl:min-h-[470px]">
+            {/* Background Image Layer: Centered Karate Girl */}
+            {imageUrl && (
+              <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+                <img
+                  src={imageUrl}
+                  alt="Growing Fit Mission & Vision"
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            )}
+
+            {/* Foreground Content: Mission on Left, Karate Girl Spacer, Vision on Right */}
+            <div className="relative z-10 w-full h-full min-h-[440px] xl:min-h-[470px] grid grid-cols-12 gap-6 xl:gap-8 items-center py-10 xl:py-14 px-8 lg:px-12 xl:px-16">
+
+              {/* Left Column: Mission Text (Clean & Clear, NO Card Container) */}
+              <div className="col-span-4 space-y-3.5 pr-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <svg
+                      className="w-6 h-6 text-[#172033]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="12" r="6" />
+                      <circle cx="12" cy="12" r="2" />
+                      <path d="M19 5l-4.5 4.5" />
+                      <path d="M16 5h3v3" />
+                    </svg>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#172033]" />
+                    <h3 className="text-sm font-black tracking-[0.16em] uppercase text-[#172033]">
+                      OUR <span className="text-[#172033]">{missionTitle}</span>
+                    </h3>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E11D2A]" />
-                  <h3 className="text-xs sm:text-sm font-black tracking-[0.16em] uppercase text-[#172033]">
-                    OUR <span className="text-[#E11D2A]">{visionTitle}</span>
-                  </h3>
-                </div>
+
+                <p className="text-xs sm:text-[13.5px] xl:text-sm text-[#334155] font-medium leading-relaxed max-w-sm">
+                  {missionDesc}
+                </p>
               </div>
 
-              {/* Description */}
-              <p className="text-xs sm:text-[12.5px] text-[#475467] leading-relaxed max-w-xs sm:max-w-sm">
-                {visionDesc}
-              </p>
-            </div>
+              {/* Center Column Spacer: Karate Girl in full view */}
+              <div className="col-span-4 h-full pointer-events-none" aria-hidden="true" />
 
+              {/* Right Column: Vision Text (Clean & Clear, NO Card Container) */}
+              <div className="col-span-4 space-y-3.5 pl-4 xl:pl-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <svg
+                      className="w-6 h-6 text-[#172033]"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#172033]" />
+                    <h3 className="text-sm font-black tracking-[0.16em] uppercase text-[#172033]">
+                      OUR <span className="text-[#172033]">{visionTitle}</span>
+                    </h3>
+                  </div>
+                </div>
+
+                <p className="text-xs sm:text-[13.5px] xl:text-sm text-[#334155] font-medium leading-relaxed max-w-sm">
+                  {visionDesc}
+                </p>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>

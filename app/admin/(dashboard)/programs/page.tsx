@@ -3,8 +3,7 @@
 import React, { useState, useEffect, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { ImageUploader } from '@/components/admin/ImageUploader';
-import { createClient } from '@/lib/supabase/client';
-import { upsertProgramAction, deleteProgramAction } from '@/lib/actions/cms';
+import { getProgramsAction, upsertProgramAction, deleteProgramAction } from '@/lib/actions/cms';
 import { SportsProgram } from '@/types/database';
 import { Plus, Trash2, Edit2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -26,14 +25,20 @@ export default function AdminProgramsPage() {
   });
 
   const fetchPrograms = async () => {
-    const supabase = createClient();
-    const { data } = await supabase.from('sports_programs').select('*').order('sort_order', { ascending: true });
-    if (data) setPrograms(data);
-    setLoading(false);
+    try {
+      const data = await getProgramsAction();
+      if (data && Array.isArray(data)) setPrograms(data);
+    } catch (err) {
+      console.error('Failed to load programs in admin:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchPrograms();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleEdit = (p: SportsProgram) => {

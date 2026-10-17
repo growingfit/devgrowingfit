@@ -146,13 +146,13 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
         <div className="flex items-center justify-between mb-8 sm:mb-10">
           <div className="space-y-3 sm:space-y-3.5 lg:pl-3 xl:pl-6">
             <div className="flex items-center gap-2.5">
-              <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-              <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+              <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+              <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
                 TESTIMONIALS
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-[36px] font-black text-[#172033] tracking-tight leading-[1.2]">
-              What Parents <span className="text-[#E11D2A]">Say</span>
+              What Parents <span className="text-[#172033]">Say</span>
             </h2>
             <p className="text-xs sm:text-sm text-[#667085] leading-relaxed">
               Real feedback from families whose children train and grow with us.
@@ -167,7 +167,7 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
             <button
               type="button"
               onClick={() => scrollDirection('left')}
-              className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-[#E11D2A] hover:text-[#E11D2A] hover:bg-red-50/50 transition-colors shadow-2xs"
+              className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-[#172033] hover:text-black hover:border-black/40 transition-colors shadow-2xs"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -175,7 +175,7 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
             <button
               type="button"
               onClick={() => scrollDirection('right')}
-              className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-[#E11D2A] hover:text-[#E11D2A] hover:bg-red-50/50 transition-colors shadow-2xs"
+              className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-[#172033] hover:text-black hover:border-black/40 transition-colors shadow-2xs"
               aria-label="Next testimonial"
             >
               <ChevronRight className="w-4 h-4" />
@@ -208,8 +208,8 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
                 className="w-[88%] sm:w-[calc(50%-10px)] lg:w-[calc((100%-40px)/3)] shrink-0 bg-[#FAFAFC] border border-[#E8E8EC]/80 rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-300 group select-none min-h-[230px]"
               >
                 <div className="space-y-3.5">
-                  {/* Red Quote Mark in rounded square */}
-                  <div className="w-9 h-9 rounded-xl bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center text-[#E11D2A] font-serif text-2xl font-black shadow-2xs group-hover:scale-105 transition-transform">
+                  {/* Quote Mark in rounded square */}
+                  <div className="w-9 h-9 rounded-xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] font-serif text-2xl font-black shadow-2xs group-hover:scale-105 transition-transform">
                     &ldquo;
                   </div>
                   <p className="text-xs sm:text-[13px] text-[#475467] leading-relaxed line-clamp-4">
@@ -219,7 +219,7 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
 
                 {/* Author & Designation with Avatar & 5 Stars */}
                 <div className="pt-4 border-t border-[#E8E8EC]/80 mt-5 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center font-bold text-xs sm:text-sm text-[#E11D2A] overflow-hidden shrink-0 shadow-2xs">
+                  <div className="w-10 h-10 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center font-bold text-xs sm:text-sm text-[#172033] overflow-hidden shrink-0 shadow-2xs">
                     {item.avatar_url ? (
                       <img
                         src={item.avatar_url}

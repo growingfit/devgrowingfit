@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { getAboutSectionAction } from '@/lib/actions/cms';
 import { AboutSection as AboutSectionType, AboutFeature } from '@/types/database';
 
 interface AboutSectionProps {
@@ -58,16 +58,9 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
   useEffect(() => {
     async function loadFreshAbout() {
       try {
-        const supabase = createClient();
-        const { data: dbData } = await supabase
-          .from('about_sections')
-          .select('*')
-          .order('updated_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (dbData) {
-          setAboutData((prev) => ({ ...prev, ...dbData }));
+        const res = await getAboutSectionAction();
+        if (res) {
+          setAboutData((prev) => ({ ...prev, ...res }));
         }
       } catch (err) {
         console.error('Failed to load fresh about in AboutSection:', err);
@@ -91,7 +84,7 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
   const aboutImageSrc =
     aboutData?.image_url && aboutData.image_url.trim().length > 0
       ? aboutData.image_url.trim()
-      : '/images/user-admin-about.png';
+      : null;
 
   const displayFeatures =
     features && features.filter((f) => f.is_visible).length > 0
@@ -105,7 +98,7 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
     if (key.includes('coach') || key.includes('user') || key.includes('trainer')) {
       return (
         <svg
-          className="w-5 h-5 text-[#E11D2A]"
+          className="w-5 h-5 text-[#172033]"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -123,7 +116,7 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
     if (key.includes('safe') || key.includes('shield') || key.includes('environment')) {
       return (
         <svg
-          className="w-5 h-5 text-[#E11D2A]"
+          className="w-5 h-5 text-[#172033]"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -147,7 +140,7 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
     ) {
       return (
         <svg
-          className="w-5 h-5 text-[#E11D2A]"
+          className="w-5 h-5 text-[#172033]"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -167,7 +160,7 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
     // 4. Focus on Overall Well-being
     return (
       <svg
-        className="w-5 h-5 text-[#E11D2A]"
+        className="w-5 h-5 text-[#172033]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -187,39 +180,40 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
         {/* Unified Horizontal About Growing Fit Card */}
         <div className="relative w-full rounded-3xl lg:rounded-[36px] bg-white border border-[#E8E8EC] shadow-sm hover:shadow-md transition-shadow overflow-hidden">
           
-          {/* Mobile & Tablet Header Image (< lg): 100% visible photograph without cropping */}
-          <div className="block lg:hidden relative w-full h-56 sm:h-72 overflow-hidden bg-slate-50 border-b border-[#E8E8EC]">
-            <img
-              src={aboutImageSrc}
-              alt="About Growing Fit Martial Arts"
-              className="w-full h-full object-cover object-left"
+          {/* Mobile & Tablet Header Image (< lg): Positioned to the left with NO fade effect */}
+          {aboutImageSrc && (
+            <div className="block lg:hidden relative w-full h-56 sm:h-72 overflow-hidden bg-slate-50 border-b border-[#E8E8EC]">
+              <img
+                src={aboutImageSrc}
+                alt="About Growing Fit Martial Arts"
+                className="w-full h-full object-cover object-left"
+              />
+            </div>
+          )}
+
+          {/* Desktop Full-card Left-aligned Background Image (>= lg) with NO fade effect */}
+          {aboutImageSrc && (
+            <div
+              className="hidden lg:block absolute inset-0 bg-no-repeat pointer-events-none z-0"
+              style={{
+                backgroundImage: `url('${aboutImageSrc}')`,
+                backgroundPosition: 'left center',
+                backgroundSize: 'cover',
+              }}
             />
-          </div>
-
-          {/* Desktop Full-card Left-aligned Background Banner (>= lg) */}
-          <div
-            className="hidden lg:block absolute inset-0 bg-no-repeat pointer-events-none z-0"
-            style={{
-              backgroundImage: `url('${aboutImageSrc}')`,
-              backgroundPosition: 'left center',
-              backgroundSize: 'cover',
-            }}
-          />
-
-          {/* Subtle Right-edge Protection to ensure clean contrast on any viewport */}
-          <div className="hidden lg:block absolute inset-y-0 right-0 w-[45%] xl:w-[40%] bg-gradient-to-l from-white via-white/70 to-transparent pointer-events-none z-0" />
+          )}
 
           {/* Content Container */}
           <div className="relative z-10 w-full p-6 sm:p-8 lg:p-10 xl:p-12">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-center min-h-0 lg:min-h-[440px]">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-6 xl:gap-8 items-center min-h-0 lg:min-h-[440px]">
               
-              {/* Left transparent spacer column (Columns 1-5 on desktop): Preserves 100% full view of the martial arts photograph */}
-              <div className="hidden lg:block lg:col-span-5 pointer-events-none" />
+              {/* Left transparent spacer column (Columns 1-5 on desktop): Preserves 100% full view of martial arts photograph */}
+              <div className="hidden lg:block lg:col-span-5 xl:col-span-5 pointer-events-none" />
 
-              {/* Middle Column (Columns 6-9): Blank Space Text Content */}
-              <div className="lg:col-span-4 xl:col-span-4 space-y-4 sm:space-y-4.5 relative z-10">
+              {/* Middle Column: Blank Space Text Content */}
+              <div className="lg:col-span-4 xl:col-span-4 space-y-3.5 sm:space-y-4 relative z-10">
                 {/* Faint Martial Arts Flying Kick Silhouette Watermark */}
-                <div className="absolute top-0 right-0 w-36 h-36 sm:w-44 sm:h-44 opacity-[0.06] pointer-events-none select-none z-0">
+                <div className="absolute top-0 right-0 w-36 h-36 sm:w-44 sm:h-44 opacity-[0.05] pointer-events-none select-none z-0">
                   <svg
                     viewBox="0 0 100 100"
                     fill="currentColor"
@@ -233,16 +227,16 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
 
                 {/* Eyebrow */}
                 <div className="flex items-center gap-2">
-                  <span className="h-[2px] w-5 bg-[#E11D2A] rounded-full inline-block" />
-                  <span className="text-[11px] sm:text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+                  <span className="h-[2px] w-5 bg-[#172033] rounded-full inline-block" />
+                  <span className="text-[11px] sm:text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
                     {eyebrow}
                   </span>
                 </div>
 
                 {/* 2-line Headline */}
-                <h2 className="text-2xl sm:text-3xl lg:text-[34px] xl:text-[40px] font-black text-[#172033] tracking-tight leading-[1.15]">
+                <h2 className="text-2xl sm:text-3xl lg:text-[34px] xl:text-[38px] font-black text-[#172033] tracking-tight leading-[1.18]">
                   More Than <br />
-                  Just <span className="text-[#E11D2A]">{highlightedText.endsWith('.') ? highlightedText : `${highlightedText}.`}</span>
+                  Just <span className="text-[#172033]">{highlightedText.endsWith('.') ? highlightedText : `${highlightedText}.`}</span>
                 </h2>
 
                 {/* Paragraph in blank space */}
@@ -250,11 +244,11 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
                   {description}
                 </p>
 
-                {/* Royal Purple "Know More" CTA Button */}
+                {/* White "Know More" CTA Button */}
                 <div className="pt-2">
                   <Link
                     href={buttonUrl}
-                    className="inline-flex items-center gap-2.5 bg-[#4B1E8A] hover:bg-[#3D1672] text-white font-bold text-xs sm:text-sm px-6 sm:px-7 py-3 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 group"
+                    className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-[#172033] hover:text-black font-bold text-xs sm:text-sm px-6 sm:px-7 py-3 rounded-xl sm:rounded-2xl border border-[#D0D5DD] shadow-xs hover:shadow-sm transition-all duration-200 group"
                   >
                     <span>{buttonText}</span>
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -262,15 +256,18 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
                 </div>
               </div>
 
-              {/* Right Column (Columns 10-12): 4 Vertical Feature Rows */}
-              <div className="lg:col-span-3 xl:col-span-3 flex flex-col justify-center relative z-10 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100">
-                <div className="space-y-3.5 sm:space-y-4 xl:space-y-4.5">
+              {/* Right Column: 4 Feature Cards (1-col on desktop, 2-col on tablet, 1-col on mobile) */}
+              <div className="lg:col-span-3 xl:col-span-3 relative z-10 pt-5 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-3.5 xl:gap-4">
                   {displayFeatures.slice(0, 4).map((feature, idx) => (
-                    <div key={feature.id || idx} className="flex items-start gap-3 sm:gap-3.5 group">
-                      <div className="w-11 h-11 xl:w-12 xl:h-12 rounded-2xl bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center text-[#E11D2A] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <div
+                      key={feature.id || idx}
+                      className="flex items-start gap-3 sm:gap-3.5 p-3 sm:p-3.5 rounded-2xl bg-[#FAFAFC] lg:bg-transparent border border-[#E8E8EC]/60 lg:border-0 group hover:bg-[#F0F2F5] lg:hover:bg-transparent transition-colors"
+                    >
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 xl:w-12 xl:h-12 rounded-2xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                         {renderIcon(feature.icon, feature.title)}
                       </div>
-                      <div className="space-y-0.5">
+                      <div className="space-y-0.5 min-w-0">
                         <h3 className="text-xs sm:text-[13.5px] xl:text-[14px] font-bold text-[#172033] leading-snug">
                           {feature.title}
                         </h3>
@@ -286,8 +283,6 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
             </div>
           </div>
 
-          {/* Ambient Soft Red Glow in Bottom Right Corner */}
-          <div className="absolute -bottom-14 -right-14 w-52 h-52 bg-gradient-to-tl from-red-100/60 via-red-50/20 to-transparent rounded-full pointer-events-none blur-2xl z-0" />
         </div>
       </div>
     </section>

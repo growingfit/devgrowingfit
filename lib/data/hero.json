@@ -1,0 +1,20 @@
+{
+  "hero": {
+    "id": 1,
+    "eyebrow": "",
+    "heading": "Growing Fit",
+    "highlighted_text": "",
+    "description": "SPORTS FOR A STRONGER TOMORROW",
+    "primary_cta_text": "",
+    "primary_cta_url": "",
+    "secondary_cta_text": "",
+    "secondary_cta_url": "",
+    "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792233661/growing_fit/hqgrr4qr9kod36bbkscn.png",
+    "image_public_id": "growing_fit/hqgrr4qr9kod36bbkscn",
+    "mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792233722/growing_fit/wmegwdgc0naazdz7uepv.png",
+    "mobile_image_public_id": "growing_fit/wmegwdgc0naazdz7uepv",
+    "image_focal_position": "center",
+    "is_visible": true
+  },
+  "benefits": []
+}

@@ -3,8 +3,7 @@
 import React, { useState, useEffect, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { ImageUploader } from '@/components/admin/ImageUploader';
-import { updateHeroSectionAction, updateHeroBenefitAction } from '@/lib/actions/cms';
-import { createClient } from '@/lib/supabase/client';
+import { getHeroSectionAction, updateHeroSectionAction, updateHeroBenefitAction } from '@/lib/actions/cms';
 import { HeroSection, HeroBenefit } from '@/types/database';
 import { Save, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -14,16 +13,18 @@ export default function AdminHeroPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const [hero, setHero] = useState<Partial<HeroSection>>({
-    eyebrow: 'SCHOOL OF HEALTH & PHYSICAL EDUCATION',
-    heading: 'Stronger Kids. Brighter',
-    highlighted_text: 'Futures.',
-    description: 'At Growing Fit, we help children build strength, confidence and discipline through sports and physical education.',
-    primary_cta_text: 'Explore Programs',
-    primary_cta_url: '#programs',
-    secondary_cta_text: 'Enquire Now',
-    secondary_cta_url: '#contact',
+    eyebrow: '',
+    heading: '',
+    highlighted_text: '',
+    description: '',
+    primary_cta_text: '',
+    primary_cta_url: '',
+    secondary_cta_text: '',
+    secondary_cta_url: '',
     image_url: '',
     image_public_id: '',
+    mobile_image_url: '',
+    mobile_image_public_id: '',
     image_focal_position: 'center',
     is_visible: true,
   });
@@ -32,21 +33,23 @@ export default function AdminHeroPage() {
 
   useEffect(() => {
     async function loadData() {
-      const supabase = createClient();
-      const [heroRes, benefitsRes] = await Promise.all([
-        supabase.from('hero_sections').select('*').eq('id', 1).single(),
-        supabase.from('hero_benefits').select('*').order('sort_order', { ascending: true }),
-      ]);
-
-      if (heroRes.data) {
-        setHero(heroRes.data);
+      try {
+        const data = await getHeroSectionAction();
+        if (data?.hero) {
+          setHero((prev) => ({ ...prev, ...data.hero }));
+        }
+        if (data?.benefits && Array.isArray(data.benefits)) {
+          setBenefits(data.benefits);
+        }
+      } catch (err) {
+        console.error('Failed to load hero section data in admin:', err);
+      } finally {
+        setLoading(false);
       }
-      if (benefitsRes.data) {
-        setBenefits(benefitsRes.data);
-      }
-      setLoading(false);
     }
     loadData();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleHeroSubmit = async (e: React.FormEvent) => {
@@ -57,6 +60,9 @@ export default function AdminHeroPage() {
     const result = await updateHeroSectionAction(hero);
     if (result.success) {
       setMessage({ type: 'success', text: result.message || 'Hero section saved successfully.' });
+      const data = await getHeroSectionAction();
+      if (data?.hero) setHero((prev) => ({ ...prev, ...data.hero }));
+      if (data?.benefits && Array.isArray(data.benefits)) setBenefits(data.benefits);
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to save hero section.' });
     }
@@ -72,6 +78,8 @@ export default function AdminHeroPage() {
     });
     if (result.success) {
       setMessage({ type: 'success', text: 'Benefit indicator updated.' });
+      const data = await getHeroSectionAction();
+      if (data?.benefits && Array.isArray(data.benefits)) setBenefits(data.benefits);
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to update benefit.' });
     }
@@ -167,7 +175,7 @@ export default function AdminHeroPage() {
 
           <div>
             <label className="block text-xs font-bold text-[#172033] uppercase tracking-wider mb-2">
-              Description Paragraph
+              Tagline / Subtitle (e.g. SPORTS FOR A STRONGER TOMORROW)
             </label>
             <textarea
               rows={3}
@@ -229,14 +237,36 @@ export default function AdminHeroPage() {
             </div>
           </div>
 
-          {/* Cloudinary Hero Image Upload */}
+          {/* Hero Images: Desktop and Mobile Side-by-Side */}
           <div className="pt-2">
-            <ImageUploader
-              label="Hero Academy Photograph (Cloudinary)"
-              value={hero.image_url}
-              publicId={hero.image_public_id}
-              onChange={(url, publicId) => setHero({ ...hero, image_url: url, image_public_id: publicId })}
-            />
+            <h3 className="text-xs font-bold text-[#172033] uppercase tracking-wider mb-3">
+              Hero Banner Photographs (Cloudinary)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-[#FAFAFC] border border-[#E8E8EC] rounded-2xl">
+              <div>
+                <ImageUploader
+                  label="Desktop Hero Banner (Landscape)"
+                  value={hero.image_url}
+                  publicId={hero.image_public_id}
+                  onChange={(url, publicId) => setHero({ ...hero, image_url: url, image_public_id: publicId })}
+                />
+                <p className="text-[11px] text-[#667085] mt-1.5">
+                  Displayed on desktop &amp; tablet screens (recommended wide aspect ratio, e.g. 16:9).
+                </p>
+              </div>
+
+              <div>
+                <ImageUploader
+                  label="Mobile Hero Banner (Portrait)"
+                  value={hero.mobile_image_url}
+                  publicId={hero.mobile_image_public_id}
+                  onChange={(url, publicId) => setHero({ ...hero, mobile_image_url: url, mobile_image_public_id: publicId })}
+                />
+                <p className="text-[11px] text-[#667085] mt-1.5">
+                  Displayed on mobile devices (recommended vertical aspect ratio, e.g. 4:5 or portrait).
+                </p>
+              </div>
+            </div>
           </div>
 
           <button

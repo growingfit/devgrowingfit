@@ -1,0 +1,34 @@
+[
+  {
+    "id": "gal-1",
+    "title": "Martial Arts Training",
+    "alt_text": "Growing Fit Academy Training",
+    "image_url": "/images/hero-martial-arts.png",
+    "sort_order": 1,
+    "is_published": true
+  },
+  {
+    "id": "gal-2",
+    "title": "Kata & Forms Practice",
+    "alt_text": "Growing Fit Academy Training",
+    "image_url": "/images/about-hero-girl.jpg",
+    "sort_order": 2,
+    "is_published": true
+  },
+  {
+    "id": "gal-3",
+    "title": "Discipline & Focus",
+    "alt_text": "Growing Fit Academy Training",
+    "image_url": "/images/about-philosophy-boy.jpg",
+    "sort_order": 3,
+    "is_published": true
+  },
+  {
+    "id": "gal-4",
+    "title": "Youth Conditioning",
+    "alt_text": "Growing Fit Academy Training",
+    "image_url": "/images/vision-karate-girl.png",
+    "sort_order": 4,
+    "is_published": true
+  }
+]

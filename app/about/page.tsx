@@ -68,9 +68,9 @@ export const metadata = {
 export default async function AboutPage() {
   const data = await getHomePageData();
 
-  const heroImage = data.about?.hero_image_url || '/images/about-hero-banner.png';
-  const philosophyImage = data.about?.philosophy_image_url || '/images/about-philosophy-card.jpg';
-  const ctaImage = data.about?.cta_image_url || '/images/about-cta-banner.png';
+  const heroImage = data.about?.hero_image_url;
+  const philosophyImage = data.about?.philosophy_image_url;
+  const ctaImage = data.about?.cta_image_url;
 
   const coreValues = [
     {
@@ -169,18 +169,20 @@ export default async function AboutPage() {
               </div>
 
               {/* Right Hero Image: Young Girl Punching Forward with Seamless Left Blend */}
-              <div className="lg:col-span-5 xl:col-span-5 relative flex items-center justify-center lg:justify-start">
-                <div className="relative w-full h-[320px] sm:h-[380px] lg:h-[430px] overflow-hidden flex items-center">
-                  {/* Base Photo with focal position at 78% to pull subject left into full view */}
-                  <img
-                    src={heroImage}
-                    alt="Young martial arts student punching forward at Growing Fit Academy"
-                    className="w-full h-full object-cover object-[78%_center] select-none"
-                  />
-                  {/* Seamless Left Gradient Fade */}
-                  <div className="absolute inset-y-0 left-0 w-20 sm:w-32 lg:w-40 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none" />
+              {heroImage && (
+                <div className="lg:col-span-5 xl:col-span-5 relative flex items-center justify-center lg:justify-start">
+                  <div className="relative w-full h-[320px] sm:h-[380px] lg:h-[430px] overflow-hidden flex items-center">
+                    {/* Base Photo with focal position at 78% to pull subject left into full view */}
+                    <img
+                      src={heroImage}
+                      alt="Young martial arts student punching forward at Growing Fit Academy"
+                      className="w-full h-full object-cover object-[78%_center] select-none"
+                    />
+                    {/* Seamless Left Gradient Fade */}
+                    <div className="absolute inset-y-0 left-0 w-20 sm:w-32 lg:w-40 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none" />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
@@ -216,17 +218,19 @@ export default async function AboutPage() {
               </div>
 
               {/* Right Philosophy Image: Boy in Dark Uniform Punching Forward */}
-              <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-start">
-                <div className="relative w-full h-[300px] sm:h-[350px] lg:h-[400px] overflow-hidden flex items-center">
-                  <img
-                    src={philosophyImage}
-                    alt="Martial arts philosophy and youth physical empowerment"
-                    className="w-full h-full object-cover object-[78%_center] select-none"
-                  />
-                  {/* Seamless Left Fade */}
-                  <div className="absolute inset-y-0 left-0 w-20 sm:w-32 lg:w-36 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none" />
+              {philosophyImage && (
+                <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-start">
+                  <div className="relative w-full h-[300px] sm:h-[350px] lg:h-[400px] overflow-hidden flex items-center">
+                    <img
+                      src={philosophyImage}
+                      alt="Martial arts philosophy and youth physical empowerment"
+                      className="w-full h-full object-cover object-[78%_center] select-none"
+                    />
+                    {/* Seamless Left Fade */}
+                    <div className="absolute inset-y-0 left-0 w-20 sm:w-32 lg:w-36 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none" />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
@@ -336,7 +340,7 @@ export default async function AboutPage() {
             <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#FFF5F6] via-[#FFF0F2] to-[#FFEBEF] border border-[#FFE4E8] shadow-xs">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[320px]">
                 {/* Left Action Copy */}
-                <div className="lg:col-span-7 p-8 sm:p-12 lg:p-14 space-y-4">
+                <div className="lg:col-span-7 p-6 sm:p-10 lg:p-14 space-y-3.5 sm:space-y-4">
                   {/* Eyebrow */}
                   <div className="flex items-center gap-2">
                     <span className="w-6 h-[2.5px] bg-[#E11D2A] rounded-full" />
@@ -374,13 +378,15 @@ export default async function AboutPage() {
                 </div>
 
                 {/* Right Side: Karate Girl High Side Kick */}
-                <div className="lg:col-span-5 relative h-[280px] sm:h-[320px] lg:h-[360px] overflow-hidden flex items-center justify-start">
-                  <img
-                    src={ctaImage}
-                    alt="Martial arts student performing side kick at Growing Fit"
-                    className="w-full h-full object-cover object-[78%_center] select-none pointer-events-none"
-                  />
-                </div>
+                {ctaImage && (
+                  <div className="lg:col-span-5 relative h-[280px] sm:h-[320px] lg:h-[360px] overflow-hidden flex items-center justify-start">
+                    <img
+                      src={ctaImage}
+                      alt="Martial arts student performing side kick at Growing Fit"
+                      className="w-full h-full object-cover object-[78%_center] select-none pointer-events-none"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

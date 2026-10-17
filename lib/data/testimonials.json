@@ -1,0 +1,22 @@
+[
+  {
+    "id": "test-1",
+    "quote": "Growing Fit has transformed my son’s confidence and physical stamina. The coaches are patient, encouraging, and highly professional.",
+    "author_name": "Priya R.",
+    "author_title": "Parent of 8-year-old Karateka",
+    "avatar_url": "",
+    "rating": 5,
+    "sort_order": 1,
+    "is_published": true
+  },
+  {
+    "id": "test-2",
+    "quote": "The environment here is exceptional. My daughter loves her weekend martial arts sessions and has developed incredible self-discipline.",
+    "author_name": "Anand Kumar",
+    "author_title": "Parent of 11-year-old Student",
+    "avatar_url": "",
+    "rating": 5,
+    "sort_order": 2,
+    "is_published": true
+  }
+]

@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { ImageUploader } from '@/components/admin/ImageUploader';
-import { createClient } from '@/lib/supabase/client';
 import {
+  getCategoriesAction,
   upsertCategoryAction,
   deleteCategoryAction,
   clearAllCategoriesAction,
@@ -47,22 +47,22 @@ export default function AdminCategoriesPage() {
   });
 
   const fetchCategories = async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from('sports_categories')
-      .select('*')
-      .order('sort_order', { ascending: true });
-
-    if (data) {
-      setCategories(data);
-      // Sync fetched categories to server cache to ensure homepage updates immediately
-      syncCategoriesCacheAction(data).catch(() => {});
+    try {
+      const data = await getCategoriesAction();
+      if (data && Array.isArray(data)) {
+        setCategories(data);
+      }
+    } catch (err) {
+      console.error('Failed to load categories in admin:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchCategories();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleEdit = (category: SportsCategory) => {

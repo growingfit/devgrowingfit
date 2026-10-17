@@ -13,7 +13,7 @@ import {
   Instagram,
   Sparkles,
 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { getGalleryAction } from '@/lib/actions/cms';
 
 interface GalleryItem {
   id: string;
@@ -30,16 +30,11 @@ export default function GalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch admin uploaded images dynamically from Supabase
+  // Fetch admin uploaded images dynamically via server action (local cache + Supabase)
   useEffect(() => {
-    async function loadDbImages() {
+    async function loadImages() {
       try {
-        const supabase = createClient();
-        const { data } = await supabase
-          .from('gallery_images')
-          .select('*')
-          .order('sort_order', { ascending: true });
-
+        const data = await getGalleryAction();
         if (data && data.length > 0) {
           const dbItems: GalleryItem[] = data
             .filter((img: any) => img && img.is_published !== false && typeof img.image_url === 'string' && img.image_url.trim().length > 0)
@@ -55,12 +50,13 @@ export default function GalleryPage() {
           setItems([]);
         }
       } catch (err) {
+        console.error('Failed to load gallery images:', err);
         setItems([]);
       } finally {
         setLoading(false);
       }
     }
-    loadDbImages();
+    loadImages();
   }, []);
 
   const filteredItems =

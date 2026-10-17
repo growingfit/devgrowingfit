@@ -36,14 +36,14 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
           <div className="lg:col-span-5 space-y-6 sm:space-y-8 lg:pl-3 xl:pl-6">
             <div className="space-y-3 sm:space-y-3.5">
               <div className="flex items-center gap-2.5">
-                <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-                <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+                <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+                <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
                   ADMISSIONS &amp; ENQUIRY
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-[36px] font-black text-[#172033] tracking-tight leading-[1.22]">
                 Connect With Our <br className="hidden sm:inline" />
-                <span className="text-[#E11D2A]">Admissions Team</span>
+                <span className="text-[#172033]">Admissions Team</span>
               </h2>
               <p className="text-xs sm:text-sm text-[#667085] leading-relaxed max-w-md">
                 Schedule a visit, learn about our programs, or get answers to your questions. We&apos;re here to help!
@@ -53,14 +53,14 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
             <div className="space-y-5 pt-1">
               {/* Phone */}
               <div className="flex items-start gap-4 group">
-                <div className="w-11 h-11 rounded-full bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center text-[#E11D2A] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Phone</h4>
                   <a
                     href={`tel:${phone.replace(/\s+/g, '')}`}
-                    className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-[#E11D2A] transition-colors"
+                    className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors"
                   >
                     {phone}
                   </a>
@@ -69,14 +69,14 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
 
               {/* Email */}
               <div className="flex items-start gap-4 group">
-                <div className="w-11 h-11 rounded-full bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center text-[#E11D2A] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Email</h4>
                   <a
                     href={`mailto:${email}`}
-                    className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-[#E11D2A] transition-colors break-all"
+                    className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors break-all"
                   >
                     {email}
                   </a>
@@ -85,7 +85,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
 
               {/* Location */}
               <div className="flex items-start gap-4 group">
-                <div className="w-11 h-11 rounded-full bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center text-[#E11D2A] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -114,7 +114,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="mt-4 px-7 py-2.5 text-xs sm:text-sm font-bold text-[#E11D2A] border-2 border-[#E11D2A] rounded-full hover:bg-red-50/50 transition-colors"
+                  className="mt-4 px-7 py-2.5 text-xs sm:text-sm font-bold text-[#172033] hover:text-black bg-white hover:bg-slate-50 border border-[#D0D5DD] rounded-full shadow-2xs transition-colors"
                 >
                   Send Another Enquiry
                 </button>
@@ -134,7 +134,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                       required
                       type="text"
                       placeholder="e.g. Rahul Sharma"
-                      className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D2A]/20 focus:border-[#E11D2A] transition-all"
+                      className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#172033] transition-all"
                     />
                   </div>
                   <div>
@@ -145,7 +145,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                       required
                       type="tel"
                       placeholder="+91 98765 43210"
-                      className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D2A]/20 focus:border-[#E11D2A] transition-all"
+                      className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#172033] transition-all"
                     />
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                     <label className="block text-[10px] sm:text-[11px] font-black text-[#667085] uppercase tracking-wider mb-1.5">
                       PROGRAM OF INTEREST *
                     </label>
-                    <select className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D2A]/20 focus:border-[#E11D2A] transition-all cursor-pointer">
+                    <select className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#172033] transition-all cursor-pointer">
                       <option value="">Select Program</option>
                       <option>Kung Fu</option>
                       <option>Muay Thai</option>
@@ -175,7 +175,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                     <label className="block text-[10px] sm:text-[11px] font-black text-[#667085] uppercase tracking-wider mb-1.5">
                       PREFERRED CENTRE *
                     </label>
-                    <select className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D2A]/20 focus:border-[#E11D2A] transition-all cursor-pointer">
+                    <select className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#172033] transition-all cursor-pointer">
                       <option>Calicut Center (Kerala)</option>
                       <option>Kozhikode Center (Kerala)</option>
                       <option>Bangalore Center</option>
@@ -191,7 +191,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                   <textarea
                     rows={3}
                     placeholder="Share your child's age, any special training requirements..."
-                    className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D2A]/20 focus:border-[#E11D2A] transition-all resize-none"
+                    className="w-full px-4 py-3 bg-[#FAFAFC] border border-[#E8E8EC] rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#172033] transition-all resize-none"
                   />
                 </div>
 
@@ -199,7 +199,7 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex items-center justify-center gap-2 bg-[#E11D2A] hover:bg-[#C9141F] text-white font-bold text-xs sm:text-sm px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 group"
+                    className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-[#172033] hover:text-black border border-[#D0D5DD] font-bold text-xs sm:text-sm px-8 py-3.5 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 group"
                   >
                     <span>{loading ? 'Submitting...' : 'Submit Enquiry'}</span>
                     <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />

@@ -11,16 +11,18 @@ export const siteSettingsSchema = z.object({
 });
 
 export const heroSectionSchema = z.object({
-  eyebrow: z.string().min(1, 'Eyebrow is required'),
-  heading: z.string().min(1, 'Heading is required'),
-  highlighted_text: z.string().min(1, 'Highlighted text is required'),
-  description: z.string().min(5, 'Description is required'),
-  primary_cta_text: z.string().min(1, 'Primary CTA label is required'),
-  primary_cta_url: z.string().min(1, 'Primary CTA URL is required'),
-  secondary_cta_text: z.string().min(1, 'Secondary CTA label is required'),
-  secondary_cta_url: z.string().min(1, 'Secondary CTA URL is required'),
+  eyebrow: z.string().optional().nullable().or(z.literal('')),
+  heading: z.string().optional().nullable().or(z.literal('')).default('Growing Fit'),
+  highlighted_text: z.string().optional().nullable().or(z.literal('')),
+  description: z.string().optional().nullable().or(z.literal('')),
+  primary_cta_text: z.string().optional().nullable().or(z.literal('')),
+  primary_cta_url: z.string().optional().nullable().or(z.literal('')),
+  secondary_cta_text: z.string().optional().nullable().or(z.literal('')),
+  secondary_cta_url: z.string().optional().nullable().or(z.literal('')),
   image_url: z.string().optional().nullable(),
   image_public_id: z.string().optional().nullable(),
+  mobile_image_url: z.string().optional().nullable(),
+  mobile_image_public_id: z.string().optional().nullable(),
   image_focal_position: z.string().default('center'),
   is_visible: z.boolean().default(true),
 });
@@ -52,12 +54,12 @@ export const sportsProgramSchema = z.object({
 });
 
 export const aboutSectionSchema = z.object({
-  eyebrow: z.string().min(1, 'Eyebrow is required'),
-  heading: z.string().min(1, 'Heading is required'),
-  highlighted_text: z.string().min(1, 'Highlighted text is required'),
-  description: z.string().min(5, 'Description is required'),
-  button_text: z.string().min(1, 'Button text is required'),
-  button_url: z.string().min(1, 'Button URL is required'),
+  eyebrow: z.string().optional().nullable().or(z.literal('')),
+  heading: z.string().optional().nullable().or(z.literal('')).default('About Growing Fit'),
+  highlighted_text: z.string().optional().nullable().or(z.literal('')),
+  description: z.string().optional().nullable().or(z.literal('')),
+  button_text: z.string().optional().nullable().or(z.literal('')),
+  button_url: z.string().optional().nullable().or(z.literal('')),
   image_url: z.string().optional().nullable(),
   image_public_id: z.string().optional().nullable(),
   image_focal_position: z.string().default('center'),

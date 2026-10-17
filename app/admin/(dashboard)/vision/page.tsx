@@ -53,6 +53,8 @@ export default function AdminVisionPage() {
       }
     }
     loadData();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,6 +65,8 @@ export default function AdminVisionPage() {
     const result = await updateVisionSectionAction(vision);
     if (result.success) {
       setMessage({ type: 'success', text: result.message || 'Vision & Mission section updated successfully.' });
+      const data = await getVisionSectionAction();
+      if (data) setVision((prev) => ({ ...prev, ...data }));
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to update section.' });
     }
@@ -77,7 +81,7 @@ export default function AdminVisionPage() {
     );
   }
 
-  const currentImg = vision.image_url || '/images/vision-karate-girl.png';
+  const currentImg = vision.image_url || '';
 
   return (
     <>

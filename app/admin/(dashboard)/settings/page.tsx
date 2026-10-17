@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
-import { createClient } from '@/lib/supabase/client';
-import { updateSiteSettingsAction } from '@/lib/actions/cms';
+import { getSiteSettingsAction, updateSiteSettingsAction } from '@/lib/actions/cms';
 import { SiteSettings } from '@/types/database';
 import { Save, CheckCircle2, AlertCircle, Loader2, KeyRound, ShieldAlert } from 'lucide-react';
 
@@ -24,12 +23,18 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     async function loadData() {
-      const supabase = createClient();
-      const { data } = await supabase.from('site_settings').select('*').eq('id', 1).single();
-      if (data) setSettings(data);
-      setLoading(false);
+      try {
+        const data = await getSiteSettingsAction();
+        if (data) setSettings((prev) => ({ ...prev, ...data }));
+      } catch (err) {
+        console.error('Failed to load settings in admin:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +45,8 @@ export default function AdminSettingsPage() {
     const result = await updateSiteSettingsAction(settings);
     if (result.success) {
       setMessage({ type: 'success', text: result.message || 'Global site settings saved.' });
+      const data = await getSiteSettingsAction();
+      if (data) setSettings((prev) => ({ ...prev, ...data }));
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to update settings.' });
     }

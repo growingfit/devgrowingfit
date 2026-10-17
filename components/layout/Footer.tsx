@@ -1,6 +1,8 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
-import { Instagram, Facebook, Youtube, MapPin, Phone, Mail } from 'lucide-react';
-import { BrandLogo } from '@/components/ui/BrandLogo';
+import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import { FooterSettings, ContactSettings, Centre, SocialLink } from '@/types/database';
 
 interface FooterProps {
@@ -12,110 +14,60 @@ interface FooterProps {
 
 export function Footer({
   footerSettings,
-  contactSettings,
-  centres = [],
   socialLinks = [],
 }: FooterProps) {
-  const quickLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'About Us', href: '/about' },
-    { label: 'Programs', href: '/programs' },
-    { label: 'Facilities', href: '/facilities' },
-    { label: 'Gallery', href: '/gallery' },
-    { label: 'Contact', href: '/contact' },
-  ];
+  const brandDescription = footerSettings?.brand_description?.trim() || '';
 
-  const defaultPrograms = [
-    { label: 'Badminton', href: '/programs/badminton' },
-    { label: 'Football', href: '/programs/football' },
-    { label: 'Roller Skating', href: '/programs/roller-skating' },
-    { label: 'Cricket', href: '/programs/cricket' },
-    { label: 'Martial Arts', href: '/programs/martial-arts' },
-    { label: 'Fitness & Athletics', href: '/programs/fitness' },
-  ];
-
-  const phone = contactSettings?.phone || '+91 702 581 0722';
-  const email = contactSettings?.email || 'growingfitofficial@gmail.com';
-  const address = contactSettings?.headquarters || 'Calicut & Kochi, Kerala, India';
-  const description =
-    footerSettings?.brand_description ||
-    'Empowering children through sports, fitness, and personal development for a healthier, stronger and brighter tomorrow.';
-  const copyright = footerSettings?.copyright_text || '© 2026 Growing Fit. All rights reserved.';
+  const copyrightText =
+    footerSettings?.copyright_text || '© 2026 Growing Fit. All rights reserved.';
   const privacyUrl = footerSettings?.privacy_policy_url || '/privacy-policy';
   const termsUrl = footerSettings?.terms_conditions_url || '/terms-conditions';
 
-  const defaultCentres = [
-    { id: 'c-1', name: 'Calicut Centre' },
-    { id: 'c-2', name: 'Kochi Centre' },
-    { id: 'c-3', name: 'Bangalore Centre' },
-    { id: 'c-4', name: 'Mumbai Centre' },
+  const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'School', href: '/schools' },
+    { label: 'Corporate', href: '/corporate' },
+    { label: 'Academy', href: '/academy' },
+    { label: 'Store', href: '/store' },
   ];
 
-  const defaultSocials = [
-    { platform: 'Facebook', url: 'https://facebook.com/growingfit' },
-    { platform: 'Instagram', url: 'https://instagram.com/growingfit' },
-    { platform: 'YouTube', url: 'https://youtube.com/@growingfit' },
+  const secondaryLinks = [
+    { label: 'CONTACT US', href: '/contact' },
+    { label: 'CAREERS', href: '/contact#careers' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Mission & Vision', href: '/about#vision' },
   ];
-
-  const renderSocialIcon = (platform: string) => {
-    const p = platform.toLowerCase();
-    if (p.includes('insta')) return <Instagram className="w-4 h-4" />;
-    if (p.includes('face')) return <Facebook className="w-4 h-4" />;
-    if (p.includes('you')) return <Youtube className="w-4 h-4" />;
-    return <Mail className="w-4 h-4" />;
-  };
-
-  const activeSocials = socialLinks && socialLinks.length > 0 ? socialLinks : defaultSocials;
-  const activeCentres = centres && centres.length > 0 ? centres : defaultCentres;
 
   return (
-    <footer className="bg-[#0B1220] border-t border-slate-800/80 pt-14 sm:pt-16 pb-8 text-[#94A3B8]">
+    <footer className="w-full bg-[#0E1014] text-white pt-14 sm:pt-16 pb-8 border-t border-slate-900">
       <div className="w-full max-w-[1440px] 2xl:max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20">
-        {/* Main 5-column grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-slate-800/80">
-          
-          {/* Column 1: Brand & Socials (Span 3 on desktop) */}
-          <div className="lg:col-span-3 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-1 flex-shrink-0 group-hover:scale-105 transition-transform">
-                <img src="/growfit logo.png" alt="Growing Fit" className="w-full h-full object-contain" />
-              </div>
-              <div>
-                <span className="text-base font-black text-white tracking-tight leading-none block">Growing Fit</span>
-                <span className="text-[7.5px] font-bold tracking-widest text-[#94A3B8] uppercase block mt-1">School of Health &amp; Physical Education</span>
-              </div>
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-12 border-b border-slate-800/80">
+          {/* Column 1: Brand Logo & Description (Span 5 on Desktop) */}
+          <div className="lg:col-span-5 space-y-4">
+            <Link href="/" className="inline-block">
+              <img
+                src="/growingfit-whitelogo.png"
+                alt="Growing Fit"
+                className="h-10 sm:h-12 w-auto object-contain"
+              />
             </Link>
 
-            <p className="text-xs text-[#94A3B8] leading-relaxed max-w-sm">
-              {description}
-            </p>
-
-            {/* Social media links */}
-            <div className="flex items-center space-x-2.5 pt-2">
-              {activeSocials.map((item, idx) => (
-                <a
-                  key={(item as any).id || idx}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.platform}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#E11D2A] text-white flex items-center justify-center transition-colors shadow-2xs"
-                >
-                  {renderSocialIcon(item.platform)}
-                </a>
-              ))}
-            </div>
+            {brandDescription && (
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-md font-normal">
+                {brandDescription}
+              </p>
+            )}
           </div>
 
-          {/* Column 2: Quick Links (Span 2) */}
-          <div className="lg:col-span-2">
-            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4">Quick Links</h3>
-            <ul className="space-y-2.5 text-xs sm:text-sm">
-              {quickLinks.map((item) => (
+          {/* Column 2: Navigation Links (Span 2 on Desktop) */}
+          <div className="lg:col-span-2 space-y-3">
+            <ul className="space-y-2.5 text-xs sm:text-sm font-medium">
+              {navLinks.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors"
+                    className="text-slate-300 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -124,100 +76,105 @@ export function Footer({
             </ul>
           </div>
 
-          {/* Column 3: Our Programs (Span 3) with 2 sub-columns */}
-          <div className="lg:col-span-3">
-            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4">Our Programs</h3>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs sm:text-sm">
-              <Link href="/programs/kung-fu" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Kung Fu
-              </Link>
-              <Link href="/programs/badminton" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Badminton
-              </Link>
-              <Link href="/programs/muay-thai" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Muay Thai
-              </Link>
-              <Link href="/programs/cricket" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Cricket
-              </Link>
-              <Link href="/programs/boxing" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Boxing
-              </Link>
-              <Link href="/programs/table-tennis" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Table Tennis
-              </Link>
-              <Link href="/programs/roller-skating" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Roller Skating
-              </Link>
-              <Link href="/programs/martial-arts" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Martial Arts
-              </Link>
-              <Link href="/programs/football" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Football
-              </Link>
-              <Link href="/programs/fitness" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Fitness
-              </Link>
-              <Link href="/programs/swimming" className="text-[#94A3B8] hover:text-[#E11D2A] transition-colors">
-                Swimming
-              </Link>
-            </div>
-          </div>
-
-          {/* Column 4: Our Centres (Span 2) */}
-          <div className="lg:col-span-2">
-            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4">Our Centres</h3>
-            <ul className="space-y-2.5 text-xs sm:text-sm">
-              {activeCentres.map((centre) => (
-                <li key={centre.id} className="text-[#94A3B8]">
-                  {centre.name}
+          {/* Column 3: Contact & Careers (Span 2 on Desktop) */}
+          <div className="lg:col-span-2 space-y-3">
+            <ul className="space-y-2.5 text-xs sm:text-sm font-bold tracking-wider">
+              {secondaryLinks.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-slate-200 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 5: Get In Touch (Span 2) */}
-          <div className="lg:col-span-2">
-            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4">Get In Touch</h3>
-            <ul className="space-y-3 text-xs sm:text-sm">
-              <li className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-[#E11D2A] flex-shrink-0" />
-                <a
-                  href={`tel:${phone.replace(/\s+/g, '')}`}
-                  className="text-[#94A3B8] hover:text-white transition-colors"
-                >
-                  {phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-[#E11D2A] flex-shrink-0" />
-                <a
-                  href={`mailto:${email}`}
-                  className="text-[#94A3B8] hover:text-white transition-colors break-all"
-                >
-                  {email}
-                </a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#E11D2A] flex-shrink-0 mt-0.5" />
-                <span className="text-[#94A3B8]">
-                  {address}
-                </span>
-              </li>
-            </ul>
-          </div>
+          {/* Column 4: App Badges & Social Links (Span 3 on Desktop) */}
+          <div className="lg:col-span-3 space-y-5">
+            {/* App Store & Google Play Badges */}
+            <div className="space-y-2.5">
+              {/* App Store Badge */}
+              <a
+                href="#app-store"
+                className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-black/60 hover:bg-slate-800 transition-colors w-[150px]"
+              >
+                <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.63-.78 1.06-1.87.94-2.96-1 .04-2.17.65-2.81 1.43-.58.68-1.09 1.78-.96 2.85 1.12.09 2.22-.54 2.83-1.32z" />
+                </svg>
+                <div className="text-left leading-tight">
+                  <span className="text-[9px] text-slate-400 block">Download on the</span>
+                  <span className="text-xs font-semibold text-white block">App Store</span>
+                </div>
+              </a>
 
+              {/* Google Play Badge */}
+              <a
+                href="#google-play"
+                className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-black/60 hover:bg-slate-800 transition-colors w-[150px] ml-0 block"
+              >
+                <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+                  <path d="M3.609 1.814L13.792 12 3.61 22.186c-.302-.27-.485-.67-.485-1.125V2.939c0-.455.183-.855.484-1.125zm11.242 11.243l2.42 2.42-11.45 6.44 9.03-8.86zm0-2.114L5.82 2.083l11.45 6.44-2.419 2.42zm1.488 1.057l3.87 2.176c.72.405.72 1.067 0 1.472l-3.87 2.176-2.16-2.16 2.16-2.164z" />
+                </svg>
+                <div className="text-left leading-tight">
+                  <span className="text-[9px] text-slate-400 block">GET IT ON</span>
+                  <span className="text-xs font-semibold text-white block">Google Play</span>
+                </div>
+              </a>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="flex items-center space-x-4 pt-1 text-slate-300">
+              <a
+                href="https://facebook.com/growingfit"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="hover:text-white transition-colors"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a
+                href="https://twitter.com/growingfit"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+                className="hover:text-white transition-colors"
+              >
+                <Twitter className="w-4 h-4" />
+              </a>
+              <a
+                href="https://instagram.com/growingfit"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="hover:text-white transition-colors"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://youtube.com/@growingfit"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
+                className="hover:text-white transition-colors"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#64748B] gap-4">
-          <p>{copyright}</p>
+        {/* Bottom Bar: Copyright and Legal */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+          <p>{copyrightText}</p>
           <div className="flex items-center space-x-6">
-            <Link href={privacyUrl} className="hover:text-white transition-colors">
+            <Link href={privacyUrl} className="hover:text-slate-300 transition-colors">
               Privacy Policy
             </Link>
-            <span className="text-slate-800">|</span>
-            <Link href={termsUrl} className="hover:text-white transition-colors">
+            <Link href={termsUrl} className="hover:text-slate-300 transition-colors">
               Terms &amp; Conditions
             </Link>
           </div>
