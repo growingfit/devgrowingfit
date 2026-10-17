@@ -1339,7 +1339,7 @@ export default function SchoolPageAdmin() {
                       type="text"
                       value={item.author_role || ''}
                       onChange={(e) => {
-                        const updated = [...schoolData.testimonials];
+                        const updated = [...schoolData.testimonials.items];
                         updated[idx] = { ...updated[idx], author_role: e.target.value };
                         setSchoolData({
                           ...schoolData,
