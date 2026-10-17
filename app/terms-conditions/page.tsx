@@ -21,20 +21,20 @@ export default async function TermsConditionsPage() {
         <div className="bg-[#FAFAFC] border-b border-[#E8E8EC] py-10 sm:py-14">
           <div className="w-full max-w-[1440px] 2xl:max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex items-center gap-2 text-xs text-[#667085] mb-4" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#E11D2A] transition-colors">Home</Link>
+              <Link href="/" className="hover:text-black transition-colors">Home</Link>
               <span>/</span>
               <span className="text-[#172033] font-bold">Terms &amp; Conditions</span>
             </nav>
 
             <div className="max-w-3xl space-y-3">
               <div className="flex items-center gap-2.5">
-                <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-                <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+                <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+                <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
                   ACADEMY REGULATIONS
                 </span>
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#172033] tracking-tight leading-tight">
-                Terms &amp; <span className="text-[#E11D2A]">Conditions</span>
+                Terms &amp; <span className="text-[#172033]">Conditions</span>
               </h1>
               <p className="text-sm sm:text-base text-[#667085] leading-relaxed">
                 Guidelines governing student admission, attendance, conduct, and safety across all Growing Fit sports centres.
@@ -78,7 +78,7 @@ export default async function TermsConditionsPage() {
               <h2 className="text-xl font-bold text-[#172033]">5. Queries &amp; Support</h2>
               <p>
                 For questions regarding terms, fees, or centre rules, reach our coordinator desk at{' '}
-                <a href="tel:+917025810722" className="text-[#E11D2A] font-bold underline">
+                <a href="tel:+917025810722" className="text-[#172033] font-bold underline hover:text-black">
                   +91 702 581 0722
                 </a>{' '}
                 or email growingfitofficial@gmail.com.

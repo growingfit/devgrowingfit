@@ -3,8 +3,7 @@
 import React, { useState, useEffect, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { ImageUploader } from '@/components/admin/ImageUploader';
-import { createClient } from '@/lib/supabase/client';
-import { upsertTestimonialAction, deleteTestimonialAction } from '@/lib/actions/cms';
+import { getTestimonialsAction, upsertTestimonialAction, deleteTestimonialAction } from '@/lib/actions/cms';
 import { Testimonial } from '@/types/database';
 import { Plus, Trash2, Edit2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -27,14 +26,20 @@ export default function AdminTestimonialsPage() {
   });
 
   const fetchTestimonials = async () => {
-    const supabase = createClient();
-    const { data } = await supabase.from('testimonials').select('*').order('sort_order', { ascending: true });
-    if (data) setTestimonials(data);
-    setLoading(false);
+    try {
+      const data = await getTestimonialsAction();
+      if (data && Array.isArray(data)) setTestimonials(data);
+    } catch (err) {
+      console.error('Failed to load testimonials in admin:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchTestimonials();
+    const safetyTimer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const handleEdit = (t: Testimonial) => {

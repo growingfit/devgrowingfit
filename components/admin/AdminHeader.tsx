@@ -10,7 +10,7 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ title, description, userEmail }: AdminHeaderProps) {
   return (
-    <header className="h-20 bg-white border-b border-[#E8E8EC] px-8 flex items-center justify-between">
+    <header className="sticky top-0 z-30 h-20 bg-white/95 backdrop-blur-sm border-b border-[#E8E8EC] px-8 flex items-center justify-between">
       <div>
         <h1 className="text-xl font-bold text-[#172033] tracking-tight">{title}</h1>
         {description && <p className="text-xs text-[#667085] mt-0.5">{description}</p>}

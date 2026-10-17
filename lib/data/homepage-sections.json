@@ -1,0 +1,111 @@
+{
+  "schools": {
+    "heading": "For Schools",
+    "description": "Growing Fit Schools is a comprehensive in-school program designed to provide structured health and physical education on campus. We believe in the transformative power of sports to cultivate healthy habits and lifelong engagement in physical activities. Our expert-developed program fosters holistic student development, empowering them mentally and physically as they pursue their favourite sports in a professional structure.",
+    "button_text": "Learn More",
+    "button_url": "/schools",
+    "image_url": "/images/for-schools.png",
+    "image_public_id": "",
+    "image_alt": "School children participating in outdoor sports and football training",
+    "is_visible": true,
+    "background_color": "#F4F4F6"
+  },
+  "academy": {
+    "heading": "For Academy",
+    "description": "Growing Fit excels in renowned sports academies that offer clinical and professional training for children. Our dedicated programs nurture young athletes' natural talent in their preferred sports, with expert guidance, coaching, and proven methodologies. Our structured environment enables children to excel and unlock their full potential, preparing them for future success in the athletic arena.",
+    "button_text": "Learn More",
+    "button_url": "/academy",
+    "image_url": "/images/for-academy.png",
+    "image_public_id": "",
+    "image_alt": "Young athletes celebrating sports achievement with coach",
+    "is_visible": true,
+    "background_color": "#1C1F23",
+    "thumbnails": [
+      {
+        "id": "acad-1",
+        "title": "Skating",
+        "image_url": "/images/academy-skating.png",
+        "image_public_id": "",
+        "url": "/programs/roller-skating",
+        "sort_order": 1,
+        "is_visible": true
+      },
+      {
+        "id": "acad-2",
+        "title": "Boxing",
+        "image_url": "/images/academy-boxing.png",
+        "image_public_id": "",
+        "url": "/programs/boxing",
+        "sort_order": 2,
+        "is_visible": true
+      },
+      {
+        "id": "acad-3",
+        "title": "Swimming",
+        "image_url": "/images/academy-swimming.png",
+        "image_public_id": "",
+        "url": "/programs/swimming",
+        "sort_order": 3,
+        "is_visible": true
+      },
+      {
+        "id": "acad-4",
+        "title": "Football",
+        "image_url": "/images/academy-football.png",
+        "image_public_id": "",
+        "url": "/programs/football",
+        "sort_order": 4,
+        "is_visible": true
+      }
+    ]
+  },
+  "corporate": {
+    "heading": "For Corporates & Community",
+    "description": "Growing Fit, crafted by industry experts, provides corporate packages that grant companies the opportunity to offer their employees access to engaging team-building sessions and fitness programs. Our community sports hubs extend world-class sports infrastructure, providing people of all ages and genders access to global sports and fitness opportunities.",
+    "button_text": "Learn More",
+    "button_url": "/corporate",
+    "image_url": "/images/for-corporate.png",
+    "image_public_id": "",
+    "image_alt": "Corporate team celebrating together on sports pitch",
+    "is_visible": true,
+    "background_color": "#F4F4F6",
+    "thumbnails": [
+      {
+        "id": "corp-1",
+        "title": "Team Building",
+        "image_url": "/images/corp-team-building.png",
+        "image_public_id": "",
+        "url": "/corporate",
+        "sort_order": 1,
+        "is_visible": true
+      },
+      {
+        "id": "corp-2",
+        "title": "Tournaments",
+        "image_url": "/images/corp-tournaments.png",
+        "image_public_id": "",
+        "url": "/corporate",
+        "sort_order": 2,
+        "is_visible": true
+      },
+      {
+        "id": "corp-3",
+        "title": "Sport Day",
+        "image_url": "/images/corp-sport-day.png",
+        "image_public_id": "",
+        "url": "/corporate",
+        "sort_order": 3,
+        "is_visible": true
+      },
+      {
+        "id": "corp-4",
+        "title": "Sports Club",
+        "image_url": "/images/corp-sports-club.png",
+        "image_public_id": "",
+        "url": "/corporate",
+        "sort_order": 4,
+        "is_visible": true
+      }
+    ]
+  }
+}

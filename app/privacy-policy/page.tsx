@@ -21,20 +21,20 @@ export default async function PrivacyPolicyPage() {
         <div className="bg-[#FAFAFC] border-b border-[#E8E8EC] py-10 sm:py-14">
           <div className="w-full max-w-[1440px] 2xl:max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex items-center gap-2 text-xs text-[#667085] mb-4" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#E11D2A] transition-colors">Home</Link>
+              <Link href="/" className="hover:text-black transition-colors">Home</Link>
               <span>/</span>
               <span className="text-[#172033] font-bold">Privacy Policy</span>
             </nav>
 
             <div className="max-w-3xl space-y-3">
               <div className="flex items-center gap-2.5">
-                <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-                <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+                <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+                <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
                   LEGAL &amp; COMPLIANCE
                 </span>
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#172033] tracking-tight leading-tight">
-                Privacy <span className="text-[#E11D2A]">Policy</span>
+                Privacy <span className="text-[#172033]">Policy</span>
               </h1>
               <p className="text-sm sm:text-base text-[#667085] leading-relaxed">
                 Last updated: October 2024. How we safeguard and protect your personal information.

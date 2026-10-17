@@ -1,0 +1,20 @@
+[
+  {
+    "id": "centre-1",
+    "name": "Calicut Main Academy",
+    "address": "Beach Road, Near Corporation Stadium, Calicut, Kerala 673001",
+    "map_url": "https://maps.google.com",
+    "phone": "+91 702 581 0722",
+    "sort_order": 1,
+    "is_published": true
+  },
+  {
+    "id": "centre-2",
+    "name": "Kochi Training Centre",
+    "address": "Palarivattom Bypass Junction, Kochi, Kerala 682025",
+    "map_url": "https://maps.google.com",
+    "phone": "+91 702 581 0722",
+    "sort_order": 2,
+    "is_published": true
+  }
+]

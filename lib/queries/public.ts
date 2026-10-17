@@ -68,6 +68,20 @@ export async function getHomePageData(): Promise<HomePageData> {
       }
     } catch {}
 
+    // Merge hero section with local json
+    let heroData = heroRes.data || null;
+    let heroBenefitsList = heroBenefitsRes.data || [];
+    try {
+      const heroFilePath = path.join(process.cwd(), 'lib', 'data', 'hero.json');
+      if (fs.existsSync(heroFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(heroFilePath, 'utf-8'));
+        if (fileContent.hero) heroData = { ...fileContent.hero, ...heroData, ...fileContent.hero };
+        if (fileContent.benefits && Array.isArray(fileContent.benefits) && (!heroBenefitsList || heroBenefitsList.length === 0)) {
+          heroBenefitsList = fileContent.benefits.filter((b: any) => b.is_visible !== false);
+        }
+      }
+    } catch {}
+
     // Merge sports categories with local json data for instant sync
     let categoriesList = categoriesRes.data || [];
     try {
@@ -80,22 +94,139 @@ export async function getHomePageData(): Promise<HomePageData> {
       }
     } catch {}
 
+    // Merge programs with local json
+    let programsList = programsRes.data || [];
+    try {
+      const progFilePath = path.join(process.cwd(), 'lib', 'data', 'programs.json');
+      if (fs.existsSync(progFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(progFilePath, 'utf-8'));
+        if (Array.isArray(fileContent) && fileContent.length > 0) {
+          programsList = fileContent.filter((p: any) => p && p.is_published !== false);
+        }
+      }
+    } catch {}
+
+    // Merge centres with local json
+    let centresList = centresRes.data || [];
+    try {
+      const cFilePath = path.join(process.cwd(), 'lib', 'data', 'centres.json');
+      if (fs.existsSync(cFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(cFilePath, 'utf-8'));
+        if (Array.isArray(fileContent) && fileContent.length > 0) {
+          centresList = fileContent.filter((c: any) => c && c.is_published !== false);
+        }
+      }
+    } catch {}
+
+    // Merge stats with local json
+    let statsList = statsRes.data || [];
+    try {
+      const sFilePath = path.join(process.cwd(), 'lib', 'data', 'statistics.json');
+      if (fs.existsSync(sFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(sFilePath, 'utf-8'));
+        if (Array.isArray(fileContent) && fileContent.length > 0) {
+          statsList = fileContent.filter((s: any) => s && s.is_visible !== false);
+        }
+      }
+    } catch {}
+
+    // Merge gallery with local json
+    let galleryList = (galleryRes.data || []).filter((img: any) => img && img.is_published !== false);
+    try {
+      const gFilePath = path.join(process.cwd(), 'lib', 'data', 'gallery.json');
+      if (fs.existsSync(gFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(gFilePath, 'utf-8'));
+        if (Array.isArray(fileContent) && fileContent.length > 0) {
+          galleryList = fileContent.filter((img: any) => img && img.is_published !== false);
+        }
+      }
+    } catch {}
+
+    // Merge testimonials with local json
+    let testimonialsList = testimonialsRes.data || [];
+    try {
+      const tFilePath = path.join(process.cwd(), 'lib', 'data', 'testimonials.json');
+      if (fs.existsSync(tFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(tFilePath, 'utf-8'));
+        if (Array.isArray(fileContent) && fileContent.length > 0) {
+          testimonialsList = fileContent.filter((t: any) => t && t.is_published !== false);
+        }
+      }
+    } catch {}
+
+    // Merge contact and footer
+    let contactData = contactRes.data || null;
+    let socialLinksList = socialRes.data || [];
+    try {
+      const ctFilePath = path.join(process.cwd(), 'lib', 'data', 'contact.json');
+      if (fs.existsSync(ctFilePath)) {
+        const fileContent = JSON.parse(fs.readFileSync(ctFilePath, 'utf-8'));
+        if (fileContent.contact) contactData = { ...contactData, ...fileContent.contact };
+        if (fileContent.socials && Array.isArray(fileContent.socials) && fileContent.socials.length > 0) {
+          socialLinksList = fileContent.socials.filter((s: any) => s.is_active !== false);
+        }
+      }
+    } catch {}
+
+    let footerData = footerRes.data || null;
+    try {
+      const ftFilePath = path.join(process.cwd(), 'lib', 'data', 'footer.json');
+      if (fs.existsSync(ftFilePath)) {
+        footerData = { ...footerData, ...JSON.parse(fs.readFileSync(ftFilePath, 'utf-8')) };
+      }
+    } catch {}
+
+    let siteSettingsData = siteSettingsRes.data || null;
+    try {
+      const stFilePath = path.join(process.cwd(), 'lib', 'data', 'settings.json');
+      if (fs.existsSync(stFilePath)) {
+        siteSettingsData = { ...siteSettingsData, ...JSON.parse(fs.readFileSync(stFilePath, 'utf-8')) };
+      }
+    } catch {}
+
+    // Merge homepage sections (Schools, Academy, Corporate)
+    let schoolsSectionData: any = null;
+    let academySectionData: any = null;
+    let corporateSectionData: any = null;
+    try {
+      const hpFilePath = path.join(process.cwd(), 'lib', 'data', 'homepage-sections.json');
+      if (fs.existsSync(hpFilePath)) {
+        const hpJson = JSON.parse(fs.readFileSync(hpFilePath, 'utf-8'));
+        schoolsSectionData = hpJson.schools || null;
+        academySectionData = hpJson.academy || null;
+        corporateSectionData = hpJson.corporate || null;
+      }
+    } catch {}
+
+    // Merge header settings
+    let headerSettingsData: any = null;
+    try {
+      const hdrFilePath = path.join(process.cwd(), 'lib', 'data', 'header-settings.json');
+      if (fs.existsSync(hdrFilePath)) {
+        headerSettingsData = JSON.parse(fs.readFileSync(hdrFilePath, 'utf-8'));
+      }
+    } catch {}
+
     return {
-      siteSettings: siteSettingsRes.data || null,
-      hero: heroRes.data || null,
-      heroBenefits: heroBenefitsRes.data || [],
+      siteSettings: siteSettingsData,
+      hero: heroData,
+      heroBenefits: heroBenefitsList,
       categories: categoriesList,
-      programs: programsRes.data || [],
+      programs: programsList,
       about: aboutData,
       aboutFeatures: aboutFeaturesRes.data || [],
       vision: visionData,
-      statistics: statsRes.data || [],
-      gallery: (galleryRes.data || []).filter((img: any) => img && img.is_published !== false),
-      testimonials: testimonialsRes.data || [],
-      centres: centresRes.data || [],
-      socialLinks: socialRes.data || [],
-      contact: contactRes.data || null,
-      footer: footerRes.data || null,
+      statistics: statsList,
+      gallery: galleryList,
+      testimonials: testimonialsList,
+      centres: centresList,
+      socialLinks: socialLinksList,
+      contact: contactData,
+      footer: footerData,
+      schoolsSection: schoolsSectionData,
+      academySection: academySectionData,
+      corporateSection: corporateSectionData,
+      headerSettings: headerSettingsData,
     };
   } catch (error) {
     console.error('Database query error in getHomePageData:', error);

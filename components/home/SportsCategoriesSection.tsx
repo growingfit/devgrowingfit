@@ -205,13 +205,13 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
         {/* Section Header: Minimal & Centered */}
         <div className="text-center mb-5 sm:mb-6">
           <div className="flex items-center justify-center gap-2 mb-1.5 sm:mb-2">
-            <span className="w-5 sm:w-6 h-[2px] bg-[#E11D2A] rounded-full" />
-            <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#E11D2A] uppercase">
+            <span className="w-5 sm:w-6 h-[2px] bg-[#172033] rounded-full" />
+            <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#172033] uppercase">
               EXPLORE SPORTS
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-[#172033] tracking-tight leading-tight">
-            Our Sports <span className="text-[#E11D2A]">Categories</span>
+            Our Sports <span className="text-[#172033]">Categories</span>
           </h2>
           <p className="text-xs sm:text-sm text-[#667085] max-w-xl mx-auto mt-1.5 sm:mt-2 leading-relaxed">
             Discover a wide range of sports programs designed for all age groups and skill levels.
@@ -234,9 +234,9 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
             type="button"
             onClick={() => handleArrowClick('left')}
             aria-label="Previous sports categories"
-            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#E11D2A] hover:bg-red-50/70 hover:border-[#E11D2A]/30 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-20"
+            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#172033] hover:bg-slate-50 hover:border-black/40 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-20"
           >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#E11D2A]" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#172033]" />
           </button>
 
           {/* Marquee Viewport with subtle edge gradient fades */}
@@ -299,7 +299,7 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
                         </div>
 
                         {/* Clean, medium-weight font directly beneath */}
-                        <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-[#E11D2A] mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
+                        <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-black mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
                           {category.name}
                         </span>
                       </Link>
@@ -327,7 +327,7 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
                         draggable={false}
                       />
                     </div>
-                    <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-[#E11D2A] mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
+                    <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-[#172033] group-hover:text-black mt-2 sm:mt-2.5 text-center leading-tight transition-colors whitespace-nowrap">
                       {category.name}
                     </span>
                   </Link>
@@ -341,9 +341,9 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
             type="button"
             onClick={() => handleArrowClick('right')}
             aria-label="Next sports categories"
-            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#E11D2A] hover:bg-red-50/70 hover:border-[#E11D2A]/30 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-20"
+            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:shadow-md flex items-center justify-center text-[#172033] hover:bg-slate-50 hover:border-black/40 transition-all flex-shrink-0 cursor-pointer active:scale-95 z-20"
           >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#E11D2A]" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#172033]" />
           </button>
         </div>
       </div>

@@ -22,15 +22,15 @@ export function StatisticsSection({ statistics = [] }: StatisticsSectionProps) {
   const renderStatIcon = (label: string = '') => {
     const k = label.toLowerCase();
     if (k.includes('student') || k.includes('kid') || k.includes('happy') || k.includes('athlete')) {
-      return <Users className="w-7 h-7 sm:w-8 sm:h-8 text-[#E11D2A] stroke-[2]" />;
+      return <Users className="w-7 h-7 sm:w-8 sm:h-8 text-[#172033] stroke-[2]" />;
     }
     if (k.includes('program') || k.includes('sport') || k.includes('trophy')) {
-      return <Trophy className="w-7 h-7 sm:w-8 sm:h-8 text-[#E11D2A] stroke-[2]" />;
+      return <Trophy className="w-7 h-7 sm:w-8 sm:h-8 text-[#172033] stroke-[2]" />;
     }
     if (k.includes('center') || k.includes('centre') || k.includes('location') || k.includes('facility')) {
-      return <MapPin className="w-7 h-7 sm:w-8 sm:h-8 text-[#E11D2A] stroke-[2]" />;
+      return <MapPin className="w-7 h-7 sm:w-8 sm:h-8 text-[#172033] stroke-[2]" />;
     }
-    return <Star className="w-7 h-7 sm:w-8 sm:h-8 text-[#E11D2A] stroke-[2]" />;
+    return <Star className="w-7 h-7 sm:w-8 sm:h-8 text-[#172033] stroke-[2]" />;
   };
 
   return (
@@ -40,30 +40,30 @@ export function StatisticsSection({ statistics = [] }: StatisticsSectionProps) {
         {/* Section Header on Top */}
         <div className="space-y-3 sm:space-y-3.5 mb-6 sm:mb-8 text-left lg:pl-3 xl:pl-6">
           <div className="flex items-center gap-2.5">
-            <span className="h-[2px] w-6 bg-[#E11D2A] rounded-full" />
-            <span className="text-xs font-black tracking-[0.18em] text-[#E11D2A] uppercase">
+            <span className="h-[2px] w-6 bg-[#172033] rounded-full" />
+            <span className="text-xs font-black tracking-[0.18em] text-[#172033] uppercase">
               OUR IMPACT
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-[36px] font-black text-[#172033] tracking-tight leading-[1.2]">
-            Milestones That Drive <span className="text-[#E11D2A]">Excellence</span>
+            Milestones That Drive <span className="text-[#172033]">Excellence</span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 items-center py-7 sm:py-9 px-6 sm:px-10 bg-[#FAFAFC] border border-[#E8E8EC]/80 rounded-3xl shadow-xs">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center py-6 sm:py-8 lg:py-9 px-4 sm:px-8 lg:px-10 bg-[#FAFAFC] border border-[#E8E8EC]/80 rounded-2xl sm:rounded-3xl shadow-xs">
           {displayStats.map((stat) => (
             <div
               key={stat.id}
-              className="flex items-center gap-3.5 sm:gap-4 justify-start group"
+              className="flex items-center gap-3 sm:gap-3.5 lg:gap-4 justify-start group"
             >
-              <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 lg:w-13 lg:h-13 rounded-2xl bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                 {renderStatIcon(stat.label)}
               </div>
-              <div>
-                <span className="block text-2xl sm:text-3xl lg:text-[32px] font-black text-[#172033] tracking-tight leading-none">
+              <div className="min-w-0">
+                <span className="block text-xl sm:text-2xl lg:text-[32px] font-black text-[#172033] tracking-tight leading-none">
                   {stat.value}
                 </span>
-                <span className="block text-xs sm:text-[13.5px] font-semibold text-[#667085] mt-1 leading-tight">
+                <span className="block text-[11px] sm:text-xs lg:text-[13.5px] font-semibold text-[#667085] mt-1 leading-tight truncate">
                   {stat.label}
                 </span>
               </div>

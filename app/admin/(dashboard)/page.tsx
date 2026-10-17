@@ -20,27 +20,39 @@ import {
 export const revalidate = 0;
 
 export default async function AdminDashboardOverview() {
-  const supabase = createClient();
+  let categoriesCount = 4;
+  let programsCount = 5;
+  let galleryCount = 4;
+  let testimonialsCount = 2;
+  let centresCount = 2;
 
-  // Load counts safely
-  const [categoriesCount, programsCount, galleryCount, testimonialsCount, centresCount] =
-    await Promise.all([
+  try {
+    const supabase = createClient();
+    const [cRes, pRes, gRes, tRes, cnRes] = await Promise.all([
       supabase.from('sports_categories').select('*', { count: 'exact', head: true }),
       supabase.from('sports_programs').select('*', { count: 'exact', head: true }),
       supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
       supabase.from('testimonials').select('*', { count: 'exact', head: true }),
       supabase.from('centres').select('*', { count: 'exact', head: true }),
     ]);
+    if (cRes.count !== null && cRes.count !== undefined) categoriesCount = cRes.count;
+    if (pRes.count !== null && pRes.count !== undefined) programsCount = pRes.count;
+    if (gRes.count !== null && gRes.count !== undefined) galleryCount = gRes.count;
+    if (tRes.count !== null && tRes.count !== undefined) testimonialsCount = tRes.count;
+    if (cnRes.count !== null && cnRes.count !== undefined) centresCount = cnRes.count;
+  } catch (err) {
+    console.error('Failed to query counts in admin overview:', err);
+  }
 
   const hasSupabaseUrl = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const hasCloudinary = Boolean(process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
 
   const stats = [
-    { label: 'Active Categories', count: categoriesCount.count ?? 3, href: '/admin/categories', icon: Trophy, color: 'text-amber-500' },
-    { label: 'Sports Programs', count: programsCount.count ?? 5, href: '/admin/programs', icon: Dumbbell, color: 'text-indigo-500' },
-    { label: 'Gallery Moments', count: galleryCount.count ?? 8, href: '/admin/gallery', icon: ImageIcon, color: 'text-emerald-500' },
-    { label: 'Parent Testimonials', count: testimonialsCount.count ?? 2, href: '/admin/testimonials', icon: MessageSquareQuote, color: 'text-purple-500' },
-    { label: 'Training Centres', count: centresCount.count ?? 4, href: '/admin/centres', icon: MapPin, color: 'text-red-500' },
+    { label: 'Active Categories', count: categoriesCount, href: '/admin/categories', icon: Trophy, color: 'text-amber-500' },
+    { label: 'Sports Programs', count: programsCount, href: '/admin/programs', icon: Dumbbell, color: 'text-indigo-500' },
+    { label: 'Gallery Moments', count: galleryCount, href: '/admin/gallery', icon: ImageIcon, color: 'text-emerald-500' },
+    { label: 'Parent Testimonials', count: testimonialsCount, href: '/admin/testimonials', icon: MessageSquareQuote, color: 'text-purple-500' },
+    { label: 'Training Centres', count: centresCount, href: '/admin/contact', icon: MapPin, color: 'text-red-500' },
   ];
 
   return (
@@ -132,6 +144,19 @@ export default async function AdminDashboardOverview() {
         <div className="bg-white border border-[#E8E8EC] rounded-2xl p-6 shadow-sm">
           <h2 className="text-base font-bold text-[#172033] mb-4">CMS Management Modules</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <Link
+              href="/admin/homepage-sections"
+              className="p-4 rounded-xl border-2 border-[#8A1820]/40 bg-red-50/20 hover:border-[#8A1820] hover:bg-red-50/40 transition-colors"
+            >
+              <h4 className="text-sm font-bold text-[#172033] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#8A1820]" />
+                <span>Homepage Sections</span>
+              </h4>
+              <p className="text-xs text-[#667085] mt-1">
+                Manage For Schools, For Academy, and For Corporates &amp; Community sections, photos, and thumbnails.
+              </p>
+            </Link>
+
             <Link
               href="/admin/hero"
               className="p-4 rounded-xl border border-[#E8E8EC] hover:border-[#67238A] hover:bg-[#FAFAFC] transition-colors"

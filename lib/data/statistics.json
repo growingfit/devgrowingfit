@@ -1,0 +1,30 @@
+[
+  {
+    "id": "stat-1",
+    "value": "1500+",
+    "label": "Active Students",
+    "sort_order": 1,
+    "is_visible": true
+  },
+  {
+    "id": "stat-2",
+    "value": "15+",
+    "label": "Certified Trainers",
+    "sort_order": 2,
+    "is_visible": true
+  },
+  {
+    "id": "stat-3",
+    "value": "8+",
+    "label": "Sports Programs",
+    "sort_order": 3,
+    "is_visible": true
+  },
+  {
+    "id": "stat-4",
+    "value": "100%",
+    "label": "Dedicated Focus",
+    "sort_order": 4,
+    "is_visible": true
+  }
+]

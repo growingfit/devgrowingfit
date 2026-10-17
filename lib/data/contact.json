@@ -1,0 +1,33 @@
+{
+  "contact": {
+    "id": 1,
+    "phone": "+91 702 581 0722",
+    "email": "growingfitofficial@gmail.com",
+    "whatsapp": "https://wa.me/917025810722",
+    "headquarters": "Calicut & Kochi, Kerala, India",
+    "opening_hours": "Monday - Saturday: 6:00 AM - 7:00 PM"
+  },
+  "socials": [
+    {
+      "id": "soc-1",
+      "platform": "Instagram",
+      "url": "https://instagram.com/growingfit",
+      "sort_order": 1,
+      "is_active": true
+    },
+    {
+      "id": "soc-2",
+      "platform": "YouTube",
+      "url": "https://youtube.com/@growingfit",
+      "sort_order": 2,
+      "is_active": true
+    },
+    {
+      "id": "soc-3",
+      "platform": "Facebook",
+      "url": "https://facebook.com/growingfit",
+      "sort_order": 3,
+      "is_active": true
+    }
+  ]
+}

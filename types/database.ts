@@ -33,6 +33,8 @@ export interface HeroSection {
   secondary_cta_url: string;
   image_url?: string | null;
   image_public_id?: string | null;
+  mobile_image_url?: string | null;
+  mobile_image_public_id?: string | null;
   image_focal_position: string;
   is_visible: boolean;
   updated_at: string;
@@ -204,6 +206,201 @@ export interface LegalPage {
   updated_at: string;
 }
 
+export interface SchoolSectionData {
+  id?: number | string;
+  heading: string;
+  description: string;
+  button_text: string;
+  button_url: string;
+  image_url: string;
+  image_public_id?: string | null;
+  image_alt?: string;
+  is_visible: boolean;
+  background_color?: string;
+}
+
+export interface AcademyThumbnail {
+  id: string;
+  title: string;
+  image_url: string;
+  image_public_id?: string | null;
+  url?: string;
+  sort_order: number;
+  is_visible: boolean;
+}
+
+export interface AcademySectionData {
+  id?: number | string;
+  heading: string;
+  description: string;
+  button_text: string;
+  button_url: string;
+  image_url: string;
+  image_public_id?: string | null;
+  image_alt?: string;
+  is_visible: boolean;
+  background_color?: string;
+  thumbnails: AcademyThumbnail[];
+}
+
+export interface CorporateThumbnail {
+  id: string;
+  title: string;
+  image_url: string;
+  image_public_id?: string | null;
+  url?: string;
+  sort_order: number;
+  is_visible: boolean;
+}
+
+export interface CorporateSectionData {
+  id?: number | string;
+  heading: string;
+  description: string;
+  button_text: string;
+  button_url: string;
+  image_url: string;
+  image_public_id?: string | null;
+  image_alt?: string;
+  is_visible: boolean;
+  background_color?: string;
+  thumbnails: CorporateThumbnail[];
+}
+
+export interface HeaderSettingsData {
+  logo_url?: string;
+  tagline?: string;
+  nav_links?: { label: string; href: string; is_visible?: boolean }[];
+  show_location?: boolean;
+  location_name?: string;
+  show_login?: boolean;
+  show_cart?: boolean;
+}
+
+export interface SchoolHeroSlide {
+  id: string;
+  title: string;
+  image_url: string;
+  image_alt?: string;
+  sort_order: number;
+  is_published: boolean;
+}
+
+export interface SchoolHeroSection {
+  heading: string;
+  subtitle?: string;
+  slides: SchoolHeroSlide[];
+}
+
+export interface WhyGrowingFitItem {
+  id: string;
+  sequence: string; // e.g. '#1', '#2'
+  title: string;
+  description: string;
+  sort_order: number;
+  is_visible: boolean;
+}
+
+export interface WhyGrowingFitSection {
+  heading: string;
+  subtitle: string;
+  items: WhyGrowingFitItem[];
+}
+
+export interface SchoolIntroSection {
+  content: string;
+  is_visible: boolean;
+}
+
+export interface WhatsInForKidsCard {
+  id: string;
+  title: string;
+  image_url: string;
+  description?: string;
+  sort_order: number;
+  is_visible: boolean;
+}
+
+export interface WhatsInForKidsSection {
+  heading: string;
+  subtitle?: string;
+  cards: WhatsInForKidsCard[];
+}
+
+export interface SchoolTabItem {
+  id: string;
+  title: string;
+  image_url: string;
+  description: string;
+  link_text?: string;
+  link_url?: string;
+}
+
+export interface SchoolTabCategory {
+  id: string;
+  label: string;
+  items: SchoolTabItem[];
+}
+
+export interface SchoolTabsSection {
+  activeTab: string;
+  tabs: SchoolTabCategory[];
+}
+
+export interface CurriculumStage {
+  stage: string;
+  detail: string;
+}
+
+export interface CurriculumSection {
+  heading: string;
+  description: string;
+  stages: CurriculumStage[];
+  is_visible: boolean;
+}
+
+export interface SchoolGlimpseImage {
+  id: string;
+  title: string;
+  image_url: string;
+  sort_order: number;
+  is_published: boolean;
+}
+
+export interface SchoolGlimpsesSection {
+  heading: string;
+  subtitle?: string;
+  images: SchoolGlimpseImage[];
+}
+
+export interface SchoolTestimonialItem {
+  id: string;
+  quote: string;
+  author_name: string;
+  author_role: string;
+  avatar_url?: string;
+  sort_order: number;
+  is_visible: boolean;
+}
+
+export interface SchoolTestimonialsSection {
+  heading: string;
+  subtitle?: string;
+  items: SchoolTestimonialItem[];
+}
+
+export interface SchoolPageData {
+  hero: SchoolHeroSection;
+  whyGrowingFit: WhyGrowingFitSection;
+  introduction: SchoolIntroSection;
+  whatsInForKids: WhatsInForKidsSection;
+  tabsSection: SchoolTabsSection;
+  curriculum: CurriculumSection;
+  glimpses: SchoolGlimpsesSection;
+  testimonials: SchoolTestimonialsSection;
+  headerSettings?: HeaderSettingsData;
+}
+
 export interface HomePageData {
   siteSettings: SiteSettings | null;
   hero: HeroSection | null;
@@ -220,4 +417,8 @@ export interface HomePageData {
   socialLinks: SocialLink[];
   contact: ContactSettings | null;
   footer: FooterSettings | null;
+  schoolsSection?: SchoolSectionData;
+  academySection?: AcademySectionData;
+  corporateSection?: CorporateSectionData;
+  headerSettings?: HeaderSettingsData;
 }
