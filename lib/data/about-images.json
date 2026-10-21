@@ -1,8 +1,11 @@
 {
-  "hero_image_url": "/images/about-hero-banner.png",
-  "hero_image_public_id": "",
-  "philosophy_image_url": "/images/about-philosophy-card.jpg",
-  "philosophy_image_public_id": "",
-  "cta_image_url": "/images/about-cta-banner.png",
-  "cta_image_public_id": ""
+  "eyebrow": "ABOUT US",
+  "heading": "About Us",
+  "highlight_quote": "“Growing Fit is a leading sports academy dedicated to helping individuals of all ages and abilities achieve their health and fitness goals”",
+  "description": "Growing Fit is a leading sports academy dedicated to helping individuals of all ages and abilities achieve their health and fitness goals. We offer a wide range of sports programs, including Kung Fu, Muay Thai, Boxing, Roller Skating, Football, Swimming, and Badminton, to help our members stay active, healthy, and achieve their full potential.",
+  "banner_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792563443/growing_fit/lmupafbyumygrqjz7jcg.png",
+  "banner_image_public_id": "growing_fit/lmupafbyumygrqjz7jcg",
+  "banner_mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792564706/growing_fit/osjliaabzcwpmicfnmo6.png",
+  "banner_mobile_image_public_id": "growing_fit/osjliaabzcwpmicfnmo6",
+  "banner_heading": ""
 }

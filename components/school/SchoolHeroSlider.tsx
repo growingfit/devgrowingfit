@@ -8,7 +8,11 @@ interface SchoolHeroSliderProps {
 }
 
 export function SchoolHeroSlider({ data }: SchoolHeroSliderProps) {
-  const slides = (data?.slides || []).filter((s) => s.is_published !== false);
+  const slides = (data?.slides || []).filter(
+    (s) =>
+      s.is_published !== false &&
+      Boolean(s.image_url && typeof s.image_url === 'string' && s.image_url.trim().length > 0)
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -86,30 +90,6 @@ export function SchoolHeroSlider({ data }: SchoolHeroSliderProps) {
             </div>
           );
         })}
-
-        {/* Circular Left Chevron Button (no icons, pure accessible text entity '<') */}
-        {total > 1 && (
-          <button
-            type="button"
-            onClick={prevSlide}
-            aria-label="Previous slide"
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-[#172033] shadow-md flex items-center justify-center font-bold text-sm sm:text-base transition-all hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            &#8249;
-          </button>
-        )}
-
-        {/* Circular Right Chevron Button (pure text entity '>') */}
-        {total > 1 && (
-          <button
-            type="button"
-            onClick={nextSlide}
-            aria-label="Next slide"
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-[#172033] shadow-md flex items-center justify-center font-bold text-sm sm:text-base transition-all hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            &#8250;
-          </button>
-        )}
 
         {/* Bottom Pagination Dots */}
         {total > 1 && (

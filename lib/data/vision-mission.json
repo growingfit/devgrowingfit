@@ -1,14 +1,14 @@
 {
   "eyebrow": "OUR PURPOSE",
-  "heading": "Our Mission & Vision",
-  "subtitle": "Inspiring and empowering every child through health, discipline, and active sports.",
-  "mission_title": "MISSION",
-  "mission_description": "To inspire and empower children through sports and physical education, promoting health, discipline, and confidence for a stronger, brighter tomorrow.",
-  "vision_title": "VISION",
-  "description": "To be a leading sports academy recognized for nurturing healthy, confident, and disciplined individuals who excel in sports and in life.",
-  "image_url": "/images/vision-karate-girl.png",
+  "heading": "Mission & Vision",
+  "subtitle": "",
+  "mission_eyebrow": "OUR MISSION",
+  "mission_title": "Mission",
+  "mission_description": "Our mission at Growing Fit is to empower individuals of all ages and abilities to lead healthy, active, and fulfilling lives. We strive to achieve this mission by providing high-quality sports training programs, promoting physical fitness and mental well-being, and fostering a supportive and inclusive community.",
+  "vision_eyebrow": "OUR VISION",
+  "vision_title": "Vision",
+  "description": "Our vision at Growing Fit is to be a leading sports academy that empowers individuals to achieve their full potential, both on and off the field. We envision a future where individuals of all ages and abilities have access to high-quality sports training programs that promote physical fitness and mental well-being, and where a supportive and inclusive community fosters personal growth and success.",
+  "image_url": "",
   "image_public_id": "",
-  "image_focal_position": "center",
-  "overlay_opacity": 0.85,
   "is_visible": true
 }

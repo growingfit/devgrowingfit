@@ -1,10 +1,16 @@
 {
   "contact": {
     "id": 1,
-    "phone": "+91 702 581 0722",
-    "email": "growingfitofficial@gmail.com",
-    "whatsapp": "https://wa.me/917025810722",
-    "headquarters": "Calicut & Kochi, Kerala, India",
+    "phone": "+91 9562 44 66 11",
+    "email": "info@edumartial.com",
+    "whatsapp": "https://wa.me/919562446611",
+    "headquarters": "Kinfra Techno Industrial Park, Calicut University PO, Kakkanchery, Malappuram, Kerala",
+    "address_lines": [
+      "Kinfra Techno Industrial Park",
+      "Calicut University PO",
+      "Kakkanchery",
+      "Malappuram, Kerala"
+    ],
     "opening_hours": "Monday - Saturday: 6:00 AM - 7:00 PM"
   },
   "socials": [

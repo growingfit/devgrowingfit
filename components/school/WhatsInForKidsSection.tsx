@@ -9,7 +9,11 @@ interface WhatsInForKidsSectionProps {
 
 export function WhatsInForKidsSection({ data }: WhatsInForKidsSectionProps) {
   const heading = data?.heading || "WHAT'S IN FOR KIDS";
-  const cards = (data?.cards || []).filter((c) => c.is_visible !== false);
+  const cards = (data?.cards || []).filter(
+    (c) =>
+      c.is_visible !== false &&
+      Boolean(c.image_url && typeof c.image_url === 'string' && c.image_url.trim().length > 0)
+  );
 
   if (!cards || cards.length === 0) return null;
 

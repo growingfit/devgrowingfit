@@ -1236,10 +1236,10 @@ export default function SchoolPageAdmin() {
                   const items = schoolData.testimonials.items || [];
                   const newItem: SchoolTestimonialItem = {
                     id: `test-${Date.now()}`,
-                    quote: 'Our children love the structured training and energetic coaches.',
-                    author_name: 'Parent Name',
-                    author_role: 'Parent',
-                    avatar_url: '/images/about-philosophy-card.jpg',
+                    quote: '',
+                    author_name: '',
+                    author_role: '',
+                    avatar_url: '',
                     sort_order: items.length + 1,
                     is_visible: true,
                   };
@@ -1318,6 +1318,7 @@ export default function SchoolPageAdmin() {
                     </label>
                     <input
                       type="text"
+                      placeholder="Enter reviewer name"
                       value={item.author_name || ''}
                       onChange={(e) => {
                         const updated = [...schoolData.testimonials.items];
@@ -1337,6 +1338,7 @@ export default function SchoolPageAdmin() {
                     </label>
                     <input
                       type="text"
+                      placeholder="e.g. Director / Principal / Parent"
                       value={item.author_role || ''}
                       onChange={(e) => {
                         const updated = [...schoolData.testimonials.items];
@@ -1356,6 +1358,7 @@ export default function SchoolPageAdmin() {
                     </label>
                     <textarea
                       rows={3}
+                      placeholder="Write testimonial feedback quote..."
                       value={item.quote || ''}
                       onChange={(e) => {
                         const updated = [...schoolData.testimonials.items];

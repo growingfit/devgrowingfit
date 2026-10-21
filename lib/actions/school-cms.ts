@@ -31,7 +31,9 @@ function readSchoolJson(): SchoolPageData | null {
   try {
     const filePath = path.join(process.cwd(), 'lib', 'data', JSON_FILE);
     if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      const content = fs.readFileSync(filePath, 'utf-8');
+      if (!content || !content.trim()) return null;
+      return JSON.parse(content);
     }
   } catch {}
   return null;

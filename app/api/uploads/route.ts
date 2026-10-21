@@ -51,7 +51,10 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const uploadResult = await uploadBufferToCloudinary(buffer, folder);
+    const isSvg = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
+    const uploadResult = await uploadBufferToCloudinary(buffer, folder, {
+      format: isSvg ? 'svg' : 'webp',
+    });
 
     return NextResponse.json({
       success: true,

@@ -9,7 +9,11 @@ interface SchoolGlimpsesSliderProps {
 
 export function SchoolGlimpsesSlider({ data }: SchoolGlimpsesSliderProps) {
   const heading = data?.heading || 'GLIMPSES OF PREVIOUS YEAR';
-  const images = (data?.images || []).filter((img) => img.is_published !== false);
+  const images = (data?.images || []).filter(
+    (img) =>
+      img.is_published !== false &&
+      Boolean(img.image_url && typeof img.image_url === 'string' && img.image_url.trim().length > 0)
+  );
 
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [activeCaption, setActiveCaption] = useState<string | null>(null);

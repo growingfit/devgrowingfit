@@ -41,171 +41,136 @@ export async function getHomePageData(): Promise<HomePageData> {
       supabase.from('footer_settings').select('*').eq('id', 1).maybeSingle(),
     ]);
 
+    // Helper to safely parse local json files without crashing
+    const safeReadJson = <T = any>(filePath: string): T | null => {
+      try {
+        if (fs.existsSync(filePath)) {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          if (content && content.trim()) {
+            return JSON.parse(content) as T;
+          }
+        }
+      } catch {}
+      return null;
+    };
+
     // Merge vision section with local json data for mission and eyebrow
     let visionData: VisionSection | null = visionRes.data || null;
-    try {
-      const dataFilePath = path.join(process.cwd(), 'lib', 'data', 'vision-mission.json');
-      if (fs.existsSync(dataFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
-        visionData = { ...fileContent, ...visionData, ...fileContent } as VisionSection;
-        // Prioritize Supabase image if uploaded
-        if (visionRes.data?.image_url) {
-          visionData.image_url = visionRes.data.image_url;
-        }
+    const visionJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'vision-mission.json'));
+    if (visionJson) {
+      visionData = { ...visionJson, ...visionData, ...visionJson } as VisionSection;
+      if (visionRes.data?.image_url) {
+        visionData.image_url = visionRes.data.image_url;
       }
-    } catch {}
+    }
 
     // Merge about section with local json data for about page images
     let aboutData: AboutSection | null = aboutRes.data || null;
-    try {
-      const aboutFilePath = path.join(process.cwd(), 'lib', 'data', 'about-images.json');
-      if (fs.existsSync(aboutFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(aboutFilePath, 'utf-8'));
-        aboutData = { ...fileContent, ...aboutData, ...fileContent } as AboutSection;
-        if (aboutRes.data?.hero_image_url) aboutData.hero_image_url = aboutRes.data.hero_image_url;
-        if (aboutRes.data?.philosophy_image_url) aboutData.philosophy_image_url = aboutRes.data.philosophy_image_url;
-        if (aboutRes.data?.cta_image_url) aboutData.cta_image_url = aboutRes.data.cta_image_url;
-      }
-    } catch {}
+    const aboutJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'about-images.json'));
+    if (aboutJson) {
+      aboutData = { ...aboutJson, ...aboutData, ...aboutJson } as AboutSection;
+      if (aboutRes.data?.hero_image_url) aboutData.hero_image_url = aboutRes.data.hero_image_url;
+      if (aboutRes.data?.philosophy_image_url) aboutData.philosophy_image_url = aboutRes.data.philosophy_image_url;
+      if (aboutRes.data?.cta_image_url) aboutData.cta_image_url = aboutRes.data.cta_image_url;
+    }
 
     // Merge hero section with local json
     let heroData = heroRes.data || null;
     let heroBenefitsList = heroBenefitsRes.data || [];
-    try {
-      const heroFilePath = path.join(process.cwd(), 'lib', 'data', 'hero.json');
-      if (fs.existsSync(heroFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(heroFilePath, 'utf-8'));
-        if (fileContent.hero) heroData = { ...fileContent.hero, ...heroData, ...fileContent.hero };
-        if (fileContent.benefits && Array.isArray(fileContent.benefits) && (!heroBenefitsList || heroBenefitsList.length === 0)) {
-          heroBenefitsList = fileContent.benefits.filter((b: any) => b.is_visible !== false);
-        }
+    const heroJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'hero.json'));
+    if (heroJson) {
+      if (heroJson.hero) heroData = { ...heroJson.hero, ...heroData, ...heroJson.hero };
+      if (heroJson.benefits && Array.isArray(heroJson.benefits) && (!heroBenefitsList || heroBenefitsList.length === 0)) {
+        heroBenefitsList = heroJson.benefits.filter((b: any) => b.is_visible !== false);
       }
-    } catch {}
+    }
 
     // Merge sports categories with local json data for instant sync
     let categoriesList = categoriesRes.data || [];
-    try {
-      const catFilePath = path.join(process.cwd(), 'lib', 'data', 'sports-categories.json');
-      if (fs.existsSync(catFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(catFilePath, 'utf-8'));
-        if (Array.isArray(fileContent) && fileContent.length > 0) {
-          categoriesList = fileContent.filter((c: any) => c && c.is_active !== false);
-        }
-      }
-    } catch {}
+    const catJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'sports-categories.json'));
+    if (Array.isArray(catJson) && catJson.length > 0) {
+      categoriesList = catJson.filter((c: any) => c && c.is_active !== false);
+    }
 
     // Merge programs with local json
     let programsList = programsRes.data || [];
-    try {
-      const progFilePath = path.join(process.cwd(), 'lib', 'data', 'programs.json');
-      if (fs.existsSync(progFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(progFilePath, 'utf-8'));
-        if (Array.isArray(fileContent) && fileContent.length > 0) {
-          programsList = fileContent.filter((p: any) => p && p.is_published !== false);
-        }
-      }
-    } catch {}
+    const progJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'programs.json'));
+    if (Array.isArray(progJson) && progJson.length > 0) {
+      programsList = progJson.filter((p: any) => p && p.is_published !== false);
+    }
 
     // Merge centres with local json
     let centresList = centresRes.data || [];
-    try {
-      const cFilePath = path.join(process.cwd(), 'lib', 'data', 'centres.json');
-      if (fs.existsSync(cFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(cFilePath, 'utf-8'));
-        if (Array.isArray(fileContent) && fileContent.length > 0) {
-          centresList = fileContent.filter((c: any) => c && c.is_published !== false);
-        }
-      }
-    } catch {}
+    const centresJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'centres.json'));
+    if (Array.isArray(centresJson) && centresJson.length > 0) {
+      centresList = centresJson.filter((c: any) => c && c.is_published !== false);
+    }
 
     // Merge stats with local json
     let statsList = statsRes.data || [];
-    try {
-      const sFilePath = path.join(process.cwd(), 'lib', 'data', 'statistics.json');
-      if (fs.existsSync(sFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(sFilePath, 'utf-8'));
-        if (Array.isArray(fileContent) && fileContent.length > 0) {
-          statsList = fileContent.filter((s: any) => s && s.is_visible !== false);
-        }
-      }
-    } catch {}
+    const statsJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'statistics.json'));
+    if (Array.isArray(statsJson) && statsJson.length > 0) {
+      statsList = statsJson.filter((s: any) => s && s.is_visible !== false);
+    }
 
     // Merge gallery with local json
     let galleryList = (galleryRes.data || []).filter((img: any) => img && img.is_published !== false);
-    try {
-      const gFilePath = path.join(process.cwd(), 'lib', 'data', 'gallery.json');
-      if (fs.existsSync(gFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(gFilePath, 'utf-8'));
-        if (Array.isArray(fileContent) && fileContent.length > 0) {
-          galleryList = fileContent.filter((img: any) => img && img.is_published !== false);
-        }
-      }
-    } catch {}
+    const galleryJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'gallery.json'));
+    if (Array.isArray(galleryJson) && galleryJson.length > 0) {
+      galleryList = galleryJson.filter((img: any) => img && img.is_published !== false);
+    }
 
     // Merge testimonials with local json
-    let testimonialsList = testimonialsRes.data || [];
-    try {
-      const tFilePath = path.join(process.cwd(), 'lib', 'data', 'testimonials.json');
-      if (fs.existsSync(tFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(tFilePath, 'utf-8'));
-        if (Array.isArray(fileContent) && fileContent.length > 0) {
-          testimonialsList = fileContent.filter((t: any) => t && t.is_published !== false);
-        }
-      }
-    } catch {}
+    let testimonialsList = (testimonialsRes.data || []).filter(
+      (t: any) => t && t.author_name !== 'Anand Kumar' && t.author_name !== 'Priya R.'
+    );
+    const testJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'testimonials.json'));
+    if (Array.isArray(testJson) && testJson.length > 0) {
+      testimonialsList = testJson.filter(
+        (t: any) => t && t.is_published !== false && t.author_name !== 'Anand Kumar' && t.author_name !== 'Priya R.'
+      );
+    }
 
     // Merge contact and footer
     let contactData = contactRes.data || null;
     let socialLinksList = socialRes.data || [];
-    try {
-      const ctFilePath = path.join(process.cwd(), 'lib', 'data', 'contact.json');
-      if (fs.existsSync(ctFilePath)) {
-        const fileContent = JSON.parse(fs.readFileSync(ctFilePath, 'utf-8'));
-        if (fileContent.contact) contactData = { ...contactData, ...fileContent.contact };
-        if (fileContent.socials && Array.isArray(fileContent.socials) && fileContent.socials.length > 0) {
-          socialLinksList = fileContent.socials.filter((s: any) => s.is_active !== false);
-        }
+    const contactJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'contact.json'));
+    if (contactJson) {
+      if (contactJson.contact) contactData = { ...contactData, ...contactJson.contact };
+      if (contactJson.socials && Array.isArray(contactJson.socials) && contactJson.socials.length > 0) {
+        socialLinksList = contactJson.socials.filter((s: any) => s.is_active !== false);
       }
-    } catch {}
+    }
 
     let footerData = footerRes.data || null;
-    try {
-      const ftFilePath = path.join(process.cwd(), 'lib', 'data', 'footer.json');
-      if (fs.existsSync(ftFilePath)) {
-        footerData = { ...footerData, ...JSON.parse(fs.readFileSync(ftFilePath, 'utf-8')) };
-      }
-    } catch {}
+    const footerJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'footer.json'));
+    if (footerJson) {
+      footerData = { ...footerData, ...footerJson };
+    }
 
     let siteSettingsData = siteSettingsRes.data || null;
-    try {
-      const stFilePath = path.join(process.cwd(), 'lib', 'data', 'settings.json');
-      if (fs.existsSync(stFilePath)) {
-        siteSettingsData = { ...siteSettingsData, ...JSON.parse(fs.readFileSync(stFilePath, 'utf-8')) };
-      }
-    } catch {}
+    const settingsJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'settings.json'));
+    if (settingsJson) {
+      siteSettingsData = { ...siteSettingsData, ...settingsJson };
+    }
 
     // Merge homepage sections (Schools, Academy, Corporate)
     let schoolsSectionData: any = null;
     let academySectionData: any = null;
     let corporateSectionData: any = null;
-    try {
-      const hpFilePath = path.join(process.cwd(), 'lib', 'data', 'homepage-sections.json');
-      if (fs.existsSync(hpFilePath)) {
-        const hpJson = JSON.parse(fs.readFileSync(hpFilePath, 'utf-8'));
-        schoolsSectionData = hpJson.schools || null;
-        academySectionData = hpJson.academy || null;
-        corporateSectionData = hpJson.corporate || null;
-      }
-    } catch {}
+    const hpJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'homepage-sections.json'));
+    if (hpJson) {
+      schoolsSectionData = hpJson.schools || null;
+      academySectionData = hpJson.academy || null;
+      corporateSectionData = hpJson.corporate || null;
+    }
 
     // Merge header settings
     let headerSettingsData: any = null;
-    try {
-      const hdrFilePath = path.join(process.cwd(), 'lib', 'data', 'header-settings.json');
-      if (fs.existsSync(hdrFilePath)) {
-        headerSettingsData = JSON.parse(fs.readFileSync(hdrFilePath, 'utf-8'));
-      }
-    } catch {}
+    const hdrJson = safeReadJson(path.join(process.cwd(), 'lib', 'data', 'header-settings.json'));
+    if (hdrJson) {
+      headerSettingsData = hdrJson;
+    }
 
     return {
       siteSettings: siteSettingsData,

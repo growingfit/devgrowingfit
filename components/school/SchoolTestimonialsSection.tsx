@@ -83,47 +83,49 @@ export function SchoolTestimonialsSection({ data }: SchoolTestimonialsSectionPro
           ))}
         </div>
 
-        {/* Bottom Navigation: Centered Dots + Right Aligned Arrow Controls */}
-        <div className="flex items-center justify-between mt-8 pt-4 border-t border-[#F2F4F7]">
-          <div className="w-16 hidden sm:block" />
+        {/* Bottom Navigation: Centered Dots + Right Aligned Arrow Controls (Only when more than 2 testimonials) */}
+        {items.length > 2 && (
+          <div className="flex items-center justify-between mt-8 pt-4 border-t border-[#F2F4F7]">
+            <div className="w-16 hidden sm:block" />
 
-          {/* Centered Dots */}
-          <div className="flex items-center justify-center gap-1.5 mx-auto">
-            {items.map((_, dotIdx) => (
+            {/* Centered Dots */}
+            <div className="flex items-center justify-center gap-1.5 mx-auto">
+              {items.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  type="button"
+                  onClick={() => setCurrentIndex(Math.min(dotIdx, maxDesktopIndex))}
+                  aria-label={`Go to testimonial ${dotIdx + 1}`}
+                  className={`transition-all duration-200 rounded-full cursor-pointer ${
+                    dotIdx === currentIndex
+                      ? 'w-2.5 h-2.5 bg-[#172033]'
+                      : 'w-2 h-2 bg-[#D0D5DD] hover:bg-[#98A2B3]'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Right Circular Arrows */}
+            <div className="flex items-center gap-2">
               <button
-                key={dotIdx}
                 type="button"
-                onClick={() => setCurrentIndex(Math.min(dotIdx, maxDesktopIndex))}
-                aria-label={`Go to testimonial ${dotIdx + 1}`}
-                className={`transition-all duration-200 rounded-full cursor-pointer ${
-                  dotIdx === currentIndex
-                    ? 'w-2.5 h-2.5 bg-[#172033]'
-                    : 'w-2 h-2 bg-[#D0D5DD] hover:bg-[#98A2B3]'
-                }`}
-              />
-            ))}
+                onClick={prevSlide}
+                aria-label="Previous testimonial"
+                className="w-8 h-8 rounded-full border border-[#D0D5DD] bg-white hover:bg-slate-50 text-[#172033] flex items-center justify-center text-sm font-bold transition-all hover:border-[#172033] active:scale-95 cursor-pointer"
+              >
+                &#8249;
+              </button>
+              <button
+                type="button"
+                onClick={nextSlide}
+                aria-label="Next testimonial"
+                className="w-8 h-8 rounded-full border border-[#D0D5DD] bg-white hover:bg-slate-50 text-[#172033] flex items-center justify-center text-sm font-bold transition-all hover:border-[#172033] active:scale-95 cursor-pointer"
+              >
+                &#8250;
+              </button>
+            </div>
           </div>
-
-          {/* Right Circular Arrows */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={prevSlide}
-              aria-label="Previous testimonial"
-              className="w-8 h-8 rounded-full border border-[#D0D5DD] bg-white hover:bg-slate-50 text-[#172033] flex items-center justify-center text-sm font-bold transition-all hover:border-[#172033] active:scale-95 cursor-pointer"
-            >
-              &#8249;
-            </button>
-            <button
-              type="button"
-              onClick={nextSlide}
-              aria-label="Next testimonial"
-              className="w-8 h-8 rounded-full border border-[#D0D5DD] bg-white hover:bg-slate-50 text-[#172033] flex items-center justify-center text-sm font-bold transition-all hover:border-[#172033] active:scale-95 cursor-pointer"
-            >
-              &#8250;
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );

@@ -53,18 +53,16 @@ export function SchoolTabsSection({ data }: SchoolTabsSectionProps) {
             {items.map((item, idx) => (
               <div key={item.id || idx} className="space-y-4 flex flex-col justify-between">
                 <div>
-                  {/* Column Image */}
-                  <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-slate-200 mb-4 shadow-2xs">
-                    {item.image_url ? (
+                  {/* Column Image - only show when image is added */}
+                  {item.image_url && item.image_url.trim().length > 0 && (
+                    <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-slate-200 mb-4 shadow-2xs">
                       <img
                         src={item.image_url}
                         alt={item.title}
                         className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
                       />
-                    ) : (
-                      <div className="w-full h-full bg-slate-200" />
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Title */}
                   <h3 className="text-base sm:text-lg font-bold text-[#172033] tracking-tight leading-snug">

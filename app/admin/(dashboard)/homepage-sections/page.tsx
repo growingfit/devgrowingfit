@@ -10,7 +10,8 @@ import {
   updateCorporateSectionAction,
 } from '@/lib/actions/cms';
 import { SchoolSectionData, AcademySectionData, CorporateSectionData } from '@/types/database';
-import { Save, Loader2, CheckCircle2, AlertCircle, School, Award, Users } from 'lucide-react';
+import Link from 'next/link';
+import { Save, Loader2, CheckCircle2, AlertCircle, School, Award, Users, Info, ExternalLink } from 'lucide-react';
 
 export default function AdminHomepageSectionsPage() {
   const [activeTab, setActiveTab] = useState<'schools' | 'academy' | 'corporate'>('schools');
@@ -32,7 +33,7 @@ export default function AdminHomepageSectionsPage() {
     heading: 'For Academy',
     description: '',
     button_text: 'Learn More',
-    button_url: '/academy',
+    button_url: '/contact',
     image_url: '/images/for-academy.png',
     image_alt: 'Young athletes celebrating with coach',
     is_visible: true,
@@ -43,7 +44,7 @@ export default function AdminHomepageSectionsPage() {
     heading: 'For Corporates & Community',
     description: '',
     button_text: 'Learn More',
-    button_url: '/corporate',
+    button_url: '/contact',
     image_url: '/images/for-corporate.png',
     image_alt: 'Corporate team celebration',
     is_visible: true,
@@ -179,6 +180,15 @@ export default function AdminHomepageSectionsPage() {
             <Users className="w-4 h-4" />
             <span>3. For Corporates &amp; Community</span>
           </button>
+
+          <Link
+            href="/admin/about"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-[#E11D2A] bg-red-50 hover:bg-red-100 transition-all ml-auto"
+          >
+            <Info className="w-4 h-4" />
+            <span>About Us Section</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
         {/* TAB 1: FOR SCHOOLS */}

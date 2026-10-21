@@ -29,13 +29,27 @@ export async function uploadBufferToCloudinary(
     throw new Error('Cloudinary API credentials are not configured in environment variables.');
   }
 
+  const isSvg =
+    options.format === 'svg' ||
+    (typeof options.filename === 'string' && options.filename.endsWith('.svg'));
+
+  const uploadConfig: Record<string, unknown> = {
+    folder,
+    resource_type: 'image',
+    ...(isSvg
+      ? { format: 'svg' }
+      : {
+          format: 'webp',
+          quality: 'auto:good',
+          fetch_format: 'webp',
+          flags: 'lossy',
+        }),
+    ...options,
+  };
+
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder,
-        resource_type: 'auto',
-        ...options,
-      },
+      uploadConfig,
       (error, result?: UploadApiResponse) => {
         if (error || !result) {
           reject(error || new Error('Upload to Cloudinary failed without result.'));
