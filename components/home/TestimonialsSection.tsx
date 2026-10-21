@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Testimonial } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface TestimonialsSectionProps {
   testimonials?: Testimonial[];
@@ -221,9 +222,11 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
                   <div className="w-10 h-10 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center font-bold text-xs sm:text-sm text-[#172033] overflow-hidden shrink-0 shadow-2xs">
                     {item.avatar_url ? (
                       <img
-                        src={item.avatar_url}
+                        src={optimizeImageUrl(item.avatar_url, { width: 120, height: 120, quality: 'auto', format: 'auto' })}
                         alt={item.author_name}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = 'none';
                         }}

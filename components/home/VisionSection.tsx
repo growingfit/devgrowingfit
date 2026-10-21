@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { getVisionSectionAction } from '@/lib/actions/cms';
 import { VisionSection as VisionSectionType } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface VisionSectionProps {
   data?: VisionSectionType | null;
@@ -46,10 +47,13 @@ export function VisionSection({ data }: VisionSectionProps) {
     visionData?.description ||
     'To be a leading sports academy recognized for nurturing healthy, confident, and disciplined individuals who excel in sports and in life.';
 
-  const imageUrl =
+  const rawImageUrl =
     visionData?.image_url && visionData.image_url.trim().length > 0
       ? visionData.image_url.trim()
       : null;
+  const imageUrl = rawImageUrl
+    ? optimizeImageUrl(rawImageUrl, { width: 1400, quality: 'auto', format: 'auto' })
+    : null;
 
   const isVisible = visionData?.is_visible ?? true;
   if (!isVisible) return null;
@@ -131,6 +135,8 @@ export function VisionSection({ data }: VisionSectionProps) {
                   src={imageUrl}
                   alt="Growing Fit Karate Girl"
                   className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             )}
@@ -181,6 +187,8 @@ export function VisionSection({ data }: VisionSectionProps) {
                   src={imageUrl}
                   alt="Growing Fit Mission & Vision"
                   className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             )}

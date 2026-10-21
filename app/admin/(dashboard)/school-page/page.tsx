@@ -66,6 +66,13 @@ export default function SchoolPageAdmin() {
   const [activeTabCategoryIndex, setActiveTabCategoryIndex] = useState(0);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const tabParam = new URLSearchParams(window.location.search).get('tab');
+      if (tabParam && ['hero', 'why', 'intro', 'what', 'tabs', 'curriculum', 'glimpses', 'testimonials'].includes(tabParam)) {
+        setActiveTab(tabParam as TabKey);
+      }
+    }
+
     async function load() {
       try {
         const data = await getSchoolPageCmsAction();
@@ -211,7 +218,7 @@ export default function SchoolPageAdmin() {
             { key: 'why', label: '2. Why Growing Fit', icon: HelpCircle },
             { key: 'intro', label: '3. Introduction', icon: FileText },
             { key: 'what', label: "4. What's in for Kids", icon: Grid },
-            { key: 'tabs', label: '5. Sports & Fitness Tabs', icon: Sliders },
+            { key: 'tabs', label: '5. Sports & Fitness Cards (Tabs)', icon: Sliders },
             { key: 'curriculum', label: '6. Curriculum', icon: BookOpen },
             { key: 'glimpses', label: '7. Previous Year Glimpses', icon: Camera },
             { key: 'testimonials', label: '8. Testimonials', icon: MessageSquare },
@@ -771,27 +778,47 @@ export default function SchoolPageAdmin() {
         {/* SECTION 5: HEALTH AND FITNESS / SKILL / SPORTS TABS */}
         {activeTab === 'tabs' && (
           <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-6">
-            <div className="border-b border-slate-100 pb-4">
-              <h3 className="text-base font-bold text-slate-900">Health & Fitness / Skill Development / Sports Training Tabs</h3>
-              <p className="text-xs text-slate-500">
-                Text-based tab bar with red underline on active tab, showing 3 columns per tab in a soft-tinted container.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Sports &amp; Fitness Tab Cards</h3>
+                <p className="text-xs text-slate-500">
+                  Manage the cards and images displayed under the 3 tabs (Health and Fitness, Skill Development, Sports Training) on the School page.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSaveSection('tabs')}
+                disabled={saving}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#E11D2A] hover:bg-[#b91520] text-white text-xs font-bold rounded-lg transition-colors shadow-xs disabled:opacity-50 self-start sm:self-auto"
+              >
+                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                <span>Save Cards</span>
+              </button>
             </div>
 
             {/* Sub-tab navigation */}
-            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+            <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
               {schoolData.tabsSection.tabs?.map((cat, idx) => (
                 <button
                   key={cat.id || idx}
                   type="button"
                   onClick={() => setActiveTabCategoryIndex(idx)}
-                  className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
+                  className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors flex items-center gap-2 cursor-pointer ${
                     activeTabCategoryIndex === idx
-                      ? 'bg-[#E11D2A] text-white shadow-xs'
+                      ? 'bg-[#172033] text-white shadow-xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  {cat.label}
+                  <span>{cat.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                      activeTabCategoryIndex === idx
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-200 text-slate-600'
+                    }`}
+                  >
+                    {cat.items?.length || 0} cards
+                  </span>
                 </button>
               ))}
             </div>
@@ -817,7 +844,7 @@ export default function SchoolPageAdmin() {
                         tabsSection: { ...schoolData.tabsSection, tabs: updatedTabs },
                       });
                     }}
-                    className="w-full max-w-sm px-3 py-2 text-xs border border-slate-300 rounded-lg"
+                    className="w-full max-w-sm px-3 py-2 text-xs border border-slate-300 rounded-lg font-semibold"
                   />
                 </div>
 
@@ -825,13 +852,42 @@ export default function SchoolPageAdmin() {
                   {schoolData.tabsSection.tabs[activeTabCategoryIndex].items?.map((item, itemIdx) => (
                     <div
                       key={item.id || itemIdx}
-                      className="p-4 rounded-xl border border-slate-200 bg-[#FAFAFC] space-y-3"
+                      className="p-4 rounded-xl border border-slate-200 bg-[#FAFAFC] space-y-3.5 relative group hover:border-slate-300 transition-colors"
                     >
-                      <span className="text-xs font-bold text-slate-900">Column #{itemIdx + 1}</span>
+                      <div className="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                        <span className="text-xs font-bold text-slate-900 truncate">
+                          Card #{itemIdx + 1}: {item.title || 'Untitled Card'}
+                        </span>
+                        {/* Delete Card Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`Delete Card #${itemIdx + 1} (${item.title || 'Untitled'})?`)) {
+                              const updatedTabs = [...schoolData.tabsSection.tabs];
+                              const catItems = updatedTabs[activeTabCategoryIndex].items.filter((_, i) => i !== itemIdx);
+                              updatedTabs[activeTabCategoryIndex] = {
+                                ...updatedTabs[activeTabCategoryIndex],
+                                items: catItems,
+                              };
+                              setSchoolData({
+                                ...schoolData,
+                                tabsSection: { ...schoolData.tabsSection, tabs: updatedTabs },
+                              });
+                            }
+                          }}
+                          className="text-slate-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition-colors"
+                          title="Delete this card"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
 
+                      {/* Image Uploader for this card */}
                       <ImageUploader
-                        label="Column Image"
+                        label="Card Image (Landscape)"
                         value={item.image_url}
+                        folder="growing_fit/schools"
+                        aspectRatio="video"
                         onChange={(url) => {
                           const updatedTabs = [...schoolData.tabsSection.tabs];
                           const catItems = [...updatedTabs[activeTabCategoryIndex].items];
@@ -849,7 +905,7 @@ export default function SchoolPageAdmin() {
 
                       <div>
                         <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                          Heading
+                          Heading / Sport Title
                         </label>
                         <input
                           type="text"
@@ -867,7 +923,8 @@ export default function SchoolPageAdmin() {
                               tabsSection: { ...schoolData.tabsSection, tabs: updatedTabs },
                             });
                           }}
-                          className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg"
+                          className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg font-medium"
+                          placeholder="e.g. Track & Athletics"
                         />
                       </div>
 
@@ -891,14 +948,15 @@ export default function SchoolPageAdmin() {
                               tabsSection: { ...schoolData.tabsSection, tabs: updatedTabs },
                             });
                           }}
-                          className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg"
+                          className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg leading-relaxed"
+                          placeholder="Describe the skill or training..."
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-2">
                         <div>
                           <label className="block text-[10px] font-semibold text-slate-600 mb-1">
-                            Link Text (e.g. SHOW MORE)
+                            Link Text (Optional)
                           </label>
                           <input
                             type="text"
@@ -917,6 +975,7 @@ export default function SchoolPageAdmin() {
                               });
                             }}
                             className="w-full px-2 py-1 text-xs border border-slate-300 rounded"
+                            placeholder="e.g. SHOW MORE"
                           />
                         </div>
                         <div>
@@ -940,11 +999,60 @@ export default function SchoolPageAdmin() {
                               });
                             }}
                             className="w-full px-2 py-1 text-xs border border-slate-300 rounded"
+                            placeholder="/contact"
                           />
                         </div>
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Add New Card Button */}
+                <div className="pt-2 flex justify-start">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updatedTabs = [...schoolData.tabsSection.tabs];
+                      const currentTabCat = updatedTabs[activeTabCategoryIndex];
+                      const newId = `${currentTabCat.id || 'card'}-${(currentTabCat.items?.length || 0) + 1}-${Date.now().toString().slice(-4)}`;
+                      const newCard = {
+                        id: newId,
+                        title: 'New Program',
+                        image_url: '',
+                        description: 'Enter training program details, age group focus, and athletic benefits.',
+                        link_text: 'SHOW MORE',
+                        link_url: '/contact',
+                      };
+                      updatedTabs[activeTabCategoryIndex] = {
+                        ...currentTabCat,
+                        items: [...(currentTabCat.items || []), newCard],
+                      };
+                      setSchoolData({
+                        ...schoolData,
+                        tabsSection: { ...schoolData.tabsSection, tabs: updatedTabs },
+                      });
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 border-2 border-dashed border-slate-300 hover:border-[#172033] bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Card to {schoolData.tabsSection.tabs[activeTabCategoryIndex].label}</span>
+                  </button>
+                </div>
+
+                {/* Bottom Save Bar */}
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <p className="text-xs text-slate-500">
+                    Click <strong>Save Cards</strong> to publish changes live to <span className="font-semibold text-slate-700">/schools</span>.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleSaveSection('tabs')}
+                    disabled={saving}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E11D2A] hover:bg-[#b91520] text-white text-xs font-bold rounded-lg transition-colors shadow-xs disabled:opacity-50"
+                  >
+                    {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                    <span>Save Cards</span>
+                  </button>
                 </div>
               </div>
             )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getAboutSectionAction } from '@/lib/actions/cms';
 import { AboutSection as AboutSectionType, AboutFeature } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface AboutSectionProps {
   data?: AboutSectionType | null;
@@ -81,10 +82,13 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
       : 'Growing Fit is a dedicated martial arts academy focused on the holistic development of children. Our professional training programs in Karate, Kung Fu, Muay Thai, Boxing, and more, help every child stay active, confident and disciplined in life.';
   const buttonText = aboutData?.button_text || 'Know More';
   const buttonUrl = aboutData?.button_url || '#contact';
-  const aboutImageSrc =
+  const rawAboutImageSrc =
     aboutData?.image_url && aboutData.image_url.trim().length > 0
       ? aboutData.image_url.trim()
       : null;
+  const aboutImageSrc = rawAboutImageSrc
+    ? optimizeImageUrl(rawAboutImageSrc, { width: 1400, quality: 'auto', format: 'auto' })
+    : null;
 
   const displayFeatures =
     features && features.filter((f) => f.is_visible).length > 0
@@ -187,6 +191,8 @@ export function AboutSection({ data, features = [] }: AboutSectionProps) {
                 src={aboutImageSrc}
                 alt="About Growing Fit Martial Arts"
                 className="w-full h-full object-cover object-left"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           )}

@@ -155,7 +155,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'hf-1',
                 title: 'Mental Fitness',
-                image_url: '/images/vision-karate-girl.png',
+                image_url: '',
                 description: 'Sports and physical activities promote mental fitness by improving focus, reducing stress and building confidence.',
                 link_text: '',
                 link_url: '',
@@ -163,7 +163,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'hf-2',
                 title: 'Physical Fitness',
-                image_url: '/images/hero-martial-arts.png',
+                image_url: '',
                 description: 'Structured training improves cardiovascular health, strength, flexibility and overall well-being.',
                 link_text: 'SHOW MORE',
                 link_url: '#contact',
@@ -171,7 +171,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'hf-3',
                 title: 'Strength and Conditioning',
-                image_url: '/images/cta-skating-banner.png',
+                image_url: '',
                 description: 'Tailored sessions enhance strength, endurance and performance, helping children lead an active and healthy lifestyle.',
                 link_text: '',
                 link_url: '',
@@ -185,7 +185,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'sd-1',
                 title: 'Agility & Motor Skills',
-                image_url: '/images/academy-skating.png',
+                image_url: '',
                 description: 'Sharpening foundational footwork, reaction times, balance, and spatial awareness.',
                 link_text: '',
                 link_url: '',
@@ -193,7 +193,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'sd-2',
                 title: 'Defensive Techniques',
-                image_url: '/images/academy-boxing.png',
+                image_url: '',
                 description: 'Structured martial arts drills building personal safety, defensive discipline, and poise.',
                 link_text: 'SHOW MORE',
                 link_url: '#contact',
@@ -201,7 +201,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'sd-3',
                 title: 'Tactical Coordination',
-                image_url: '/images/academy-football.png',
+                image_url: '',
                 description: 'Team sports strategies fostering situational decision making and quick physical execution.',
                 link_text: '',
                 link_url: '',
@@ -215,7 +215,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'st-1',
                 title: 'Track & Athletics',
-                image_url: '/images/corp-sport-day.png',
+                image_url: '',
                 description: 'Sprint mechanics, pacing, aerobic capacity and endurance development for young runners.',
                 link_text: '',
                 link_url: '',
@@ -223,7 +223,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'st-2',
                 title: 'Swimming Mastery',
-                image_url: '/images/academy-swimming.png',
+                image_url: '',
                 description: 'Professional stroke technique, breath control and water confidence coached with clinical care.',
                 link_text: 'SHOW MORE',
                 link_url: '#contact',
@@ -231,7 +231,7 @@ export function getSchoolPageData(): SchoolPageData {
               {
                 id: 'st-3',
                 title: 'Football & Team Play',
-                image_url: '/images/corp-team-building.png',
+                image_url: '',
                 description: 'Turf ball mastery, passing accuracy, positional discipline and collaborative sportsmanship.',
                 link_text: '',
                 link_url: '',

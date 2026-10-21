@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { SchoolHeroSection } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface SchoolHeroSliderProps {
   data: SchoolHeroSection;
@@ -62,9 +63,9 @@ export function SchoolHeroSlider({ data }: SchoolHeroSliderProps) {
 
   return (
     <section className="relative w-full bg-[#1A1D20] overflow-hidden select-none">
-      {/* Slider Viewport */}
+      {/* Slider Viewport (Exact 9:16 Portrait on Mobile, Landscape on Desktop) */}
       <div
-        className="relative w-full h-[280px] sm:h-[400px] md:h-[480px] lg:h-[540px] xl:h-[600px] 2xl:h-[640px] overflow-hidden"
+        className="relative w-full aspect-[9/16] sm:aspect-auto sm:h-[400px] md:h-[480px] lg:h-[540px] xl:h-[600px] 2xl:h-[640px] overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -78,13 +79,22 @@ export function SchoolHeroSlider({ data }: SchoolHeroSliderProps) {
                 isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
             >
-              {slide.image_url && (
+              <picture className="w-full h-full block">
+                {slide.mobile_image_url && (
+                  <source
+                    media="(max-width: 639px)"
+                    srcSet={optimizeImageUrl(slide.mobile_image_url, { width: 900, quality: 'auto', format: 'auto' })}
+                  />
+                )}
                 <img
-                  src={slide.image_url}
+                  src={optimizeImageUrl(slide.image_url || slide.mobile_image_url, { width: 1920, quality: 'auto', format: 'auto' }) || ''}
                   alt={slide.title || 'Growing Fit School Sports'}
                   className="w-full h-full object-cover object-center"
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={idx === 0 ? 'high' : 'auto'}
+                  decoding={idx === 0 ? 'sync' : 'async'}
                 />
-              )}
+              </picture>
               {/* Subtle top/bottom gradient overlay for clarity */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
             </div>

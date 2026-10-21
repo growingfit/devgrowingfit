@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { CorporateSectionData } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface CorporateSectionProps {
   data?: CorporateSectionData | null;
@@ -15,10 +16,13 @@ export function CorporateSection({ data }: CorporateSectionProps) {
   const description = data?.description?.trim() || '';
   const buttonText = data?.button_text?.trim() || '';
   const buttonUrl = data?.button_url?.trim() || '';
-  const imageSrc =
+  const rawImageSrc =
     data?.image_url && data.image_url.trim().length > 0
       ? data.image_url.trim()
       : null;
+  const imageSrc = rawImageSrc
+    ? optimizeImageUrl(rawImageSrc, { width: 900, quality: 'auto', format: 'auto' })
+    : null;
   const imageAlt = data?.image_alt || heading || 'Corporate sports';
 
   const thumbnails =
@@ -76,6 +80,8 @@ export function CorporateSection({ data }: CorporateSectionProps) {
                   src={imageSrc}
                   alt={imageAlt}
                   className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -102,9 +108,11 @@ export function CorporateSection({ data }: CorporateSectionProps) {
                     {/* Thumbnail Card with border and black accent underline */}
                     <div className="relative rounded-xl overflow-hidden border border-[#E2E8F0] bg-white shadow-sm aspect-[16/10] mb-2 sm:mb-2.5 group-hover:shadow-md transition-all">
                       <img
-                        src={item.image_url!}
+                        src={optimizeImageUrl(item.image_url!, { width: 400, quality: 'auto', format: 'auto' })}
                         alt={item.title || 'Corporate activity'}
                         className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
                       />
                       {/* Black underline accent bar */}
                       <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#172033]" />

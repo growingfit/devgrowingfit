@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface CTASectionProps {
   enquireUrl?: string;
@@ -23,9 +24,11 @@ export function CTASection({ enquireUrl = '#contact', imageUrl }: CTASectionProp
           {bgImage && (
             <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
               <img
-                src={bgImage}
+                src={optimizeImageUrl(bgImage, { width: 1400, quality: 'auto', format: 'auto' })}
                 alt="Join Growing Fit"
                 className="w-full h-full object-cover object-[78%_center] sm:object-[72%_center] lg:object-center transition-all duration-300"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           )}

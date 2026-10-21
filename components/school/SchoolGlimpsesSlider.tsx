@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SchoolGlimpsesSection } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface SchoolGlimpsesSliderProps {
   data: SchoolGlimpsesSection;
@@ -69,9 +70,11 @@ export function SchoolGlimpsesSlider({ data }: SchoolGlimpsesSliderProps) {
                   className="group relative rounded-xl sm:rounded-2xl overflow-hidden aspect-[16/10] bg-slate-900 cursor-pointer shadow-xs hover:shadow-md transition-all duration-300"
                 >
                   <img
-                    src={img.image_url}
+                    src={optimizeImageUrl(img.image_url, { width: 600, quality: 'auto', format: 'auto' })}
                     alt={img.title || 'Growing Fit School Glimpse'}
                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors" />
                 </div>
@@ -130,9 +133,10 @@ export function SchoolGlimpsesSlider({ data }: SchoolGlimpsesSliderProps) {
               Close [x]
             </button>
             <img
-              src={activeImage}
+              src={optimizeImageUrl(activeImage, { width: 1400, quality: 'auto', format: 'auto' })}
               alt={activeCaption || 'School Glimpse'}
               className="w-auto h-auto max-w-full max-h-[80vh] rounded-xl object-contain shadow-2xl"
+              decoding="async"
             />
             {activeCaption && (
               <p className="text-white text-xs sm:text-sm mt-3 text-center font-medium">

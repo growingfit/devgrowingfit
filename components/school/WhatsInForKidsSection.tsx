@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { WhatsInForKidsSection as WhatsInForKidsSectionType } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface WhatsInForKidsSectionProps {
   data: WhatsInForKidsSectionType;
@@ -37,9 +38,11 @@ export function WhatsInForKidsSection({ data }: WhatsInForKidsSectionProps) {
               {/* Background Image */}
               {card.image_url && (
                 <img
-                  src={card.image_url}
+                  src={optimizeImageUrl(card.image_url, { width: 600, quality: 'auto', format: 'auto' })}
                   alt={card.title}
                   className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                 />
               )}
 

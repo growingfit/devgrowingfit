@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SchoolTestimonialsSection as SchoolTestimonialsSectionType } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface SchoolTestimonialsSectionProps {
   data: SchoolTestimonialsSectionType;
@@ -53,9 +54,11 @@ export function SchoolTestimonialsSection({ data }: SchoolTestimonialsSectionPro
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-slate-200 flex-shrink-0 flex items-center justify-center font-bold text-sm text-[#172033]">
                 {item.avatar_url ? (
                   <img
-                    src={item.avatar_url}
+                    src={optimizeImageUrl(item.avatar_url, { width: 120, height: 120, quality: 'auto', format: 'auto' })}
                     alt={item.author_name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <span>{item.author_name ? item.author_name.charAt(0) : 'P'}</span>

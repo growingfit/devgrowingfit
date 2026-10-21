@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SchoolTabsSection as SchoolTabsSectionType } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface SchoolTabsSectionProps {
   data: SchoolTabsSectionType;
@@ -57,9 +58,11 @@ export function SchoolTabsSection({ data }: SchoolTabsSectionProps) {
                   {item.image_url && item.image_url.trim().length > 0 && (
                     <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-slate-200 mb-4 shadow-2xs">
                       <img
-                        src={item.image_url}
+                        src={optimizeImageUrl(item.image_url, { width: 600, quality: 'auto', format: 'auto' })}
                         alt={item.title}
                         className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                   )}

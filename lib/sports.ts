@@ -1,4 +1,5 @@
 import { SportsCategory } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 // 12 Reference sports matching exact user mockup
 export const DEFAULT_REFERENCE_SPORTS: SportsCategory[] = [
@@ -21,13 +22,17 @@ export const getSportIconUrl = (iconName?: string, slug?: string): string => {
 
   const trimmedIcon = (iconName || '').trim();
 
-  // 1. If an actual image URL or upload path was provided (Cloudinary, Supabase, data URL, local path)
   if (
     trimmedIcon.startsWith('http://') ||
     trimmedIcon.startsWith('https://') ||
+    trimmedIcon.startsWith('//')
+  ) {
+    return optimizeImageUrl(trimmedIcon, { width: 140, quality: 'auto', format: 'auto' });
+  }
+
+  if (
     trimmedIcon.startsWith('data:') ||
     trimmedIcon.startsWith('blob:') ||
-    trimmedIcon.startsWith('//') ||
     (trimmedIcon.startsWith('/') && !trimmedIcon.startsWith('/icons/'))
   ) {
     return trimmedIcon;
