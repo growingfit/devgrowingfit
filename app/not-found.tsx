@@ -22,10 +22,10 @@ export default function NotFound() {
           <span>Return to Homepage</span>
         </Link>
         <Link
-          href="/programs"
+          href="/about"
           className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-[#172033] border border-[#E8E8EC] font-bold text-sm px-6 py-3 rounded-full transition-all"
         >
-          <span>Explore Programs</span>
+          <span>About Growing Fit</span>
         </Link>
       </div>
     </div>

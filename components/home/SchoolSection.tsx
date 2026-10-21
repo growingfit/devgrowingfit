@@ -21,6 +21,8 @@ export function SchoolSection({ data }: SchoolSectionProps) {
       : null;
   const imageAlt = data?.image_alt || heading || 'School sports';
 
+  if (!heading && !description && !imageSrc) return null;
+
   return (
     <section
       id="schools"
@@ -29,7 +31,7 @@ export function SchoolSection({ data }: SchoolSectionProps) {
       <div className="w-full max-w-[1440px] 2xl:max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Heading, description, Learn More button */}
-          <div className="lg:col-span-6 space-y-6 lg:pr-6">
+          <div className={`space-y-6 lg:pr-6 ${imageSrc ? 'lg:col-span-6' : 'lg:col-span-12'}`}>
             {heading && (
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#172033] tracking-tight">
                 {heading}

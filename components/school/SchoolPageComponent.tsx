@@ -23,17 +23,15 @@ export function SchoolPageComponent({ data }: SchoolPageComponentProps) {
     logo_url: '/growfit logo.png',
     tagline: 'Sports for a Stronger Tomorrow',
     nav_links: [
+      { label: 'Home', href: '/', is_visible: true },
       { label: 'School', href: '/schools', is_visible: true },
-      { label: 'Programs', href: '/programs', is_visible: true },
-      { label: 'Academy', href: '/academy', is_visible: true },
-      { label: 'Corporate', href: '/corporate', is_visible: true },
-      { label: 'Store', href: '/store', is_visible: true },
+      { label: 'About Us', href: '/about', is_visible: true },
       { label: 'Contact', href: '/contact', is_visible: true },
     ],
     show_location: true,
     location_name: 'Bangalore',
     show_login: true,
-    show_cart: true,
+    show_cart: false,
   };
 
   return (

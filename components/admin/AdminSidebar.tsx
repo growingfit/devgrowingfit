@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Sparkles,
   Trophy,
-  Dumbbell,
   Info,
   Eye,
   Image as ImageIcon,
@@ -15,6 +14,7 @@ import {
   Settings,
   ExternalLink,
   LogOut,
+  Inbox,
   GraduationCap,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -25,13 +25,12 @@ export function AdminSidebar() {
 
   const navItems = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard },
+    { label: 'Enquiries', href: '/admin/enquiries', icon: Inbox },
+    { label: 'About Us', href: '/admin/about', icon: Info },
     { label: 'School Page CMS', href: '/admin/school-page', icon: GraduationCap },
     { label: 'Homepage Sections', href: '/admin/homepage-sections', icon: Sparkles },
     { label: 'Hero Banner', href: '/admin/hero', icon: ImageIcon },
     { label: 'Categories', href: '/admin/categories', icon: Trophy },
-    { label: 'Programs', href: '/admin/programs', icon: Dumbbell },
-    { label: 'About Us CMS', href: '/admin/about', icon: Info },
-    { label: 'Vision & Mission', href: '/admin/vision', icon: Eye },
     { label: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
     { label: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote },
     { label: 'Contact & Centres', href: '/admin/contact', icon: MapPin },

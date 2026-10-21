@@ -44,6 +44,7 @@ function readJsonFile<T = any>(fileName: string, fallback: any = null): T {
     const filePath = path.join(process.cwd(), 'lib', 'data', fileName);
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, 'utf-8');
+      if (!content || !content.trim()) return fallback as T;
       return JSON.parse(content) as T;
     }
   } catch {}
@@ -107,32 +108,47 @@ export async function updateHeroSectionAction(formData: unknown): Promise<Action
     const validated = heroSectionSchema.parse(formData);
     const supabase = createClient();
 
-    const payload: any = { id: 1, ...validated, updated_at: new Date().toISOString() };
-    const { error } = await supabase
-      .from('hero_sections')
-      .upsert(payload);
+    // Mirror slide 1 to top-level fields for backwards compatibility
+    const slides = Array.isArray(validated.slides) ? validated.slides : [];
+    const firstSlide = slides[0];
+    const payload: any = {
+      id: 1,
+      ...validated,
+      image_url: firstSlide?.image_url ?? validated.image_url,
+      image_public_id: firstSlide?.image_public_id ?? validated.image_public_id,
+      mobile_image_url: firstSlide?.mobile_image_url ?? validated.mobile_image_url,
+      mobile_image_public_id: firstSlide?.mobile_image_public_id ?? validated.mobile_image_public_id,
+      heading: firstSlide?.heading ?? validated.heading,
+      description: firstSlide?.description ?? validated.description,
+      updated_at: new Date().toISOString(),
+    };
 
-    if (error) {
-      // If mobile_image_url column is not yet migrated in database, retry without it
-      if (error.message?.includes('mobile_image_url') || error.details?.includes('mobile_image_url')) {
-        delete payload.mobile_image_url;
-        delete payload.mobile_image_public_id;
-        const { error: retryError } = await supabase.from('hero_sections').upsert(payload);
-        if (retryError) throw retryError;
-      } else {
-        throw error;
-      }
-    }
-
+    // Always update hero.json immediately with all slides
     const existingHero = readJsonFile('hero.json', { hero: {}, benefits: [] });
     syncJsonFile('hero.json', {
       ...existingHero,
       hero: { ...(existingHero.hero || {}), ...payload },
     });
 
+    // Sync to Supabase without failing on unmigrated JSON columns
+    try {
+      const dbPayload: any = { ...payload };
+      delete dbPayload.slides;
+      delete dbPayload.slide_interval;
+      const { error } = await supabase.from('hero_sections').upsert(dbPayload);
+
+      if (error) {
+        if (error.message?.includes('mobile_image_url') || error.details?.includes('mobile_image_url')) {
+          delete dbPayload.mobile_image_url;
+          delete dbPayload.mobile_image_public_id;
+          await supabase.from('hero_sections').upsert(dbPayload);
+        }
+      }
+    } catch {}
+
     revalidatePath('/');
     revalidatePath('/admin/hero');
-    return { success: true, message: 'Hero banner updated successfully.' };
+    return { success: true, message: 'Hero banners & slides saved successfully.' };
   } catch (err: any) {
     try {
       const validated = heroSectionSchema.parse(formData);
@@ -143,7 +159,7 @@ export async function updateHeroSectionAction(formData: unknown): Promise<Action
       });
       revalidatePath('/');
       revalidatePath('/admin/hero');
-      return { success: true, message: 'Hero banner updated (persisted to storage).' };
+      return { success: true, message: 'Hero banners & slides saved (persisted to storage).' };
     } catch {}
 
     let errorMsg = err.message || 'Failed to update hero section.';
@@ -158,9 +174,9 @@ export async function getHeroSectionAction(): Promise<{ hero: any; benefits: any
   let heroData: any = {
     id: 1,
     eyebrow: '',
-    heading: 'Growing Fit',
+    heading: 'Fun Fitness Sports',
     highlighted_text: '',
-    description: 'SPORTS FOR A STRONGER TOMORROW',
+    description: '',
     primary_cta_text: '',
     primary_cta_url: '',
     secondary_cta_text: '',
@@ -171,6 +187,7 @@ export async function getHeroSectionAction(): Promise<{ hero: any; benefits: any
     mobile_image_public_id: '',
     image_focal_position: 'center',
     is_visible: true,
+    slide_interval: 5000,
   };
 
   let benefitsData: any[] = [
@@ -202,6 +219,45 @@ export async function getHeroSectionAction(): Promise<{ hero: any; benefits: any
       benefitsData = local.benefits;
     }
   }
+
+  // Ensure 3 slides are present and normalized
+  const rawSlides: any[] = Array.isArray(heroData.slides) ? heroData.slides : [];
+  const defaultSlideTitles = ['Slide 1', 'Slide 2', 'Slide 3'];
+  const normalizedSlides = [0, 1, 2].map((i) => {
+    const existing = rawSlides[i] || {};
+    if (i === 0) {
+      return {
+        id: existing.id || 'slide-1',
+        title: existing.title || defaultSlideTitles[i],
+        image_url: existing.image_url ?? heroData.image_url ?? '',
+        image_public_id: existing.image_public_id ?? heroData.image_public_id ?? '',
+        mobile_image_url: existing.mobile_image_url ?? heroData.mobile_image_url ?? '',
+        mobile_image_public_id: existing.mobile_image_public_id ?? heroData.mobile_image_public_id ?? '',
+        heading: existing.heading ?? heroData.heading ?? 'Fun Fitness Sports',
+        eyebrow: existing.eyebrow ?? heroData.eyebrow ?? '',
+        description: existing.description ?? heroData.description ?? '',
+        primary_cta_text: existing.primary_cta_text ?? heroData.primary_cta_text ?? '',
+        primary_cta_url: existing.primary_cta_url ?? heroData.primary_cta_url ?? '',
+        is_visible: existing.is_visible ?? true,
+      };
+    }
+    return {
+      id: existing.id || `slide-${i + 1}`,
+      title: existing.title || defaultSlideTitles[i],
+      image_url: existing.image_url ?? '',
+      image_public_id: existing.image_public_id ?? '',
+      mobile_image_url: existing.mobile_image_url ?? '',
+      mobile_image_public_id: existing.mobile_image_public_id ?? '',
+      heading: existing.heading ?? heroData.heading ?? 'Fun Fitness Sports',
+      eyebrow: existing.eyebrow ?? '',
+      description: existing.description ?? '',
+      primary_cta_text: existing.primary_cta_text ?? '',
+      primary_cta_url: existing.primary_cta_url ?? '',
+      is_visible: existing.is_visible ?? true,
+    };
+  });
+
+  heroData.slides = normalizedSlides;
 
   return { hero: heroData, benefits: benefitsData };
 }
@@ -545,20 +601,25 @@ export async function updateAboutSectionAction(formData: unknown): Promise<Actio
     const validated = aboutSectionSchema.parse(formData);
     const supabase = createClient();
 
-    // 1. Persist the 3 image options to local json for zero-friction resilience
+    // 1. Persist the about data and image options to local json for zero-friction resilience
     try {
       const dataDir = path.join(process.cwd(), 'lib', 'data');
       if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
       const dataFilePath = path.join(dataDir, 'about-images.json');
-      const imageData = {
+      let existingData = {};
+      try {
+        if (fs.existsSync(dataFilePath)) {
+          existingData = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+        }
+      } catch {}
+
+      const aboutData = {
+        ...existingData,
+        ...validated,
         hero_image_url: validated.hero_image_url || '',
         hero_image_public_id: validated.hero_image_public_id || '',
-        philosophy_image_url: validated.philosophy_image_url || '',
-        philosophy_image_public_id: validated.philosophy_image_public_id || '',
-        cta_image_url: validated.cta_image_url || '',
-        cta_image_public_id: validated.cta_image_public_id || '',
       };
-      fs.writeFileSync(dataFilePath, JSON.stringify(imageData, null, 2), 'utf-8');
+      fs.writeFileSync(dataFilePath, JSON.stringify(aboutData, null, 2), 'utf-8');
     } catch (fsErr) {
       console.warn('Could not save about-images.json locally:', fsErr);
     }
@@ -602,22 +663,26 @@ export async function updateAboutSectionAction(formData: unknown): Promise<Actio
 export async function getAboutSectionAction(): Promise<any> {
   let result: any = {
     id: 1,
-    eyebrow: 'ABOUT GROWING FIT',
-    heading: 'More Than Just',
-    highlighted_text: 'Martial Arts.',
-    description: 'Growing Fit is a dedicated martial arts academy focused on the holistic development of children. Our professional training programs in Karate, Kung Fu, Muay Thai, Boxing, and more, help every child stay active, confident and disciplined in life.',
+    eyebrow: 'ABOUT US',
+    heading: 'About Us',
+    highlight_quote:
+      '“Growing Fit is a leading sports academy dedicated to helping individuals of all ages and abilities achieve their health and fitness goals”',
+    description:
+      'Growing Fit is a leading sports academy dedicated to helping individuals of all ages and abilities achieve their health and fitness goals. We offer a wide range of sports programs, including Kung Fu, Muay Thai, Boxing, Roller Skating, Football, Swimming, and Badminton, to help our members stay active, healthy, and achieve their full potential.',
     button_text: 'Know More',
     button_url: '/about',
     image_url: '',
     image_public_id: '',
     image_focal_position: 'center',
     is_visible: true,
-    hero_image_url: '/images/about-hero-girl.jpg',
+    hero_image_url: '',
     hero_image_public_id: '',
-    philosophy_image_url: '/images/about-philosophy-boy.jpg',
-    philosophy_image_public_id: '',
-    cta_image_url: '/images/vision-karate-girl.png',
-    cta_image_public_id: '',
+    banner_image_url:
+      'https://res.cloudinary.com/nvho1sss/image/upload/v1792563443/growing_fit/lmupafbyumygrqjz7jcg.png',
+    banner_image_public_id: 'growing_fit/lmupafbyumygrqjz7jcg',
+    banner_mobile_image_url:
+      'https://res.cloudinary.com/nvho1sss/image/upload/v1792564706/growing_fit/osjliaabzcwpmicfnmo6.png',
+    banner_mobile_image_public_id: 'growing_fit/osjliaabzcwpmicfnmo6',
   };
 
   try {
@@ -740,13 +805,15 @@ export async function getVisionSectionAction(): Promise<any> {
   let result: any = {
     id: 1,
     eyebrow: 'OUR PURPOSE',
-    heading: 'Our Mission & Vision',
-    subtitle: 'Inspiring and empowering every child through health, discipline, and active sports.',
-    mission_title: 'MISSION',
-    mission_description: 'To inspire and empower children through sports and physical education, promoting health, discipline, and confidence for a stronger, brighter tomorrow.',
-    vision_title: 'VISION',
-    description: 'To be a leading sports academy recognized for nurturing healthy, confident, and disciplined individuals who excel in sports and in life.',
-    image_url: '/images/vision-karate-girl.png',
+    heading: 'Mission & Vision',
+    subtitle: '',
+    mission_title: 'Mission',
+    mission_description:
+      'Our mission at Growing Fit is to empower individuals of all ages and abilities to lead healthy, active, and fulfilling lives. We strive to achieve this mission by providing high-quality sports training programs, promoting physical fitness and mental well-being, and fostering a supportive and inclusive community.',
+    vision_title: 'Vision',
+    description:
+      'Our vision at Growing Fit is to be a leading sports academy that empowers individuals to achieve their full potential, both on and off the field. We envision a future where individuals of all ages and abilities have access to high-quality sports training programs that promote physical fitness and mental well-being, and where a supportive and inclusive community fosters personal growth and success.',
+    image_url: '',
     image_public_id: '',
     image_focal_position: 'center',
     overlay_opacity: 0.85,
@@ -946,11 +1013,6 @@ export async function deleteGalleryImageAction(id: string, publicId?: string | n
 
 // 10. Testimonials CRUD
 export async function getTestimonialsAction(): Promise<any[]> {
-  const defaultTestimonials = [
-    { id: 'test-1', quote: 'Growing Fit has transformed my son’s confidence and physical stamina. The coaches are patient, encouraging, and highly professional.', author_name: 'Priya R.', author_title: 'Parent of 8-year-old Karateka', avatar_url: '', rating: 5, sort_order: 1, is_published: true },
-    { id: 'test-2', quote: 'The environment here is exceptional. My daughter loves her weekend martial arts sessions and has developed incredible self-discipline.', author_name: 'Anand Kumar', author_title: 'Parent of 11-year-old Student', avatar_url: '', rating: 5, sort_order: 2, is_published: true },
-  ];
-
   const local = readJsonFile<any[]>('testimonials.json', null as any);
   if (Array.isArray(local) && local.length > 0) return local;
 
@@ -963,8 +1025,7 @@ export async function getTestimonialsAction(): Promise<any[]> {
     }
   } catch {}
 
-  syncJsonFile('testimonials.json', defaultTestimonials);
-  return defaultTestimonials;
+  return [];
 }
 
 export async function upsertTestimonialAction(item: {
@@ -1127,10 +1188,10 @@ export async function deleteCentreAction(id: string): Promise<ActionResult> {
 export async function getContactAction(): Promise<{ contact: any; socials: any[] }> {
   let contactData: any = {
     id: 1,
-    phone: '+91 702 581 0722',
-    email: 'growingfitofficial@gmail.com',
-    whatsapp: 'https://wa.me/917025810722',
-    headquarters: 'Calicut & Kochi, Kerala, India',
+    phone: '+91 9562 44 66 11',
+    email: 'info@edumartial.com',
+    whatsapp: 'https://wa.me/919562446611',
+    headquarters: 'Kinfra Techno Industrial Park, Calicut University PO, Kakkanchery, Malappuram, Kerala',
     opening_hours: 'Monday - Saturday: 6:00 AM - 7:00 PM',
   };
   let socialsData: any[] = [
@@ -1404,34 +1465,34 @@ export async function getHomepageSectionsAction(): Promise<{
       heading: 'For Academy',
       description: 'Growing Fit excels in renowned sports academies that offer clinical and professional training for children. Our dedicated programs nurture young athletes\' natural talent in their preferred sports, with expert guidance, coaching, and proven methodologies. Our structured environment enables children to excel and unlock their full potential, preparing them for future success in the athletic arena.',
       button_text: 'Learn More',
-      button_url: '/academy',
+      button_url: '/contact',
       image_url: '/images/for-academy.png',
       image_public_id: '',
       image_alt: 'Young athletes celebrating sports achievement with coach',
       is_visible: true,
       background_color: '#1C1F23',
       thumbnails: [
-        { id: 'acad-1', title: 'Skating', image_url: '/images/academy-skating.png', url: '/programs/roller-skating', sort_order: 1, is_visible: true },
-        { id: 'acad-2', title: 'Boxing', image_url: '/images/academy-boxing.png', url: '/programs/boxing', sort_order: 2, is_visible: true },
-        { id: 'acad-3', title: 'Swimming', image_url: '/images/academy-swimming.png', url: '/programs/swimming', sort_order: 3, is_visible: true },
-        { id: 'acad-4', title: 'Football', image_url: '/images/academy-football.png', url: '/programs/football', sort_order: 4, is_visible: true },
+        { id: 'acad-1', title: 'Skating', image_url: '/images/academy-skating.png', url: '/contact', sort_order: 1, is_visible: true },
+        { id: 'acad-2', title: 'Boxing', image_url: '/images/academy-boxing.png', url: '/contact', sort_order: 2, is_visible: true },
+        { id: 'acad-3', title: 'Swimming', image_url: '/images/academy-swimming.png', url: '/contact', sort_order: 3, is_visible: true },
+        { id: 'acad-4', title: 'Football', image_url: '/images/academy-football.png', url: '/contact', sort_order: 4, is_visible: true },
       ],
     },
     corporate: {
       heading: 'For Corporates & Community',
       description: 'Growing Fit, crafted by industry experts, provides corporate packages that grant companies the opportunity to offer their employees access to engaging team-building sessions and fitness programs. Our community sports hubs extend world-class sports infrastructure, providing people of all ages and genders access to global sports and fitness opportunities.',
       button_text: 'Learn More',
-      button_url: '/corporate',
+      button_url: '/contact',
       image_url: '/images/for-corporate.png',
       image_public_id: '',
       image_alt: 'Corporate team celebrating together on sports pitch',
       is_visible: true,
       background_color: '#F4F4F6',
       thumbnails: [
-        { id: 'corp-1', title: 'Team Building', image_url: '/images/corp-team-building.png', url: '/corporate', sort_order: 1, is_visible: true },
-        { id: 'corp-2', title: 'Tournaments', image_url: '/images/corp-tournaments.png', url: '/corporate', sort_order: 2, is_visible: true },
-        { id: 'corp-3', title: 'Sport Day', image_url: '/images/corp-sport-day.png', url: '/corporate', sort_order: 3, is_visible: true },
-        { id: 'corp-4', title: 'Sports Club', image_url: '/images/corp-sports-club.png', url: '/corporate', sort_order: 4, is_visible: true },
+        { id: 'corp-1', title: 'Team Building', image_url: '/images/corp-team-building.png', url: '/contact', sort_order: 1, is_visible: true },
+        { id: 'corp-2', title: 'Tournaments', image_url: '/images/corp-tournaments.png', url: '/contact', sort_order: 2, is_visible: true },
+        { id: 'corp-3', title: 'Sport Day', image_url: '/images/corp-sport-day.png', url: '/contact', sort_order: 3, is_visible: true },
+        { id: 'corp-4', title: 'Sports Club', image_url: '/images/corp-sports-club.png', url: '/contact', sort_order: 4, is_visible: true },
       ],
     },
   };
@@ -1538,16 +1599,13 @@ export async function getHeaderSettingsAction(): Promise<any> {
     nav_links: [
       { label: 'Home', href: '/', is_visible: true },
       { label: 'School', href: '/schools', is_visible: true },
-      { label: 'Programs', href: '/programs', is_visible: true },
-      { label: 'Academy', href: '/academy', is_visible: true },
-      { label: 'Corporate', href: '/corporate', is_visible: true },
-      { label: 'Store', href: '/store', is_visible: true },
+      { label: 'About Us', href: '/about', is_visible: true },
       { label: 'Contact', href: '/contact', is_visible: true },
     ],
     show_location: true,
     location_name: 'Bangalore',
     show_login: true,
-    show_cart: true,
+    show_cart: false,
   };
 
   const local = readJsonFile('header-settings.json', fallback);
@@ -1583,4 +1641,158 @@ export async function updateHeaderSettingsAction(data: any): Promise<ActionResul
     return { success: false, error: err.message || 'Failed to update header settings.' };
   }
 }
+
+// ========================================================
+// 16. Enquiries Management (Contact Form Submissions)
+// ========================================================
+export async function submitEnquiryAction(data: {
+  name: string;
+  phone: string;
+  email?: string;
+  message?: string;
+  source?: string;
+}): Promise<ActionResult> {
+  try {
+    if (!data.name?.trim()) {
+      return { success: false, error: 'Name is required' };
+    }
+    if (!data.phone?.trim()) {
+      return { success: false, error: 'Mobile number is required' };
+    }
+
+    const newEnquiry = {
+      id: `enq-${Date.now()}`,
+      name: data.name.trim(),
+      phone: data.phone.trim(),
+      email: data.email?.trim() || '',
+      message: data.message?.trim() || '',
+      status: 'unread',
+      source: data.source || 'contact_page',
+      created_at: new Date().toISOString(),
+    };
+
+    // 1. Persist to local JSON for instant reliability
+    try {
+      const dataDir = path.join(process.cwd(), 'lib', 'data');
+      if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+      const dataFilePath = path.join(dataDir, 'enquiries.json');
+      let enquiries: any[] = [];
+      if (fs.existsSync(dataFilePath)) {
+        try {
+          enquiries = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+          if (!Array.isArray(enquiries)) enquiries = [];
+        } catch {}
+      }
+      enquiries.unshift(newEnquiry);
+      fs.writeFileSync(dataFilePath, JSON.stringify(enquiries, null, 2), 'utf-8');
+    } catch (fsErr) {
+      console.warn('Could not write enquiries.json locally:', fsErr);
+    }
+
+    // 2. Persist to Supabase if table exists
+    try {
+      const supabase = createClient();
+      await supabase.from('enquiries').insert([newEnquiry]);
+    } catch {}
+
+    revalidatePath('/admin/enquiries');
+    return { success: true, message: 'Your enquiry has been received successfully!' };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to submit enquiry' };
+  }
+}
+
+export async function getEnquiriesAction(): Promise<any[]> {
+  let enquiries: any[] = [];
+
+  // Read local file first
+  try {
+    const dataFilePath = path.join(process.cwd(), 'lib', 'data', 'enquiries.json');
+    if (fs.existsSync(dataFilePath)) {
+      const fileData = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+      if (Array.isArray(fileData)) {
+        enquiries = fileData;
+      }
+    }
+  } catch {}
+
+  // Fallback / merge with Supabase
+  try {
+    const supabase = createClient();
+    const { data: dbData } = await supabase
+      .from('enquiries')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (dbData && dbData.length > 0) {
+      const ids = new Set(enquiries.map((e) => e.id));
+      for (const item of dbData) {
+        if (!ids.has(item.id)) {
+          enquiries.push(item);
+        }
+      }
+    }
+  } catch {}
+
+  return enquiries.sort(
+    (a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+  );
+}
+
+export async function toggleEnquiryStatusAction(id: string): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const dataFilePath = path.join(process.cwd(), 'lib', 'data', 'enquiries.json');
+    let enquiries: any[] = [];
+    if (fs.existsSync(dataFilePath)) {
+      enquiries = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+    }
+
+    let targetStatus = 'read';
+    enquiries = enquiries.map((enq) => {
+      if (enq.id === id) {
+        targetStatus = enq.status === 'read' ? 'unread' : 'read';
+        return { ...enq, status: targetStatus };
+      }
+      return enq;
+    });
+
+    fs.writeFileSync(dataFilePath, JSON.stringify(enquiries, null, 2), 'utf-8');
+
+    try {
+      const supabase = createClient();
+      await supabase.from('enquiries').update({ status: targetStatus }).eq('id', id);
+    } catch {}
+
+    revalidatePath('/admin/enquiries');
+    return { success: true, message: `Enquiry marked as ${targetStatus}.` };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to update enquiry status' };
+  }
+}
+
+export async function deleteEnquiryAction(id: string): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const dataFilePath = path.join(process.cwd(), 'lib', 'data', 'enquiries.json');
+    let enquiries: any[] = [];
+    if (fs.existsSync(dataFilePath)) {
+      enquiries = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+    }
+
+    enquiries = enquiries.filter((enq) => enq.id !== id);
+    fs.writeFileSync(dataFilePath, JSON.stringify(enquiries, null, 2), 'utf-8');
+
+    try {
+      const supabase = createClient();
+      await supabase.from('enquiries').delete().eq('id', id);
+    } catch {}
+
+    revalidatePath('/admin/enquiries');
+    return { success: true, message: 'Enquiry deleted successfully.' };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to delete enquiry' };
+  }
+}
+
 

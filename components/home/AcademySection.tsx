@@ -23,8 +23,16 @@ export function AcademySection({ data }: AcademySectionProps) {
 
   const thumbnails =
     data?.thumbnails && data.thumbnails.length > 0
-      ? data.thumbnails.filter((t) => t.is_visible !== false)
+      ? data.thumbnails.filter(
+          (t) =>
+            t.is_visible !== false &&
+            Boolean(t.image_url && t.image_url.trim().length > 0)
+        )
       : [];
+
+  if (!heading && !description && !imageSrc && thumbnails.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -71,24 +79,30 @@ export function AcademySection({ data }: AcademySectionProps) {
               </div>
             )}
 
-            {/* Admin Sports Thumbnails Grid */}
-            {thumbnails && thumbnails.length > 0 && (
+            {/* Admin Sports Thumbnails Grid - Only shown when images are uploaded & saved */}
+            {thumbnails.length > 0 && (
               <div className="pt-6 border-t border-slate-800/80">
-                <div className="grid grid-cols-4 gap-3 sm:gap-4">
+                <div
+                  className={`grid gap-3 sm:gap-4 ${
+                    thumbnails.length === 1
+                      ? 'grid-cols-1 max-w-[150px]'
+                      : thumbnails.length === 2
+                      ? 'grid-cols-2 max-w-[300px]'
+                      : thumbnails.length === 3
+                      ? 'grid-cols-3 max-w-[450px]'
+                      : 'grid-cols-2 sm:grid-cols-4'
+                  }`}
+                >
                   {thumbnails.map((item) => {
                     const content = (
                       <div className="group cursor-pointer text-center">
-                        {/* Thumbnail image with subtle border and red underline bar */}
+                        {/* Thumbnail image with subtle border and white underline bar */}
                         <div className="relative rounded-lg overflow-hidden border border-slate-700/80 bg-slate-900/60 aspect-[4/3] mb-1.5 shadow-sm group-hover:border-slate-500 transition-all">
-                          {item.image_url ? (
-                            <img
-                              src={item.image_url}
-                              alt={item.title}
-                              className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-slate-800" />
-                          )}
+                          <img
+                            src={item.image_url!}
+                            alt={item.title || 'Academy sport'}
+                            className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                          />
                           {/* Thin white accent line at bottom of thumbnail */}
                           <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-white" />
                         </div>

@@ -15,7 +15,10 @@ export function getSchoolPageData(): SchoolPageData {
   let data: SchoolPageData | null = null;
   if (fs.existsSync(jsonPath)) {
     try {
-      data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+      const content = fs.readFileSync(jsonPath, 'utf-8');
+      if (content && content.trim()) {
+        data = JSON.parse(content);
+      }
     } catch (err) {
       console.error('Error reading school-page.json:', err);
     }
@@ -293,21 +296,12 @@ export function getSchoolPageData(): SchoolPageData {
         heading: 'TESTIMONIALS',
         items: [
           {
-            id: 't-1',
-            quote: 'Our child has shown amazing improvement in confidence and physical fitness after joining Growing Fit. The coaches are very supportive and professional.',
-            author_name: 'Anjali Mehta',
-            author_role: 'Parent',
-            avatar_url: '/images/about-philosophy-card.jpg',
+            id: 'test-1',
+            quote: '“Growing old is mandatory. But Growing Fit is optional.\n\nGrowing Fit has not only helped me Grow Fit but also has kept me fit in life from Saudi Arabia to India. I endorse Growing Fit Club and I\'m grateful to Master Mohammad Rafi for his tireless training for growing our health. Men of action – Satisfaction.\n\nHappy joining Growing Fit.”',
+            author_name: 'Inayathulla M',
+            author_role: 'Director, Growing Tots Preschool, Bengaluru',
+            avatar_url: 'https://res.cloudinary.com/nvho1sss/image/upload/v1792573086/growing_fit/yu1hbsui4eenvar3zjdb.webp',
             sort_order: 1,
-            is_visible: true,
-          },
-          {
-            id: 't-2',
-            quote: 'The training sessions are well-structured and keep the kids engaged. We are happy to see our child more active and disciplined.',
-            author_name: 'Ramesh Kumar',
-            author_role: 'Parent',
-            avatar_url: '/images/for-academy.png',
-            sort_order: 2,
             is_visible: true,
           },
         ],
@@ -319,11 +313,56 @@ export function getSchoolPageData(): SchoolPageData {
     fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
   }
 
+  // Dynamically sync testimonials from testimonials.json
+  try {
+    const globalTPath = path.join(dataDir, 'testimonials.json');
+    if (fs.existsSync(globalTPath)) {
+      const content = fs.readFileSync(globalTPath, 'utf-8');
+      if (content && content.trim()) {
+        const globalList = JSON.parse(content);
+        if (Array.isArray(globalList) && globalList.length > 0) {
+          const published = globalList
+            .filter((t: any) => t && t.is_published !== false && t.author_name !== 'Anand Kumar' && t.author_name !== 'Priya R.')
+            .map((t: any, idx: number) => ({
+              id: t.id || `test-${idx + 1}`,
+              quote: t.quote || '',
+              author_name: t.author_name || '',
+              author_role: t.author_title || 'Parent',
+              avatar_url: t.avatar_url || '',
+              sort_order: t.sort_order || idx + 1,
+              is_visible: true,
+            }));
+
+          const existingItems = (data.testimonials?.items || []).filter(
+            (i: any) => i.author_name !== 'Anjali Mehta' && i.author_name !== 'Ramesh Kumar'
+          );
+
+          if (published.length > 0) {
+            const combined = [...existingItems];
+            published.forEach((p: any) => {
+              if (!combined.some((c: any) => c.author_name === p.author_name || c.id === p.id)) {
+                combined.push(p);
+              }
+            });
+            data.testimonials = {
+              heading: data.testimonials?.heading || 'TESTIMONIALS',
+              subtitle: data.testimonials?.subtitle,
+              items: combined.length > 0 ? combined : published,
+            };
+          }
+        }
+      }
+    }
+  } catch {}
+
   // Load header settings
   try {
     const hdrPath = path.join(dataDir, 'header-settings.json');
     if (fs.existsSync(hdrPath)) {
-      data.headerSettings = JSON.parse(fs.readFileSync(hdrPath, 'utf-8'));
+      const content = fs.readFileSync(hdrPath, 'utf-8');
+      if (content && content.trim()) {
+        data.headerSettings = JSON.parse(content);
+      }
     }
   } catch {}
 

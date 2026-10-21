@@ -13,10 +13,10 @@ interface SportsCategoriesSectionProps {
 }
 
 export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSectionProps) {
-  // Load categories dynamically from Admin / Database
+  // Load categories dynamically from Admin / Database - only show when icon/image is present
   const activeDb = (categories && categories.length > 0)
     ? categories
-        .filter((c) => c && c.is_active !== false)
+        .filter((c) => c && c.is_active !== false && Boolean(c.icon && typeof c.icon === 'string' && c.icon.trim().length > 0))
         .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
     : [];
 
@@ -281,7 +281,7 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
                     {displayList.map((category, catIdx) => (
                       <Link
                         key={`cat-${setIdx}-${category.id || category.slug}-${catIdx}`}
-                        href={category.slug ? `/programs/${category.slug}` : '/programs'}
+                        href="/schools"
                         onClick={handleItemClick}
                         tabIndex={setIdx > 0 ? -1 : undefined}
                         className="group flex flex-col items-center justify-start flex-shrink-0 cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 w-[82px] xs:w-[92px] sm:w-[108px] md:w-[118px] lg:w-[126px] xl:w-[132px]"
@@ -313,7 +313,7 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
                 {displayList.map((category) => (
                   <Link
                     key={category.id || category.slug}
-                    href={category.slug ? `/programs/${category.slug}` : '/programs'}
+                    href="/schools"
                     onClick={handleItemClick}
                     className="group flex flex-col items-center justify-start flex-shrink-0 cursor-pointer select-none transition-transform duration-200 hover:-translate-y-1 w-[82px] xs:w-[92px] sm:w-[108px] md:w-[118px] lg:w-[126px] xl:w-[132px]"
                     title={`Explore ${category.name}`}

@@ -1,22 +1,24 @@
 [
   {
     "id": "test-1",
-    "quote": "Growing Fit has transformed my son’s confidence and physical stamina. The coaches are patient, encouraging, and highly professional.",
-    "author_name": "Priya R.",
-    "author_title": "Parent of 8-year-old Karateka",
-    "avatar_url": "",
+    "quote": "“Growing old is mandatory. But Growing Fit is optional.\n\nGrowing Fit has not only helped me Grow Fit but also has kept me fit in life from Saudi Arabia to India. I endorse Growing Fit Club and I'm grateful to Master Mohammad Rafi for his tireless training for growing our health. Men of action – Satisfaction.\n\nHappy joining Growing Fit.”",
+    "author_name": "Inayathulla M",
+    "author_title": "Director, Growing Tots Preschool, Bengaluru",
+    "avatar_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792573086/growing_fit/yu1hbsui4eenvar3zjdb.webp",
     "rating": 5,
     "sort_order": 1,
-    "is_published": true
+    "is_published": true,
+    "avatar_public_id": "growing_fit/yu1hbsui4eenvar3zjdb"
   },
   {
-    "id": "test-2",
-    "quote": "The environment here is exceptional. My daughter loves her weekend martial arts sessions and has developed incredible self-discipline.",
-    "author_name": "Anand Kumar",
-    "author_title": "Parent of 11-year-old Student",
-    "avatar_url": "",
+    "id": "b7991ca1-e8a8-4d6b-9f27-64ea4cfe6bef",
+    "quote": "“It was the first day when Grand Master Rafi came to train our kids in Bangalore. Honestly, for me it was like a man of Muay Thai with full passion teaching our kids at Growing Tots Preschool (after-school program). He was not just a master but a sincere person with discipline and dedication. He also taught many of us that staying or growing fit is very important.\n\nI recommend Growing Fit as a fitness partner for all kids clubs, schools, gyms, etc.”",
+    "author_name": "Askar Ali",
+    "author_title": "Director, Growing Tots Preschool, Bengaluru",
+    "avatar_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792583789/growing_fit/ymtp11jv76fmwaeom2as.webp",
+    "avatar_public_id": "growing_fit/ymtp11jv76fmwaeom2as",
     "rating": 5,
-    "sort_order": 2,
+    "sort_order": 1,
     "is_published": true
   }
 ]

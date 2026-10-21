@@ -6,7 +6,7 @@
       {
         "id": "slide-1",
         "title": "Youth Martial Arts & Physical Education",
-        "image_url": "/images/hero-banner-karate.png",
+        "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792572052/growing_fit/wxfqpqvjkimugw3wkqpq.png",
         "image_alt": "Young students practicing martial arts outdoors",
         "sort_order": 1,
         "is_published": true
@@ -14,7 +14,7 @@
       {
         "id": "slide-2",
         "title": "Structured On-Campus Training Curriculum",
-        "image_url": "/images/for-schools.png",
+        "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792570927/growing_fit/xvme9dsrc9hdmgk8ezy6.png",
         "image_alt": "Students training in outdoor sports track",
         "sort_order": 2,
         "is_published": true
@@ -22,7 +22,7 @@
       {
         "id": "slide-3",
         "title": "Multi-Sport Development & Athletic Discipline",
-        "image_url": "/images/for-academy.png",
+        "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792578059/growing_fit/rgtmtvyqzxwbpuqhs8pb.jpg",
         "image_alt": "Students celebrating team sports",
         "sort_order": 3,
         "is_published": true
@@ -86,7 +86,7 @@
       {
         "id": "what-1",
         "title": "Qualified Coaches",
-        "image_url": "/images/about-hero-girl.jpg",
+        "image_url": "",
         "description": "Certified national trainers and physical education experts.",
         "sort_order": 1,
         "is_visible": true
@@ -94,7 +94,7 @@
       {
         "id": "what-2",
         "title": "Structured Programs",
-        "image_url": "/images/for-schools.png",
+        "image_url": "",
         "description": "Age-appropriate physical education curricula tailored for schools.",
         "sort_order": 2,
         "is_visible": true
@@ -102,7 +102,7 @@
       {
         "id": "what-3",
         "title": "Fun Learning",
-        "image_url": "/images/hero-banner-karate.png",
+        "image_url": "",
         "description": "Engaging, interactive sports sessions that foster genuine love for movement.",
         "sort_order": 3,
         "is_visible": true
@@ -110,7 +110,7 @@
       {
         "id": "what-4",
         "title": "Competitive Exposure",
-        "image_url": "/images/for-academy.png",
+        "image_url": "",
         "description": "Opportunities to compete in inter-school tournaments and sports meets.",
         "sort_order": 4,
         "is_visible": true
@@ -127,7 +127,7 @@
           {
             "id": "hf-1",
             "title": "Mental Fitness",
-            "image_url": "/images/about-hero-girl.jpg",
+            "image_url": "",
             "description": "Sports and physical activities promote mental fitness by improving focus, reducing stress and building confidence.",
             "link_text": "",
             "link_url": ""
@@ -135,7 +135,7 @@
           {
             "id": "hf-2",
             "title": "Physical Fitness",
-            "image_url": "/images/about-philosophy-boy.jpg",
+            "image_url": "",
             "description": "Structured training improves cardiovascular health, strength, flexibility and overall well-being.",
             "link_text": "SHOW MORE",
             "link_url": "/contact"
@@ -143,7 +143,7 @@
           {
             "id": "hf-3",
             "title": "Strength and Conditioning",
-            "image_url": "/images/for-schools.png",
+            "image_url": "",
             "description": "Tailored sessions enhance strength, endurance and performance, helping children lead an active and healthy lifestyle.",
             "link_text": "",
             "link_url": ""
@@ -237,28 +237,28 @@
       {
         "id": "glim-1",
         "title": "School Sports Meet Running Drills",
-        "image_url": "/images/for-schools.png",
+        "image_url": "",
         "sort_order": 1,
         "is_published": true
       },
       {
         "id": "glim-2",
         "title": "Youth Swimming Training Camp",
-        "image_url": "/images/academy-swimming.png",
+        "image_url": "",
         "sort_order": 2,
         "is_published": true
       },
       {
         "id": "glim-3",
         "title": "Martial Arts High Kick Demonstration",
-        "image_url": "/images/about-martial-arts.png",
+        "image_url": "",
         "sort_order": 3,
         "is_published": true
       },
       {
         "id": "glim-4",
         "title": "Inter-School Football Scrimmage",
-        "image_url": "/images/academy-football.png",
+        "image_url": "",
         "sort_order": 4,
         "is_published": true
       }
@@ -268,21 +268,12 @@
     "heading": "TESTIMONIALS",
     "items": [
       {
-        "id": "t-1",
-        "quote": "Our child has shown amazing improvement in confidence and physical fitness after joining Growing Fit. The coaches are very supportive and professional.",
-        "author_name": "Anjali Mehta",
-        "author_role": "Parent",
-        "avatar_url": "/images/about-philosophy-card.jpg",
+        "id": "test-1",
+        "quote": "“Growing old is mandatory. But Growing Fit is optional.\n\nGrowing Fit has not only helped me Grow Fit but also has kept me fit in life from Saudi Arabia to India. I endorse Growing Fit Club and I'm grateful to Master Mohammad Rafi for his tireless training for growing our health. Men of action – Satisfaction.\n\nHappy joining Growing Fit.”",
+        "author_name": "Inayathulla M",
+        "author_role": "Director, Growing Tots Preschool, Bengaluru",
+        "avatar_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792573086/growing_fit/yu1hbsui4eenvar3zjdb.webp",
         "sort_order": 1,
-        "is_visible": true
-      },
-      {
-        "id": "t-2",
-        "quote": "The training sessions are well-structured and keep the kids engaged. We are happy to see our child more active and disciplined.",
-        "author_name": "Ramesh Kumar",
-        "author_role": "Parent",
-        "avatar_url": "/images/about-hero-girl.jpg",
-        "sort_order": 2,
         "is_visible": true
       }
     ]

@@ -82,13 +82,12 @@ export function TestimonialsSection({ testimonials = [] }: TestimonialsSectionPr
   const [isPaused, setIsPaused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Combine user database testimonials with curated defaults
-  const displayList =
-    testimonials && testimonials.length >= 6
-      ? testimonials
-      : testimonials && testimonials.length > 0
-      ? [...testimonials, ...DEFAULT_TESTIMONIALS.slice(0, Math.max(0, 6 - testimonials.length))]
-      : DEFAULT_TESTIMONIALS;
+  // Display only real published testimonials added by the user (no dummy defaults)
+  const displayList = (testimonials || []).filter(
+    (t) => t && t.is_published !== false && t.author_name !== 'Anand Kumar' && t.author_name !== 'Priya R.'
+  );
+
+  if (displayList.length === 0) return null;
 
   // Dynamically calculate the exact scroll step (1 card width + gap)
   const getScrollStep = () => {

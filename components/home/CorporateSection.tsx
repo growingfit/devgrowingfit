@@ -23,8 +23,16 @@ export function CorporateSection({ data }: CorporateSectionProps) {
 
   const thumbnails =
     data?.thumbnails && data.thumbnails.length > 0
-      ? data.thumbnails.filter((t) => t.is_visible !== false)
+      ? data.thumbnails.filter(
+          (t) =>
+            t.is_visible !== false &&
+            Boolean(t.image_url && t.image_url.trim().length > 0)
+        )
       : [];
+
+  if (!heading && !description && !imageSrc && thumbnails.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -74,24 +82,30 @@ export function CorporateSection({ data }: CorporateSectionProps) {
           )}
         </div>
 
-        {/* Bottom Row: Activity Thumbnails */}
-        {thumbnails && thumbnails.length > 0 && (
+        {/* Bottom Row: Activity Thumbnails - Only shown when images are uploaded & saved */}
+        {thumbnails.length > 0 && (
           <div className="pt-4 sm:pt-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+            <div
+              className={`grid gap-4 sm:gap-6 ${
+                thumbnails.length === 1
+                  ? 'grid-cols-1 max-w-[280px]'
+                  : thumbnails.length === 2
+                  ? 'grid-cols-2 max-w-[560px]'
+                  : thumbnails.length === 3
+                  ? 'grid-cols-2 sm:grid-cols-3 max-w-[840px]'
+                  : 'grid-cols-2 sm:grid-cols-4'
+              }`}
+            >
               {thumbnails.map((item) => {
                 const content = (
                   <div className="group cursor-pointer text-center">
-                    {/* Thumbnail Card with border and red accent underline */}
+                    {/* Thumbnail Card with border and black accent underline */}
                     <div className="relative rounded-xl overflow-hidden border border-[#E2E8F0] bg-white shadow-sm aspect-[16/10] mb-2 sm:mb-2.5 group-hover:shadow-md transition-all">
-                      {item.image_url ? (
-                        <img
-                          src={item.image_url}
-                          alt={item.title}
-                          className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-slate-100" />
-                      )}
+                      <img
+                        src={item.image_url!}
+                        alt={item.title || 'Corporate activity'}
+                        className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                      />
                       {/* Black underline accent bar */}
                       <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#172033]" />
                     </div>

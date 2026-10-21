@@ -10,9 +10,24 @@ export const siteSettingsSchema = z.object({
   is_maintenance: z.boolean().default(false),
 });
 
+export const heroSlideSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().optional(),
+  image_url: z.string().optional().nullable().or(z.literal('')),
+  image_public_id: z.string().optional().nullable().or(z.literal('')),
+  mobile_image_url: z.string().optional().nullable().or(z.literal('')),
+  mobile_image_public_id: z.string().optional().nullable().or(z.literal('')),
+  heading: z.string().optional().nullable().or(z.literal('')),
+  eyebrow: z.string().optional().nullable().or(z.literal('')),
+  description: z.string().optional().nullable().or(z.literal('')),
+  primary_cta_text: z.string().optional().nullable().or(z.literal('')),
+  primary_cta_url: z.string().optional().nullable().or(z.literal('')),
+  is_visible: z.boolean().default(true),
+});
+
 export const heroSectionSchema = z.object({
   eyebrow: z.string().optional().nullable().or(z.literal('')),
-  heading: z.string().optional().nullable().or(z.literal('')).default('Growing Fit'),
+  heading: z.string().optional().nullable().or(z.literal('')).default('Fun Fitness Sports'),
   highlighted_text: z.string().optional().nullable().or(z.literal('')),
   description: z.string().optional().nullable().or(z.literal('')),
   primary_cta_text: z.string().optional().nullable().or(z.literal('')),
@@ -25,6 +40,8 @@ export const heroSectionSchema = z.object({
   mobile_image_public_id: z.string().optional().nullable(),
   image_focal_position: z.string().default('center'),
   is_visible: z.boolean().default(true),
+  slides: z.array(heroSlideSchema).optional(),
+  slide_interval: z.number().optional().default(5000),
 });
 
 export const heroBenefitSchema = z.object({
@@ -56,7 +73,12 @@ export const sportsProgramSchema = z.object({
 export const aboutSectionSchema = z.object({
   eyebrow: z.string().optional().nullable().or(z.literal('')),
   heading: z.string().optional().nullable().or(z.literal('')).default('About Growing Fit'),
+  heading_line1: z.string().optional().nullable().or(z.literal('')),
+  heading_highlight1: z.string().optional().nullable().or(z.literal('')),
+  heading_highlight2: z.string().optional().nullable().or(z.literal('')),
+  heading_line2: z.string().optional().nullable().or(z.literal('')),
   highlighted_text: z.string().optional().nullable().or(z.literal('')),
+  highlight_quote: z.string().optional().nullable().or(z.literal('')),
   description: z.string().optional().nullable().or(z.literal('')),
   button_text: z.string().optional().nullable().or(z.literal('')),
   button_url: z.string().optional().nullable().or(z.literal('')),
@@ -66,6 +88,11 @@ export const aboutSectionSchema = z.object({
   is_visible: z.boolean().default(true),
   hero_image_url: z.string().optional().nullable(),
   hero_image_public_id: z.string().optional().nullable(),
+  banner_image_url: z.string().optional().nullable(),
+  banner_image_public_id: z.string().optional().nullable(),
+  banner_mobile_image_url: z.string().optional().nullable(),
+  banner_mobile_image_public_id: z.string().optional().nullable(),
+  banner_heading: z.string().optional().nullable(),
   philosophy_image_url: z.string().optional().nullable(),
   philosophy_image_public_id: z.string().optional().nullable(),
   cta_image_url: z.string().optional().nullable(),
@@ -84,9 +111,11 @@ export const visionSectionSchema = z.object({
   eyebrow: z.string().optional().default('OUR PURPOSE'),
   heading: z.string().min(1, 'Heading is required').default('Our Mission & Vision'),
   subtitle: z.string().optional().default('Inspiring and empowering every child through health, discipline, and active sports.'),
-  mission_title: z.string().optional().default('MISSION'),
+  mission_eyebrow: z.string().optional().default('OUR MISSION'),
+  mission_title: z.string().optional().default('To Inspire and Empower'),
   mission_description: z.string().min(5, 'Mission description is required').default('To inspire and empower children through sports and physical education, promoting health, discipline, and confidence for a stronger, brighter tomorrow.'),
-  vision_title: z.string().optional().default('VISION'),
+  vision_eyebrow: z.string().optional().default('OUR VISION'),
+  vision_title: z.string().optional().default('A Healthier and Brighter Future'),
   description: z.string().min(5, 'Vision description is required'),
   image_url: z.string().optional().nullable(),
   image_public_id: z.string().optional().nullable(),

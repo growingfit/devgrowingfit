@@ -21,6 +21,21 @@ export interface SiteSettings {
   updated_at: string;
 }
 
+export interface HeroSlide {
+  id?: string;
+  title?: string;
+  image_url?: string | null;
+  image_public_id?: string | null;
+  mobile_image_url?: string | null;
+  mobile_image_public_id?: string | null;
+  heading?: string;
+  eyebrow?: string;
+  description?: string;
+  primary_cta_text?: string;
+  primary_cta_url?: string;
+  is_visible?: boolean;
+}
+
 export interface HeroSection {
   id: number;
   eyebrow: string;
@@ -37,6 +52,8 @@ export interface HeroSection {
   mobile_image_public_id?: string | null;
   image_focal_position: string;
   is_visible: boolean;
+  slides?: HeroSlide[];
+  slide_interval?: number;
   updated_at: string;
 }
 

@@ -17,7 +17,7 @@ export default function AdminTestimonialsPage() {
   const [form, setForm] = useState({
     quote: '',
     author_name: '',
-    author_title: 'Parent',
+    author_title: '',
     avatar_url: '',
     avatar_public_id: '',
     rating: 5,
@@ -62,7 +62,7 @@ export default function AdminTestimonialsPage() {
     setForm({
       quote: '',
       author_name: '',
-      author_title: 'Parent',
+      author_title: '',
       avatar_url: '',
       avatar_public_id: '',
       rating: 5,
@@ -147,7 +147,7 @@ export default function AdminTestimonialsPage() {
               <input
                 required
                 type="text"
-                placeholder="e.g. Fazilulla M"
+                placeholder="Author Name"
                 value={form.author_name}
                 onChange={(e) => setForm({ ...form, author_name: e.target.value })}
                 className="w-full px-4 py-2.5 bg-white border border-[#E8E8EC] rounded-xl text-sm focus:outline-none focus:border-[#67238A]"
@@ -159,7 +159,7 @@ export default function AdminTestimonialsPage() {
               <input
                 required
                 type="text"
-                placeholder="e.g. Parent"
+                placeholder="Role / Title (e.g. Parent, Principal)"
                 value={form.author_title}
                 onChange={(e) => setForm({ ...form, author_title: e.target.value })}
                 className="w-full px-4 py-2.5 bg-white border border-[#E8E8EC] rounded-xl text-sm focus:outline-none focus:border-[#67238A]"
@@ -168,11 +168,11 @@ export default function AdminTestimonialsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#172033] uppercase tracking-wider mb-2">Parent Review Quote *</label>
+            <label className="block text-xs font-bold text-[#172033] uppercase tracking-wider mb-2">Review Quote *</label>
             <textarea
               required
               rows={3}
-              placeholder="e.g. Growing Fit has been an amazing place for my child..."
+              placeholder="Write review quote here..."
               value={form.quote}
               onChange={(e) => setForm({ ...form, quote: e.target.value })}
               className="w-full px-4 py-2.5 bg-white border border-[#E8E8EC] rounded-xl text-sm focus:outline-none focus:border-[#67238A]"

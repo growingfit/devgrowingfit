@@ -2,19 +2,65 @@
   "hero": {
     "id": 1,
     "eyebrow": "",
-    "heading": "Growing Fit",
+    "heading": "Fun Fitness Sports",
     "highlighted_text": "",
-    "description": "SPORTS FOR A STRONGER TOMORROW",
+    "description": "",
     "primary_cta_text": "",
     "primary_cta_url": "",
     "secondary_cta_text": "",
     "secondary_cta_url": "",
-    "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792233661/growing_fit/hqgrr4qr9kod36bbkscn.png",
-    "image_public_id": "growing_fit/hqgrr4qr9kod36bbkscn",
-    "mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792233722/growing_fit/wmegwdgc0naazdz7uepv.png",
-    "mobile_image_public_id": "growing_fit/wmegwdgc0naazdz7uepv",
+    "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792563443/growing_fit/lmupafbyumygrqjz7jcg.png",
+    "image_public_id": "growing_fit/lmupafbyumygrqjz7jcg",
+    "mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792564706/growing_fit/osjliaabzcwpmicfnmo6.png",
+    "mobile_image_public_id": "growing_fit/osjliaabzcwpmicfnmo6",
     "image_focal_position": "center",
-    "is_visible": true
+    "is_visible": true,
+    "slide_interval": 5000,
+    "slides": [
+      {
+        "id": "slide-1",
+        "title": "Slide 1",
+        "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792563443/growing_fit/lmupafbyumygrqjz7jcg.png",
+        "image_public_id": "growing_fit/lmupafbyumygrqjz7jcg",
+        "mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792564706/growing_fit/osjliaabzcwpmicfnmo6.png",
+        "mobile_image_public_id": "growing_fit/osjliaabzcwpmicfnmo6",
+        "heading": "Fun Fitness Sports",
+        "eyebrow": "",
+        "description": "",
+        "primary_cta_text": "",
+        "primary_cta_url": "",
+        "is_visible": true
+      },
+      {
+        "id": "slide-2",
+        "title": "Slide 2",
+        "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792571901/growing_fit/zgtflw3awkjk2fipxvxq.png",
+        "image_public_id": "growing_fit/zgtflw3awkjk2fipxvxq",
+        "mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792564977/growing_fit/x1ytna3slzyzaqecdzkx.png",
+        "mobile_image_public_id": "growing_fit/x1ytna3slzyzaqecdzkx",
+        "heading": "Fun Fitness Sports",
+        "eyebrow": "",
+        "description": "",
+        "primary_cta_text": "",
+        "primary_cta_url": "",
+        "is_visible": true
+      },
+      {
+        "id": "slide-3",
+        "title": "Slide 3",
+        "image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792566693/growing_fit/fijflldg5pxyryqgkluv.png",
+        "image_public_id": "growing_fit/fijflldg5pxyryqgkluv",
+        "mobile_image_url": "https://res.cloudinary.com/nvho1sss/image/upload/v1792566698/growing_fit/ompaf8qx8wn6ntksysqk.png",
+        "mobile_image_public_id": "growing_fit/ompaf8qx8wn6ntksysqk",
+        "heading": "Fun Fitness Sports",
+        "eyebrow": "",
+        "description": "",
+        "primary_cta_text": "",
+        "primary_cta_url": "",
+        "is_visible": true
+      }
+    ],
+    "updated_at": "2026-10-21T08:39:34.100Z"
   },
   "benefits": []
 }

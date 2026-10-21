@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { WhyGrowingFitSection } from '@/types/database';
 
 interface WhyGrowingFitSliderProps {
@@ -15,21 +15,47 @@ export function WhyGrowingFitSlider({ data }: WhyGrowingFitSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Desktop shows 3 items at a time; total pages = Math.max(1, items.length - 2)
   // Mobile shows 1 item at a time; total pages = items.length
   const total = items.length;
   const maxDesktopIndex = Math.max(0, total - 3);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev >= maxDesktopIndex ? 0 : prev + 1));
-  };
+  const nextSlide = useCallback(() => {
+    if (total <= 1) return;
+    setCurrentIndex((prev) => {
+      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+      const maxIdx = isDesktop ? maxDesktopIndex : total - 1;
+      return prev >= maxIdx ? 0 : prev + 1;
+    });
+  }, [total, maxDesktopIndex]);
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxDesktopIndex : prev - 1));
-  };
+  const prevSlide = useCallback(() => {
+    if (total <= 1) return;
+    setCurrentIndex((prev) => {
+      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+      const maxIdx = isDesktop ? maxDesktopIndex : total - 1;
+      return prev <= 0 ? maxIdx : prev - 1;
+    });
+  }, [total, maxDesktopIndex]);
+
+  // Auto-scrolling interval: advances every 3.5 seconds unless hovered/touched
+  useEffect(() => {
+    if (total <= 1 || isPaused) return;
+
+    timerRef.current = setInterval(() => {
+      nextSlide();
+    }, 3500);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [total, isPaused, nextSlide]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -39,12 +65,13 @@ export function WhyGrowingFitSlider({ data }: WhyGrowingFitSliderProps) {
   };
 
   const handleTouchEnd = () => {
+    setIsPaused(false);
     if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
     if (distance > 40) {
-      setCurrentIndex((prev) => (prev >= total - 1 ? 0 : prev + 1));
+      nextSlide();
     } else if (distance < -40) {
-      setCurrentIndex((prev) => (prev <= 0 ? total - 1 : prev - 1));
+      prevSlide();
     }
   };
 
@@ -68,6 +95,8 @@ export function WhyGrowingFitSlider({ data }: WhyGrowingFitSliderProps) {
         {/* Content Slider Container */}
         <div
           className="relative overflow-hidden"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
