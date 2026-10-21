@@ -157,7 +157,7 @@
           {
             "id": "sd-1",
             "title": "Agility & Motor Skills",
-            "image_url": "/images/for-schools.png",
+            "image_url": "",
             "description": "Sharpening foundational footwork, reaction times, balance, and spatial awareness.",
             "link_text": "",
             "link_url": ""
@@ -165,7 +165,7 @@
           {
             "id": "sd-2",
             "title": "Defensive Techniques",
-            "image_url": "/images/about-martial-arts.png",
+            "image_url": "",
             "description": "Structured martial arts drills building personal safety, defensive discipline, and poise.",
             "link_text": "SHOW MORE",
             "link_url": "/contact"
@@ -173,7 +173,7 @@
           {
             "id": "sd-3",
             "title": "Tactical Coordination",
-            "image_url": "/images/academy-football.png",
+            "image_url": "",
             "description": "Team sports strategies fostering situational decision making and quick physical execution.",
             "link_text": "",
             "link_url": ""
@@ -187,7 +187,7 @@
           {
             "id": "st-1",
             "title": "Track & Athletics",
-            "image_url": "/images/for-schools.png",
+            "image_url": "",
             "description": "Sprint mechanics, pacing, aerobic capacity and endurance development for young runners.",
             "link_text": "",
             "link_url": ""
@@ -195,7 +195,7 @@
           {
             "id": "st-2",
             "title": "Swimming Mastery",
-            "image_url": "/images/academy-swimming.png",
+            "image_url": "",
             "description": "Professional stroke technique, breath control and water confidence coached with clinical care.",
             "link_text": "SHOW MORE",
             "link_url": "/contact"
@@ -203,7 +203,7 @@
           {
             "id": "st-3",
             "title": "Football & Team Play",
-            "image_url": "/images/academy-football.png",
+            "image_url": "",
             "description": "Turf ball mastery, passing accuracy, positional discipline and collaborative sportsmanship.",
             "link_text": "",
             "link_url": ""

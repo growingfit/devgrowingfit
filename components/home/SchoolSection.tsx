@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { SchoolSectionData } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface SchoolSectionProps {
   data?: SchoolSectionData | null;
@@ -15,10 +16,13 @@ export function SchoolSection({ data }: SchoolSectionProps) {
   const description = data?.description?.trim() || '';
   const buttonText = data?.button_text?.trim() || '';
   const buttonUrl = data?.button_url?.trim() || '';
-  const imageSrc =
+  const rawImageSrc =
     data?.image_url && data.image_url.trim().length > 0
       ? data.image_url.trim()
       : null;
+  const imageSrc = rawImageSrc
+    ? optimizeImageUrl(rawImageSrc, { width: 900, quality: 'auto', format: 'auto' })
+    : null;
   const imageAlt = data?.image_alt || heading || 'School sports';
 
   if (!heading && !description && !imageSrc) return null;
@@ -64,6 +68,8 @@ export function SchoolSection({ data }: SchoolSectionProps) {
                   src={imageSrc}
                   alt={imageAlt}
                   className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>

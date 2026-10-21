@@ -210,6 +210,23 @@ export default function AdminHomepageSectionsPage() {
               </label>
             </div>
 
+            {/* Quick Link to School Page Cards */}
+            <div className="p-3.5 bg-blue-50/70 border border-blue-200/80 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <Info className="w-4 h-4 text-blue-600 shrink-0" />
+                <p className="text-xs text-blue-900">
+                  Looking to manage the <strong>School Page Cards</strong> (Health &amp; Fitness, Skill Development, Sports Training tabs)?
+                </p>
+              </div>
+              <Link
+                href="/admin/school-page?tab=tabs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors shrink-0 shadow-2xs self-start sm:self-auto"
+              >
+                <span>Edit School Tab Cards</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+            </div>
+
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-[#172033] mb-1.5 uppercase tracking-wider">

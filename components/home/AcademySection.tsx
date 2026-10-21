@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { AcademySectionData } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface AcademySectionProps {
   data?: AcademySectionData | null;
@@ -15,10 +16,13 @@ export function AcademySection({ data }: AcademySectionProps) {
   const description = data?.description?.trim() || '';
   const buttonText = data?.button_text?.trim() || '';
   const buttonUrl = data?.button_url?.trim() || '';
-  const imageSrc =
+  const rawImageSrc =
     data?.image_url && data.image_url.trim().length > 0
       ? data.image_url.trim()
       : null;
+  const imageSrc = rawImageSrc
+    ? optimizeImageUrl(rawImageSrc, { width: 900, quality: 'auto', format: 'auto' })
+    : null;
   const imageAlt = data?.image_alt || heading || 'Academy sports';
 
   const thumbnails =
@@ -49,6 +53,8 @@ export function AcademySection({ data }: AcademySectionProps) {
                   src={imageSrc}
                   alt={imageAlt}
                   className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -99,9 +105,11 @@ export function AcademySection({ data }: AcademySectionProps) {
                         {/* Thumbnail image with subtle border and white underline bar */}
                         <div className="relative rounded-lg overflow-hidden border border-slate-700/80 bg-slate-900/60 aspect-[4/3] mb-1.5 shadow-sm group-hover:border-slate-500 transition-all">
                           <img
-                            src={item.image_url!}
+                            src={optimizeImageUrl(item.image_url!, { width: 360, quality: 'auto', format: 'auto' })}
                             alt={item.title || 'Academy sport'}
                             className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                            decoding="async"
                           />
                           {/* Thin white accent line at bottom of thumbnail */}
                           <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-white" />

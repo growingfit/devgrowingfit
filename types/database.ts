@@ -298,6 +298,7 @@ export interface SchoolHeroSlide {
   id: string;
   title: string;
   image_url: string;
+  mobile_image_url?: string;
   image_alt?: string;
   sort_order: number;
   is_published: boolean;

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { HeroSection as HeroSectionType, HeroSlide } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface HeroSectionProps {
   data?: HeroSectionType | null;
@@ -124,8 +125,8 @@ export function HeroSection({ data }: HeroSectionProps) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Sliding Carousel Track Container (9:16 Portrait on Mobile, Landscape on Desktop) */}
-      <div className="relative w-full aspect-[9/16] max-h-[85vh] md:aspect-auto md:h-[520px] lg:h-[600px] xl:h-[660px] overflow-hidden">
+      {/* Sliding Carousel Track Container (Exact 9:16 Portrait on Mobile, Landscape on Desktop) */}
+      <div className="relative w-full aspect-[9/16] md:aspect-auto md:h-[520px] lg:h-[600px] xl:h-[660px] overflow-hidden">
         <div
           className="flex h-full w-full transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -143,17 +144,19 @@ export function HeroSection({ data }: HeroSectionProps) {
                   {slide.mobile_image_url && (
                     <source
                       media="(max-width: 767px)"
-                      srcSet={slide.mobile_image_url}
+                      srcSet={optimizeImageUrl(slide.mobile_image_url, { width: 900, quality: 'auto', format: 'auto' })}
                     />
                   )}
                   <img
-                    src={(slide.image_url || slide.mobile_image_url) || ''}
+                    src={optimizeImageUrl(slide.image_url || slide.mobile_image_url, { width: 1920, quality: 'auto', format: 'auto' }) || ''}
                     alt={singleHeading || `Growing Fit Banner ${idx + 1}`}
                     className="w-full h-full object-cover object-center"
                     style={{
                       objectPosition: currentHero?.image_focal_position || 'center',
                     }}
                     loading={idx === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={idx === 0 ? 'high' : 'auto'}
+                    decoding={idx === 0 ? 'sync' : 'async'}
                   />
                 </picture>
 

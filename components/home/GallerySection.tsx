@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { getGalleryAction } from '@/lib/actions/cms';
 import { GalleryImage } from '@/types/database';
+import { optimizeImageUrl } from '@/lib/utils/image';
 
 interface GallerySectionProps {
   images?: GalleryImage[];
@@ -167,10 +168,11 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
               >
                 {/* Photo Image */}
                 <img
-                  src={item.image_url}
+                  src={optimizeImageUrl(item.image_url, { width: 600, quality: 'auto', format: 'auto' })}
                   alt={item.title}
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
                   loading="lazy"
+                  decoding="async"
                 />
 
                 {/* Hover Dark Gradient Overlay */}
@@ -230,9 +232,10 @@ export function GallerySection({ images = [] }: GallerySectionProps) {
             {/* Modal Image Area with Left/Right Controls */}
             <div className="relative bg-slate-950 flex items-center justify-center min-h-[300px] max-h-[70vh] overflow-hidden">
               <img
-                src={activeItem.image_url}
+                src={optimizeImageUrl(activeItem.image_url, { width: 1400, quality: 'auto', format: 'auto' })}
                 alt={activeItem.title}
                 className="w-full max-h-[70vh] object-contain"
+                decoding="async"
               />
 
               {/* Prev Button */}
