@@ -139,3 +139,9 @@
   animation: gfAuraPulse 3s ease-in-out infinite;
 }
 
+/* Zero flash splash screen suppression on page refresh */
+html.gf-no-splash #gf-splash-screen {
+  display: none !important;
+}
+
+

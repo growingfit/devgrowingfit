@@ -7,14 +7,28 @@ export function SplashScreen() {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
 
-  // Starts in 'loading' phase by default so it renders immediately on initial load with ZERO white flash
-  const [phase, setPhase] = useState<'loading' | 'exit' | 'done'>('loading');
+  // Check sessionStorage synchronously so refreshing the page NEVER shows the splash screen again
+  const [phase, setPhase] = useState<'loading' | 'exit' | 'done'>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        if (sessionStorage.getItem('gf_splash_shown') === 'true') {
+          return 'done';
+        }
+      } catch {}
+    }
+    return 'loading';
+  });
 
   useEffect(() => {
     if (isAdmin) return;
 
     try {
-      localStorage.removeItem('gf_splash_seen_v1');
+      if (sessionStorage.getItem('gf_splash_shown') === 'true') {
+        setPhase('done');
+        return;
+      }
+      // Mark as shown for the current session so refreshes bypass immediately
+      sessionStorage.setItem('gf_splash_shown', 'true');
     } catch {}
 
     const startTime = Date.now();
@@ -61,6 +75,7 @@ export function SplashScreen() {
 
   return (
     <div
+      id="gf-splash-screen"
       aria-hidden="true"
       className={`fixed inset-0 z-[999999] bg-black flex flex-col items-center justify-center select-none overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         isExiting

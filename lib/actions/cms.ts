@@ -1235,23 +1235,19 @@ export async function deleteCentreAction(id: string): Promise<ActionResult> {
 export async function getContactAction(): Promise<{ contact: any; socials: any[] }> {
   let contactData: any = {
     id: 1,
-    phone: '+91 9562 44 66 11',
-    email: 'info@edumartial.com',
-    whatsapp: 'https://wa.me/919562446611',
-    headquarters: 'Kinfra Techno Industrial Park, Calicut University PO, Kakkanchery, Malappuram, Kerala',
-    opening_hours: 'Monday - Saturday: 6:00 AM - 7:00 PM',
+    address: '',
+    headquarters: '',
+    phone: '',
+    phone_secondary: '',
+    email: '',
   };
-  let socialsData: any[] = [
-    { id: 'soc-1', platform: 'Instagram', url: 'https://instagram.com/growingfit', sort_order: 1, is_active: true },
-    { id: 'soc-2', platform: 'YouTube', url: 'https://youtube.com/@growingfit', sort_order: 2, is_active: true },
-    { id: 'soc-3', platform: 'Facebook', url: 'https://facebook.com/growingfit', sort_order: 3, is_active: true },
-  ];
+  let socialsData: any[] = [];
 
   // 1. Read local JSON first as initial base
   const local = readJsonFile<any>('contact.json', null);
   if (local) {
     if (local.contact) contactData = { ...contactData, ...local.contact };
-    if (local.socials && Array.isArray(local.socials) && local.socials.length > 0) {
+    if (local.socials && Array.isArray(local.socials)) {
       socialsData = local.socials;
     }
   }
@@ -1263,8 +1259,16 @@ export async function getContactAction(): Promise<{ contact: any; socials: any[]
       supabase.from('contact_settings').select('*').eq('id', 1).maybeSingle(),
       supabase.from('social_links').select('*').order('sort_order', { ascending: true }),
     ]);
-    if (contactRes.data) contactData = { ...contactData, ...contactRes.data };
-    if (socialRes.data && socialRes.data.length > 0) socialsData = socialRes.data;
+    if (contactRes.data) {
+      contactData = {
+        ...contactData,
+        ...contactRes.data,
+        address: contactRes.data.address || contactRes.data.headquarters || contactData.address || '',
+      };
+    }
+    if (socialRes.data && Array.isArray(socialRes.data)) {
+      socialsData = socialRes.data;
+    }
   } catch {}
 
   return { contact: contactData, socials: socialsData };
@@ -1275,19 +1279,45 @@ export async function updateContactSettingsAction(formData: unknown): Promise<Ac
     await requireAdmin();
     const validated = contactSettingsSchema.parse(formData);
     const supabase = createClient();
-    const { error } = await supabase.from('contact_settings').upsert({ id: 1, ...validated, updated_at: new Date().toISOString() });
-    if (error) console.warn('Supabase contact update warning:', error);
+
+    const addressVal = validated.address || validated.headquarters || '';
+    const payload = {
+      id: 1,
+      phone: validated.phone || '',
+      phone_secondary: validated.phone_secondary || '',
+      email: validated.email || '',
+      address: addressVal,
+      headquarters: addressVal,
+      updated_at: new Date().toISOString(),
+    };
+
+    try {
+      const { error } = await supabase.from('contact_settings').upsert(payload);
+      if (error) {
+        // Fallback for when phone_secondary / address columns are pending in Supabase
+        await supabase.from('contact_settings').upsert({
+          id: 1,
+          phone: payload.phone,
+          email: payload.email,
+          headquarters: payload.headquarters,
+          updated_at: payload.updated_at,
+        });
+      }
+    } catch (dbErr) {
+      console.warn('Supabase contact upsert warning:', dbErr);
+    }
 
     const existing = readJsonFile<any>('contact.json', { contact: {}, socials: [] });
     syncJsonFile('contact.json', {
       ...existing,
-      contact: { ...(existing.contact || {}), ...validated },
+      contact: { ...(existing.contact || {}), ...payload },
     });
 
+    revalidatePath('/', 'layout');
     revalidatePath('/');
     revalidatePath('/contact');
     revalidatePath('/admin/contact');
-    return { success: true, message: 'Contact settings updated.' };
+    return { success: true, message: 'Contact settings updated successfully.' };
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to update contact settings.' };
   }
