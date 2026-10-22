@@ -59,6 +59,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preload" as="image" href="/growingfit-whitelogo.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(sessionStorage.getItem('gf_splash_shown')==='true'){document.documentElement.classList.add('gf-no-splash');}}catch(e){}`,
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased text-[#172033] bg-white">
         <SplashScreen />

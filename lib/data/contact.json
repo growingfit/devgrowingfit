@@ -1,39 +1,12 @@
 {
   "contact": {
     "id": 1,
-    "phone": "+91 9562 44 66 11",
-    "email": "info@edumartial.com",
-    "whatsapp": "https://wa.me/919562446611",
-    "headquarters": "Kinfra Techno Industrial Park, Calicut University PO, Kakkanchery, Malappuram, Kerala",
-    "address_lines": [
-      "Kinfra Techno Industrial Park",
-      "Calicut University PO",
-      "Kakkanchery",
-      "Malappuram, Kerala"
-    ],
-    "opening_hours": "Monday - Saturday: 6:00 AM - 7:00 PM"
+    "address": "GROWING FIT FAROOOK COLLEGE PO CHUNKAM 8/4 CALICUT,KERALA",
+    "headquarters": "GROWING FIT FAROOOK COLLEGE PO CHUNKAM 8/4 CALICUT,KERALA",
+    "phone": "+91 702 581 0722",
+    "phone_secondary": "+91 759 482 2571",
+    "email": "growingfitofficial@gmail.com",
+    "updated_at": "2026-10-22T10:32:31.103Z"
   },
-  "socials": [
-    {
-      "id": "soc-1",
-      "platform": "Instagram",
-      "url": "https://instagram.com/growingfit",
-      "sort_order": 1,
-      "is_active": true
-    },
-    {
-      "id": "soc-2",
-      "platform": "YouTube",
-      "url": "https://youtube.com/@growingfit",
-      "sort_order": 2,
-      "is_active": true
-    },
-    {
-      "id": "soc-3",
-      "platform": "Facebook",
-      "url": "https://facebook.com/growingfit",
-      "sort_order": 3,
-      "is_active": true
-    }
-  ]
+  "socials": []
 }

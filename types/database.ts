@@ -199,9 +199,11 @@ export interface SocialLink {
 export interface ContactSettings {
   id: number;
   phone: string;
+  phone_secondary?: string | null;
   email: string;
-  whatsapp?: string | null;
+  address?: string | null;
   headquarters?: string | null;
+  whatsapp?: string | null;
   opening_hours?: string | null;
   updated_at: string;
 }

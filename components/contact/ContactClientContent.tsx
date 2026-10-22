@@ -89,14 +89,11 @@ function ContactFormAndCentresInner({
 
   const publishedCentres = (initialCentres || []).filter((c) => c.is_published !== false);
 
-  const phoneDisplay = contactInfo?.phone || '+91 9562 44 66 11';
-  const emailDisplay = contactInfo?.email || 'info@edumartial.com';
-  const addressLines = [
-    'Kinfra Techno Industrial Park',
-    'Calicut University PO',
-    'Kakkanchery',
-    'Malappuram, Kerala',
-  ];
+  const phone1 = (contactInfo?.phone || '').trim();
+  const phone2 = (contactInfo?.phone_secondary || '').trim();
+  const emailDisplay = (contactInfo?.email || '').trim();
+  const rawAddress = (contactInfo?.address || contactInfo?.headquarters || '').trim();
+  const activeSocials = (socials || []).filter((s: any) => s && s.is_active !== false && s.url);
 
   return (
     <div className="w-full max-w-[1440px] 2xl:max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-20">
@@ -118,48 +115,87 @@ function ContactFormAndCentresInner({
               </h1>
 
               {/* Contact Us Section */}
-              <div className="space-y-3.5">
-                <h2 className="text-base sm:text-lg font-bold text-[#172033]">
-                  Contact Us
-                </h2>
-                <div className="space-y-3 text-sm sm:text-[15px] font-medium text-[#172033]">
-                  {/* Phone */}
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-[#172033] shrink-0 fill-current" />
-                    <a
-                      href={`tel:${phoneDisplay.replace(/\s+/g, '')}`}
-                      className="hover:underline tracking-wide"
-                    >
-                      {phoneDisplay}
-                    </a>
-                  </div>
+              {(phone1 || phone2 || emailDisplay) && (
+                <div className="space-y-3.5">
+                  <h2 className="text-base sm:text-lg font-bold text-[#172033]">
+                    Contact Us
+                  </h2>
+                  <div className="space-y-3 text-sm sm:text-[15px] font-medium text-[#172033]">
+                    {/* Primary Phone */}
+                    {phone1 && (
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-4 h-4 text-[#172033] shrink-0 fill-current" />
+                        <a
+                          href={`tel:${phone1.replace(/\s+/g, '')}`}
+                          className="hover:underline tracking-wide"
+                        >
+                          {phone1}
+                        </a>
+                      </div>
+                    )}
 
-                  {/* Email */}
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-[#172033] shrink-0 fill-current" />
-                    <a
-                      href={`mailto:${emailDisplay}`}
-                      className="hover:underline tracking-wide"
-                    >
-                      {emailDisplay}
-                    </a>
+                    {/* Secondary Phone */}
+                    {phone2 && (
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-4 h-4 text-[#172033] shrink-0 fill-current" />
+                        <a
+                          href={`tel:${phone2.replace(/\s+/g, '')}`}
+                          className="hover:underline tracking-wide"
+                        >
+                          {phone2}
+                        </a>
+                      </div>
+                    )}
+
+                    {/* Email / Gmail */}
+                    {emailDisplay && (
+                      <div className="flex items-center gap-3">
+                        <Mail className="w-4 h-4 text-[#172033] shrink-0 fill-current" />
+                        <a
+                          href={`mailto:${emailDisplay}`}
+                          className="hover:underline tracking-wide break-all"
+                        >
+                          {emailDisplay}
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Address Section */}
-              <div className="space-y-2.5 pt-2">
-                <h2 className="text-base sm:text-lg font-bold text-[#172033]">
-                  Address
-                </h2>
-                <address className="not-italic text-sm sm:text-[15px] text-[#475467] leading-[1.75] font-normal">
-                  {addressLines.map((line, idx) => (
-                    <span key={idx} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </address>
-              </div>
+              {rawAddress && (
+                <div className="space-y-2.5 pt-2">
+                  <h2 className="text-base sm:text-lg font-bold text-[#172033]">
+                    Address
+                  </h2>
+                  <address className="not-italic text-sm sm:text-[15px] text-[#475467] leading-[1.75] font-normal whitespace-pre-line">
+                    {rawAddress}
+                  </address>
+                </div>
+              )}
+
+              {/* Social Channels Section */}
+              {activeSocials.length > 0 && (
+                <div className="space-y-2.5 pt-2">
+                  <h2 className="text-base sm:text-lg font-bold text-[#172033]">
+                    Follow Us
+                  </h2>
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {activeSocials.map((s: any) => (
+                      <a
+                        key={s.id}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F0F2F5] hover:bg-[#172033] hover:text-white text-xs font-semibold text-[#172033] rounded-full transition-colors"
+                      >
+                        <span>{s.platform}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Bottom Subtle Tag */}

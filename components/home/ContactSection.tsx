@@ -12,10 +12,10 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const phone = contactSettings?.phone || '+91 702 581 0722';
-  const email = contactSettings?.email || 'growingfitofficial@gmail.com';
-  const headquarters = contactSettings?.headquarters || 'Calicut & Kochi, Kerala, India';
-  const hours = contactSettings?.opening_hours || 'Monday - Saturday: 6:00 AM - 7:00 PM';
+  const phone1 = contactSettings?.phone?.trim() || '';
+  const phone2 = contactSettings?.phone_secondary?.trim() || '';
+  const email = contactSettings?.email?.trim() || '';
+  const address = (contactSettings?.address || contactSettings?.headquarters || '').trim();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,53 +51,66 @@ export function ContactSection({ contactSettings }: ContactSectionProps) {
             </div>
 
             <div className="space-y-5 pt-1">
-              {/* Phone */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                  <Phone className="w-5 h-5" />
+              {/* Phone (1 & 2) */}
+              {(phone1 || phone2) && (
+                <div className="flex items-start gap-4 group">
+                  <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Phone</h4>
+                    {phone1 && (
+                      <a
+                        href={`tel:${phone1.replace(/\s+/g, '')}`}
+                        className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors block"
+                      >
+                        {phone1}
+                      </a>
+                    )}
+                    {phone2 && (
+                      <a
+                        href={`tel:${phone2.replace(/\s+/g, '')}`}
+                        className={`text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors block ${phone1 ? 'mt-0.5' : ''}`}
+                      >
+                        {phone2}
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Phone</h4>
-                  <a
-                    href={`tel:${phone.replace(/\s+/g, '')}`}
-                    className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors"
-                  >
-                    {phone}
-                  </a>
-                </div>
-              </div>
+              )}
 
               {/* Email */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                  <Mail className="w-5 h-5" />
+              {email && (
+                <div className="flex items-start gap-4 group">
+                  <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Email</h4>
+                    <a
+                      href={`mailto:${email}`}
+                      className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors break-all"
+                    >
+                      {email}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Email</h4>
-                  <a
-                    href={`mailto:${email}`}
-                    className="text-sm sm:text-base font-extrabold text-[#172033] hover:text-black hover:underline transition-colors break-all"
-                  >
-                    {email}
-                  </a>
-                </div>
-              </div>
+              )}
 
-              {/* Location */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                  <MapPin className="w-5 h-5" />
+              {/* Location / Address */}
+              {address && (
+                <div className="flex items-start gap-4 group">
+                  <div className="w-11 h-11 rounded-full bg-[#F0F2F5] border border-[#E4E7EC] flex items-center justify-center text-[#172033] shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Address</h4>
+                    <p className="text-sm sm:text-base font-extrabold text-[#172033] whitespace-pre-line leading-relaxed">
+                      {address}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[10px] font-bold text-[#8A94A6] uppercase tracking-wider">Location</h4>
-                  <p className="text-sm sm:text-base font-extrabold text-[#172033]">
-                    {headquarters}
-                  </p>
-                  <p className="text-xs text-[#667085] mt-0.5">
-                    {hours}
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 

@@ -170,10 +170,12 @@ export const socialLinkSchema = z.object({
 });
 
 export const contactSettingsSchema = z.object({
-  phone: z.string().min(5, 'Phone number is required'),
-  email: z.string().email('Invalid email address'),
+  address: z.string().optional().nullable().or(z.literal('')),
+  headquarters: z.string().optional().nullable().or(z.literal('')),
+  phone: z.string().optional().nullable().or(z.literal('')),
+  phone_secondary: z.string().optional().nullable().or(z.literal('')),
+  email: z.string().optional().nullable().or(z.literal('')),
   whatsapp: z.string().optional().nullable(),
-  headquarters: z.string().optional().nullable(),
   opening_hours: z.string().optional().nullable(),
 });
 
