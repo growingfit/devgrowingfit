@@ -15,7 +15,7 @@
     "mobile_image_public_id": "growing_fit/osjliaabzcwpmicfnmo6",
     "image_focal_position": "center",
     "is_visible": true,
-    "slide_interval": 5000,
+    "slide_interval": 3200,
     "slides": [
       {
         "id": "slide-1",

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     'Comprehensive on-campus sports, martial arts, and physical education programs for educational institutions. Certified coaches, structured curriculum, and holistic student development.',
 };
 
-export default function SchoolsPage() {
-  const data = getSchoolPageData();
+export default async function SchoolsPage() {
+  const data = await getSchoolPageData();
   return <SchoolPageComponent data={data} />;
 }

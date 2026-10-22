@@ -46,11 +46,25 @@ export default function AdminCategoriesPage() {
     is_active: true,
   });
 
+  const getNextSortOrder = (items: SportsCategory[]) => {
+    if (!items || items.length === 0) return 1;
+    const max = Math.max(...items.map((c) => Number(c.sort_order) || 0), 0);
+    return max + 1;
+  };
+
   const fetchCategories = async () => {
     try {
       const data = await getCategoriesAction();
       if (data && Array.isArray(data)) {
         setCategories(data);
+        // Automatically set the sort_order to the next category number when not editing
+        if (!editingId) {
+          const nextOrder = getNextSortOrder(data);
+          setForm((prev) => ({
+            ...prev,
+            sort_order: nextOrder,
+          }));
+        }
       }
     } catch (err) {
       console.error('Failed to load categories in admin:', err);
@@ -77,13 +91,15 @@ export default function AdminCategoriesPage() {
     window.scrollTo({ top: 380, behavior: 'smooth' });
   };
 
-  const handleReset = () => {
+  const handleReset = (currentList?: SportsCategory[]) => {
     setEditingId(null);
+    const list = Array.isArray(currentList) ? currentList : categories;
+    const nextOrder = getNextSortOrder(list);
     setForm({
       name: '',
       slug: '',
       icon: '',
-      sort_order: categories.length + 1,
+      sort_order: nextOrder,
       is_active: true,
     });
   };
@@ -105,8 +121,13 @@ export default function AdminCategoriesPage() {
 
     if (result.success) {
       setMessage({ type: 'success', text: result.message || 'Category saved successfully.' });
-      handleReset();
-      await fetchCategories();
+      const updated = await getCategoriesAction();
+      if (updated && Array.isArray(updated)) {
+        setCategories(updated);
+        handleReset(updated);
+      } else {
+        handleReset();
+      }
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to save category.' });
     }
@@ -119,7 +140,13 @@ export default function AdminCategoriesPage() {
     const result = await deleteCategoryAction(id);
     if (result.success) {
       setMessage({ type: 'success', text: `Category "${name}" removed.` });
-      await fetchCategories();
+      const updated = await getCategoriesAction();
+      if (updated && Array.isArray(updated)) {
+        setCategories(updated);
+        if (!editingId) {
+          handleReset(updated);
+        }
+      }
     } else {
       setMessage({ type: 'error', text: result.error || 'Failed to delete.' });
     }
@@ -313,7 +340,7 @@ export default function AdminCategoriesPage() {
             {editingId && (
               <button
                 type="button"
-                onClick={handleReset}
+                onClick={() => handleReset()}
                 className="text-xs text-[#67238A] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -420,17 +447,25 @@ export default function AdminCategoriesPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-center">
             <div>
-              <label className="block text-xs font-bold text-[#172033] uppercase tracking-wider mb-2">
-                Sort Order Number
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-bold text-[#172033] uppercase tracking-wider">
+                  Sort Order Number
+                </label>
+                {!editingId && (
+                  <span className="text-[11px] font-semibold text-[#67238A] bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-100">
+                    Next category #: {getNextSortOrder(categories)}
+                  </span>
+                )}
+              </div>
               <input
                 type="number"
+                min="1"
                 value={form.sort_order}
                 onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })}
                 className="w-full px-4 py-2.5 bg-white border border-[#E8E8EC] rounded-xl text-sm focus:outline-none focus:border-[#67238A]"
               />
               <span className="text-[11px] text-slate-400 mt-1 block">
-                Lower numbers appear first in the sliding sequence.
+                Lower numbers appear first in the sliding sequence. Automatically pre-filled with the next available position.
               </span>
             </div>
 
