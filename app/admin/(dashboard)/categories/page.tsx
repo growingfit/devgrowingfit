@@ -93,7 +93,7 @@ export default function AdminCategoriesPage() {
 
   const handleReset = (currentList?: SportsCategory[]) => {
     setEditingId(null);
-    const list = currentList || categories;
+    const list = Array.isArray(currentList) ? currentList : categories;
     const nextOrder = getNextSortOrder(list);
     setForm({
       name: '',
@@ -340,7 +340,7 @@ export default function AdminCategoriesPage() {
             {editingId && (
               <button
                 type="button"
-                onClick={handleReset}
+                onClick={() => handleReset()}
                 className="text-xs text-[#67238A] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
