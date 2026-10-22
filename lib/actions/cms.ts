@@ -89,14 +89,14 @@ export async function getSiteSettingsAction(): Promise<any> {
     is_maintenance: false,
   };
 
+  const local = readJsonFile<any>('settings.json', null);
+  if (local && typeof local === 'object') settings = { ...settings, ...local };
+
   try {
     const supabase = createClient();
     const { data } = await supabase.from('site_settings').select('*').eq('id', 1).maybeSingle();
     if (data) settings = { ...settings, ...data };
   } catch {}
-
-  const local = readJsonFile<any>('settings.json', null);
-  if (local && typeof local === 'object') settings = { ...settings, ...local };
 
   return settings;
 }
@@ -187,7 +187,7 @@ export async function getHeroSectionAction(): Promise<{ hero: any; benefits: any
     mobile_image_public_id: '',
     image_focal_position: 'center',
     is_visible: true,
-    slide_interval: 5000,
+    slide_interval: 3200,
   };
 
   let benefitsData: any[] = [
@@ -196,6 +196,14 @@ export async function getHeroSectionAction(): Promise<{ hero: any; benefits: any
     { id: '3', title: 'Strength, Agility & Mental Focus', icon: 'Shield', sort_order: 3, is_visible: true },
     { id: '4', title: 'Centers in Calicut & Kochi', icon: 'CheckCircle', sort_order: 4, is_visible: true },
   ];
+
+  const local = readJsonFile<any>('hero.json', null);
+  if (local) {
+    if (local.hero) heroData = { ...heroData, ...local.hero };
+    if (local.benefits && Array.isArray(local.benefits) && local.benefits.length > 0) {
+      benefitsData = local.benefits;
+    }
+  }
 
   try {
     const supabase = createClient();
@@ -211,14 +219,6 @@ export async function getHeroSectionAction(): Promise<{ hero: any; benefits: any
       benefitsData = benefitsRes.data;
     }
   } catch {}
-
-  const local = readJsonFile<any>('hero.json', null);
-  if (local) {
-    if (local.hero) heroData = { ...heroData, ...local.hero };
-    if (local.benefits && Array.isArray(local.benefits) && local.benefits.length > 0) {
-      benefitsData = local.benefits;
-    }
-  }
 
   // Ensure 3 slides are present and normalized
   const rawSlides: any[] = Array.isArray(heroData.slides) ? heroData.slides : [];
@@ -302,18 +302,38 @@ function syncLocalSportsCategories(categories: any[]) {
 
 export async function getCategoriesAction(): Promise<any[]> {
   const local = readJsonFile<any[]>('sports-categories.json', []);
-  if (Array.isArray(local) && local.length > 0) {
-    return local;
-  }
+  const localCategories = Array.isArray(local) ? local : [];
 
   try {
     const supabase = createClient();
-    const { data } = await supabase.from('sports_categories').select('*').order('sort_order', { ascending: true });
-    if (data && data.length > 0) {
-      syncLocalSportsCategories(data);
-      return data;
+    const { data: dbData, error } = await supabase
+      .from('sports_categories')
+      .select('*')
+      .order('sort_order', { ascending: true });
+
+    if (!error && Array.isArray(dbData) && dbData.length > 0) {
+      const categoryMap = new Map<string, any>();
+      for (const c of localCategories) {
+        const key = String(c.id || c.slug || c.name).toLowerCase();
+        categoryMap.set(key, c);
+      }
+      for (const c of dbData) {
+        const key = String(c.id || c.slug || c.name).toLowerCase();
+        categoryMap.set(key, c);
+      }
+      const merged = Array.from(categoryMap.values()).sort(
+        (a: any, b: any) => (Number(a.sort_order) || 999) - (Number(b.sort_order) || 999)
+      );
+      syncLocalSportsCategories(merged);
+      return merged;
     }
-  } catch {}
+  } catch (err) {
+    console.warn('Supabase fetch failed in getCategoriesAction:', err);
+  }
+
+  if (localCategories.length > 0) {
+    return localCategories;
+  }
 
   return [];
 }
@@ -322,6 +342,7 @@ export async function syncCategoriesCacheAction(categories: any[]): Promise<Acti
   try {
     syncLocalSportsCategories(categories);
     revalidatePath('/');
+    revalidatePath('/', 'layout');
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err.message };
@@ -372,6 +393,7 @@ export async function upsertCategoryAction(category: {
 
     revalidatePath('/');
     revalidatePath('/admin/categories');
+    revalidatePath('/', 'layout');
     return { success: true, message: 'Category saved successfully.' };
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to save category.' };
@@ -394,6 +416,7 @@ export async function deleteCategoryAction(id: string): Promise<ActionResult> {
 
     revalidatePath('/');
     revalidatePath('/admin/categories');
+    revalidatePath('/', 'layout');
     return { success: true, message: 'Category removed successfully.' };
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to delete category.' };
@@ -411,6 +434,7 @@ export async function clearAllCategoriesAction(): Promise<ActionResult> {
 
     revalidatePath('/');
     revalidatePath('/admin/categories');
+    revalidatePath('/', 'layout');
     return { success: true, message: 'All categories cleared successfully.' };
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to clear categories.' };
@@ -436,6 +460,7 @@ export async function toggleCategoryActiveAction(id: string, is_active: boolean)
 
     revalidatePath('/');
     revalidatePath('/admin/categories');
+    revalidatePath('/', 'layout');
     return { success: true, message: `Category ${is_active ? 'activated' : 'deactivated'}.` };
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to toggle category.' };
@@ -502,21 +527,30 @@ export async function getProgramsAction(): Promise<any[]> {
   ];
 
   const local = readJsonFile<any[]>('programs.json', null as any);
-  if (Array.isArray(local) && local.length > 0) {
-    return local;
-  }
+  const localPrograms = Array.isArray(local) ? local : defaultPrograms;
 
   try {
     const supabase = createClient();
-    const { data } = await supabase.from('sports_programs').select('*').order('sort_order', { ascending: true });
-    if (data && data.length > 0) {
-      syncJsonFile('programs.json', data);
-      return data;
+    const { data: dbData, error } = await supabase.from('sports_programs').select('*').order('sort_order', { ascending: true });
+    if (!error && Array.isArray(dbData) && dbData.length > 0) {
+      const progMap = new Map<string, any>();
+      for (const p of localPrograms) {
+        progMap.set(String(p.id || p.slug || p.name).toLowerCase(), p);
+      }
+      for (const p of dbData) {
+        progMap.set(String(p.id || p.slug || p.name).toLowerCase(), p);
+      }
+      const merged = Array.from(progMap.values()).sort(
+        (a: any, b: any) => (Number(a.sort_order) || 999) - (Number(b.sort_order) || 999)
+      );
+      syncJsonFile('programs.json', merged);
+      return merged;
     }
-  } catch {}
+  } catch (err) {
+    console.warn('Supabase fetch failed in getProgramsAction:', err);
+  }
 
-  syncJsonFile('programs.json', defaultPrograms);
-  return defaultPrograms;
+  return localPrograms;
 }
 
 export async function upsertProgramAction(program: {
@@ -686,18 +720,18 @@ export async function getAboutSectionAction(): Promise<any> {
   };
 
   try {
-    const supabase = createClient();
-    const { data: dbData } = await supabase.from('about_sections').select('*').eq('id', 1).maybeSingle();
-    if (dbData) {
-      result = { ...result, ...dbData };
-    }
-  } catch {}
-
-  try {
     const dataFilePath = path.join(process.cwd(), 'lib', 'data', 'about-images.json');
     if (fs.existsSync(dataFilePath)) {
       const fileData = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
       result = { ...result, ...fileData };
+    }
+  } catch {}
+
+  try {
+    const supabase = createClient();
+    const { data: dbData } = await supabase.from('about_sections').select('*').eq('id', 1).maybeSingle();
+    if (dbData) {
+      result = { ...result, ...dbData };
     }
   } catch {}
 
@@ -713,19 +747,24 @@ export async function getAboutFeaturesAction(): Promise<any[]> {
   ];
 
   const local = readJsonFile<any[]>('about-features.json', null as any);
-  if (Array.isArray(local) && local.length > 0) return local;
+  const localFeatures = Array.isArray(local) ? local : defaultFeatures;
 
   try {
     const supabase = createClient();
-    const { data } = await supabase.from('about_features').select('*').order('sort_order', { ascending: true });
-    if (data && data.length > 0) {
-      syncJsonFile('about-features.json', data);
-      return data;
+    const { data: dbData, error } = await supabase.from('about_features').select('*').order('sort_order', { ascending: true });
+    if (!error && Array.isArray(dbData) && dbData.length > 0) {
+      const featMap = new Map<string, any>();
+      for (const f of localFeatures) featMap.set(String(f.id || f.title).toLowerCase(), f);
+      for (const f of dbData) featMap.set(String(f.id || f.title).toLowerCase(), f);
+      const merged = Array.from(featMap.values()).sort(
+        (a: any, b: any) => (Number(a.sort_order) || 999) - (Number(b.sort_order) || 999)
+      );
+      syncJsonFile('about-features.json', merged);
+      return merged;
     }
   } catch {}
 
-  syncJsonFile('about-features.json', defaultFeatures);
-  return defaultFeatures;
+  return localFeatures;
 }
 
 export async function updateAboutFeatureAction(id: string, data: { title: string; description: string; icon: string; sort_order: number; is_visible: boolean }): Promise<ActionResult> {
@@ -821,18 +860,18 @@ export async function getVisionSectionAction(): Promise<any> {
   };
 
   try {
-    const supabase = createClient();
-    const { data: dbData } = await supabase.from('vision_sections').select('*').eq('id', 1).maybeSingle();
-    if (dbData) {
-      result = { ...result, ...dbData };
-    }
-  } catch {}
-
-  try {
     const dataFilePath = path.join(process.cwd(), 'lib', 'data', 'vision-mission.json');
     if (fs.existsSync(dataFilePath)) {
       const fileData = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
       result = { ...result, ...fileData };
+    }
+  } catch {}
+
+  try {
+    const supabase = createClient();
+    const { data: dbData } = await supabase.from('vision_sections').select('*').eq('id', 1).maybeSingle();
+    if (dbData) {
+      result = { ...result, ...dbData };
     }
   } catch {}
 
@@ -849,19 +888,24 @@ export async function getStatisticsAction(): Promise<any[]> {
   ];
 
   const local = readJsonFile<any[]>('statistics.json', null as any);
-  if (Array.isArray(local) && local.length > 0) return local;
+  const localStats = Array.isArray(local) ? local : defaultStats;
 
   try {
     const supabase = createClient();
-    const { data } = await supabase.from('site_statistics').select('*').order('sort_order', { ascending: true });
-    if (data && data.length > 0) {
-      syncJsonFile('statistics.json', data);
-      return data;
+    const { data: dbData, error } = await supabase.from('site_statistics').select('*').order('sort_order', { ascending: true });
+    if (!error && Array.isArray(dbData) && dbData.length > 0) {
+      const statMap = new Map<string, any>();
+      for (const s of localStats) statMap.set(String(s.id || s.label).toLowerCase(), s);
+      for (const s of dbData) statMap.set(String(s.id || s.label).toLowerCase(), s);
+      const merged = Array.from(statMap.values()).sort(
+        (a: any, b: any) => (Number(a.sort_order) || 999) - (Number(b.sort_order) || 999)
+      );
+      syncJsonFile('statistics.json', merged);
+      return merged;
     }
   } catch {}
 
-  syncJsonFile('statistics.json', defaultStats);
-  return defaultStats;
+  return localStats;
 }
 
 export async function upsertStatisticAction(stat: {
@@ -934,19 +978,24 @@ export async function getGalleryAction(): Promise<any[]> {
   ];
 
   const local = readJsonFile<any[]>('gallery.json', null as any);
-  if (Array.isArray(local) && local.length > 0) return local;
+  const localImages = Array.isArray(local) ? local : defaultImages;
 
   try {
     const supabase = createClient();
-    const { data } = await supabase.from('gallery_images').select('*').order('sort_order', { ascending: true });
-    if (data && data.length > 0) {
-      syncJsonFile('gallery.json', data);
-      return data;
+    const { data: dbData, error } = await supabase.from('gallery_images').select('*').order('sort_order', { ascending: true });
+    if (!error && Array.isArray(dbData) && dbData.length > 0) {
+      const galMap = new Map<string, any>();
+      for (const g of localImages) galMap.set(String(g.id || g.image_url).toLowerCase(), g);
+      for (const g of dbData) galMap.set(String(g.id || g.image_url).toLowerCase(), g);
+      const merged = Array.from(galMap.values()).sort(
+        (a: any, b: any) => (Number(a.sort_order) || 999) - (Number(b.sort_order) || 999)
+      );
+      syncJsonFile('gallery.json', merged);
+      return merged;
     }
   } catch {}
 
-  syncJsonFile('gallery.json', defaultImages);
-  return defaultImages;
+  return localImages;
 }
 
 export async function saveGalleryImageAction(imageData: {
@@ -1013,9 +1062,6 @@ export async function deleteGalleryImageAction(id: string, publicId?: string | n
 
 // 10. Testimonials CRUD
 export async function getTestimonialsAction(): Promise<any[]> {
-  const local = readJsonFile<any[]>('testimonials.json', null as any);
-  if (Array.isArray(local) && local.length > 0) return local;
-
   try {
     const supabase = createClient();
     const { data } = await supabase.from('testimonials').select('*').order('sort_order', { ascending: true });
@@ -1025,7 +1071,8 @@ export async function getTestimonialsAction(): Promise<any[]> {
     }
   } catch {}
 
-  return [];
+  const local = readJsonFile<any[]>('testimonials.json', []);
+  return Array.isArray(local) ? local : [];
 }
 
 export async function upsertTestimonialAction(item: {
@@ -1102,9 +1149,6 @@ export async function getCentresAction(): Promise<any[]> {
     { id: 'centre-2', name: 'Kochi Training Centre', address: 'Palarivattom Bypass Junction, Kochi, Kerala 682025', map_url: 'https://maps.google.com', phone: '+91 702 581 0722', sort_order: 2, is_published: true },
   ];
 
-  const local = readJsonFile<any[]>('centres.json', null as any);
-  if (Array.isArray(local) && local.length > 0) return local;
-
   try {
     const supabase = createClient();
     const { data } = await supabase.from('centres').select('*').order('sort_order', { ascending: true });
@@ -1113,6 +1157,9 @@ export async function getCentresAction(): Promise<any[]> {
       return data;
     }
   } catch {}
+
+  const local = readJsonFile<any[]>('centres.json', null as any);
+  if (Array.isArray(local) && local.length > 0) return local;
 
   syncJsonFile('centres.json', defaultCentres);
   return defaultCentres;
@@ -1200,6 +1247,16 @@ export async function getContactAction(): Promise<{ contact: any; socials: any[]
     { id: 'soc-3', platform: 'Facebook', url: 'https://facebook.com/growingfit', sort_order: 3, is_active: true },
   ];
 
+  // 1. Read local JSON first as initial base
+  const local = readJsonFile<any>('contact.json', null);
+  if (local) {
+    if (local.contact) contactData = { ...contactData, ...local.contact };
+    if (local.socials && Array.isArray(local.socials) && local.socials.length > 0) {
+      socialsData = local.socials;
+    }
+  }
+
+  // 2. Fetch live Supabase DB records on top
   try {
     const supabase = createClient();
     const [contactRes, socialRes] = await Promise.all([
@@ -1209,14 +1266,6 @@ export async function getContactAction(): Promise<{ contact: any; socials: any[]
     if (contactRes.data) contactData = { ...contactData, ...contactRes.data };
     if (socialRes.data && socialRes.data.length > 0) socialsData = socialRes.data;
   } catch {}
-
-  const local = readJsonFile<any>('contact.json', null);
-  if (local) {
-    if (local.contact) contactData = { ...contactData, ...local.contact };
-    if (local.socials && Array.isArray(local.socials) && local.socials.length > 0) {
-      socialsData = local.socials;
-    }
-  }
 
   return { contact: contactData, socials: socialsData };
 }
@@ -1253,14 +1302,16 @@ export async function getFooterAction(): Promise<any> {
     terms_conditions_url: '/terms-conditions',
   };
 
+  // 1. Read local JSON first as initial base
+  const local = readJsonFile<any>('footer.json', null);
+  if (local) footerData = { ...footerData, ...local };
+
+  // 2. Fetch live Supabase DB on top
   try {
     const supabase = createClient();
     const { data } = await supabase.from('footer_settings').select('*').eq('id', 1).maybeSingle();
     if (data) footerData = { ...footerData, ...data };
   } catch {}
-
-  const local = readJsonFile<any>('footer.json', null);
-  if (local) footerData = { ...footerData, ...local };
 
   return footerData;
 }
@@ -1497,8 +1548,20 @@ export async function getHomepageSectionsAction(): Promise<{
     },
   };
 
-  const local = readJsonFile('homepage-sections.json', fallback);
-  return local || fallback;
+  const local = readJsonFile('homepage-sections.json', fallback) || fallback;
+  let result = { ...local };
+
+  try {
+    const supabase = createClient();
+    const { data: dbData } = await supabase.from('homepage_sections').select('*').eq('id', 1).maybeSingle();
+    if (dbData) {
+      if (dbData.schools && Object.keys(dbData.schools).length > 0) result.schools = { ...result.schools, ...dbData.schools };
+      if (dbData.academy && Object.keys(dbData.academy).length > 0) result.academy = { ...result.academy, ...dbData.academy };
+      if (dbData.corporate && Object.keys(dbData.corporate).length > 0) result.corporate = { ...result.corporate, ...dbData.corporate };
+    }
+  } catch {}
+
+  return result;
 }
 
 export async function updateSchoolSectionAction(data: any): Promise<ActionResult> {
@@ -1522,6 +1585,7 @@ export async function updateSchoolSectionAction(data: any): Promise<ActionResult
       });
     } catch {}
 
+    revalidatePath('/', 'layout');
     revalidatePath('/');
     revalidatePath('/admin/homepage-sections');
     return { success: true, message: 'Schools section updated successfully!' };
@@ -1551,6 +1615,7 @@ export async function updateAcademySectionAction(data: any): Promise<ActionResul
       });
     } catch {}
 
+    revalidatePath('/', 'layout');
     revalidatePath('/');
     revalidatePath('/admin/homepage-sections');
     return { success: true, message: 'Academy section updated successfully!' };
@@ -1580,6 +1645,7 @@ export async function updateCorporateSectionAction(data: any): Promise<ActionRes
       });
     } catch {}
 
+    revalidatePath('/', 'layout');
     revalidatePath('/');
     revalidatePath('/admin/homepage-sections');
     return { success: true, message: 'Corporate & Community section updated successfully!' };
@@ -1608,8 +1674,22 @@ export async function getHeaderSettingsAction(): Promise<any> {
     show_cart: false,
   };
 
-  const local = readJsonFile('header-settings.json', fallback);
-  return local || fallback;
+  const local = readJsonFile('header-settings.json', fallback) || fallback;
+  let result = { ...local };
+
+  try {
+    const supabase = createClient();
+    const { data: dbData } = await supabase.from('header_settings').select('*').eq('id', 1).maybeSingle();
+    if (dbData) {
+      result = {
+        ...result,
+        ...dbData,
+        nav_links: Array.isArray(dbData.nav_links) && dbData.nav_links.length > 0 ? dbData.nav_links : result.nav_links,
+      };
+    }
+  } catch {}
+
+  return result;
 }
 
 export async function updateHeaderSettingsAction(data: any): Promise<ActionResult> {
@@ -1634,6 +1714,7 @@ export async function updateHeaderSettingsAction(data: any): Promise<ActionResul
       });
     } catch {}
 
+    revalidatePath('/', 'layout');
     revalidatePath('/');
     revalidatePath('/admin/header');
     return { success: true, message: 'Header & navigation settings updated successfully!' };

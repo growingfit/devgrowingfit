@@ -77,11 +77,12 @@ export function HeroSection({ data }: HeroSectionProps) {
     setCurrentIndex(idx);
   };
 
-  // Auto-slide effect
+  // Auto-slide effect (Faster brisk sliding: 3200ms instead of 5000ms)
   useEffect(() => {
     if (totalSlides <= 1 || isPaused) return;
 
-    const intervalTime = currentHero?.slide_interval || 5000;
+    const customInterval = currentHero?.slide_interval;
+    const intervalTime = customInterval && customInterval > 0 && customInterval !== 5000 ? customInterval : 3200;
     const timer = setInterval(() => {
       nextSlide();
     }, intervalTime);
@@ -128,7 +129,7 @@ export function HeroSection({ data }: HeroSectionProps) {
       {/* Sliding Carousel Track Container (Exact 9:16 Portrait on Mobile, Landscape on Desktop) */}
       <div className="relative w-full aspect-[9/16] md:aspect-auto md:h-[520px] lg:h-[600px] xl:h-[660px] overflow-hidden">
         <div
-          className="flex h-full w-full transition-transform duration-700 ease-in-out"
+          className="flex h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {displaySlides.map((slide, idx) => {

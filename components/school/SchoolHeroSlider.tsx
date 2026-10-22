@@ -34,7 +34,7 @@ export function SchoolHeroSlider({ data }: SchoolHeroSliderProps) {
   // Autoplay
   useEffect(() => {
     if (total <= 1) return;
-    timerRef.current = setInterval(nextSlide, 6000);
+    timerRef.current = setInterval(nextSlide, 3500);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };

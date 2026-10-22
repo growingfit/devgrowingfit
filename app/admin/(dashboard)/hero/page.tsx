@@ -38,7 +38,7 @@ export default function AdminHeroPage() {
     mobile_image_public_id: '',
     image_focal_position: 'center',
     is_visible: true,
-    slide_interval: 5000,
+    slide_interval: 3200,
     slides: [
       {
         id: 'slide-1',
@@ -263,15 +263,15 @@ export default function AdminHeroPage() {
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-[#667085]">Slide Time:</span>
                   <select
-                    value={hero.slide_interval || 5000}
+                    value={hero.slide_interval || 3200}
                     onChange={(e) => setHero({ ...hero, slide_interval: Number(e.target.value) })}
                     className="text-xs font-semibold px-2.5 py-1.5 bg-[#F8F9FA] border border-[#E8E8EC] rounded-lg text-[#172033] focus:outline-none focus:border-[#67238A]"
                   >
-                    <option value={3000}>3 Seconds</option>
+                    <option value={2500}>2.5 Seconds (Fast)</option>
+                    <option value={3200}>3.2 Seconds (Default)</option>
                     <option value={4000}>4 Seconds</option>
-                    <option value={5000}>5 Seconds (Default)</option>
+                    <option value={5000}>5 Seconds (Slow)</option>
                     <option value={7000}>7 Seconds</option>
-                    <option value={10000}>10 Seconds</option>
                   </select>
                 </div>
               </div>

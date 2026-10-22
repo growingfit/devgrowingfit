@@ -39,13 +39,39 @@ function readSchoolJson(): SchoolPageData | null {
   return null;
 }
 
+async function persistSchoolData(data: SchoolPageData) {
+  syncSchoolJson(data);
+
+  // Persist directly to Supabase table school_page (id = 1)
+  try {
+    const supabase = createClient();
+    await supabase.from('school_page').upsert({
+      id: 1,
+      data,
+      updated_at: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.warn('Supabase school_page upsert warning:', err);
+  }
+}
+
 export async function getSchoolPageCmsAction(): Promise<SchoolPageData | null> {
   const local = readSchoolJson();
+
+  // Try Supabase first for live production data on Vercel
+  try {
+    const supabase = createClient();
+    const { data: dbRow } = await supabase.from('school_page').select('data').eq('id', 1).maybeSingle();
+    if (dbRow?.data && typeof dbRow.data === 'object' && Object.keys(dbRow.data).length > 0) {
+      return { ...(local || {}), ...dbRow.data } as SchoolPageData;
+    }
+  } catch {}
+
   if (local) return local;
 
   // Import default fallback if file not yet written
   const { getSchoolPageData } = await import('@/lib/queries/school');
-  return getSchoolPageData();
+  return await getSchoolPageData();
 }
 
 export async function updateSchoolHeroAction(heroData: any): Promise<ActionResult> {
@@ -56,13 +82,9 @@ export async function updateSchoolHeroAction(heroData: any): Promise<ActionResul
       ...current,
       hero: { ...current.hero, ...heroData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
-    try {
-      const supabase = createClient();
-      await supabase.from('site_settings').update({ updated_at: new Date().toISOString() }).eq('id', 1);
-    } catch {}
-
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -80,8 +102,9 @@ export async function updateWhyGrowingFitAction(whyData: any): Promise<ActionRes
       ...current,
       whyGrowingFit: { ...current.whyGrowingFit, ...whyData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -99,8 +122,9 @@ export async function updateSchoolIntroAction(introData: any): Promise<ActionRes
       ...current,
       introduction: { ...current.introduction, ...introData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -118,8 +142,9 @@ export async function updateWhatsInForKidsAction(whatsData: any): Promise<Action
       ...current,
       whatsInForKids: { ...current.whatsInForKids, ...whatsData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -137,8 +162,9 @@ export async function updateSchoolTabsAction(tabsData: any): Promise<ActionResul
       ...current,
       tabsSection: { ...current.tabsSection, ...tabsData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -156,8 +182,9 @@ export async function updateSchoolCurriculumAction(curriculumData: any): Promise
       ...current,
       curriculum: { ...current.curriculum, ...curriculumData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -175,8 +202,9 @@ export async function updateSchoolGlimpsesAction(glimpsesData: any): Promise<Act
       ...current,
       glimpses: { ...current.glimpses, ...glimpsesData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');
@@ -194,8 +222,9 @@ export async function updateSchoolTestimonialsAction(testimonialsData: any): Pro
       ...current,
       testimonials: { ...current.testimonials, ...testimonialsData },
     };
-    syncSchoolJson(updated);
+    await persistSchoolData(updated);
 
+    revalidatePath('/', 'layout');
     revalidatePath('/schools');
     revalidatePath('/school');
     revalidatePath('/admin/school-page');

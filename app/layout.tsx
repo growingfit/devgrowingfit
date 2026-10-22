@@ -21,7 +21,10 @@ export const metadata: Metadata = {
     'Kochi Sports Centre',
   ],
   authors: [{ name: 'Growing Fit Academy' }],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://growingfit.in')
+  ),
   openGraph: {
     title: 'Growing Fit — School of Health & Physical Education',
     description:
@@ -55,6 +58,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="preload" as="image" href="/growingfit-whitelogo.png" />
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased text-[#172033] bg-white">
         <SplashScreen />

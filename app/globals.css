@@ -55,7 +55,7 @@
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: sportsMarqueeSlide 35s linear infinite;
+  animation: sportsMarqueeSlide 20s linear infinite;
 }
 
 .sports-marquee-container:hover .sports-marquee-track,
@@ -67,11 +67,75 @@
   animation-direction: reverse;
 }
 
+@keyframes sportsSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-sports-slide {
+  display: flex;
+  width: max-content;
+  animation: sportsSlide 16s linear infinite;
+}
+
+.animate-sports-slide:hover {
+  animation-play-state: paused;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Splash Screen & Loading Logo Animations */
+@keyframes gfShimmer {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  50%, 100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-gf-shimmer {
+  animation: gfShimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes gfProgress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.animate-gf-progress {
+  animation: gfProgress 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes gfAuraPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 0.95;
+  }
+}
+
+.animate-gf-aura {
+  animation: gfAuraPulse 3s ease-in-out infinite;
 }
 

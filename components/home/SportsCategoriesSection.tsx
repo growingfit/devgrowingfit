@@ -89,9 +89,9 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
       if (setWidth > 0 && trackRef.current) {
         let delta = 0;
 
-        // Steady relaxed marquee drift speed (~38px/sec) when not hovered and not dragging
+        // Brisk continuous marquee drift speed (~65px/sec instead of 38px/sec) when not hovered and not dragging
         if (!isHoveredRef.current && !isDraggingRef.current) {
-          delta -= 38 * dt;
+          delta -= 65 * dt;
         }
 
         // Apply any impulse velocity (from left/right arrows or touch/mouse fling)
@@ -128,7 +128,7 @@ export function SportsCategoriesSection({ categories = [] }: SportsCategoriesSec
   // Arrow button navigation: adds a silky smooth surge in the direction of the arrow
   const handleArrowClick = (direction: 'left' | 'right') => {
     if (!shouldLoop) return;
-    const impulse = direction === 'left' ? 360 : -360;
+    const impulse = direction === 'left' ? 440 : -440;
     velocityRef.current += impulse * 2.8;
   };
 

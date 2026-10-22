@@ -80,13 +80,43 @@
     "updated_at": "2026-10-16T06:44:27.052941+00:00"
   },
   {
+    "id": "dd4f70c0-b465-4844-aacc-8b7ae4060e7e",
+    "name": "Karate",
+    "slug": "karate",
+    "icon": "https://res.cloudinary.com/nvho1sss/image/upload/v1792651945/growing_fit/categories/iwycqcy2po5oslpnrsxc.webp",
+    "sort_order": 9,
+    "is_active": true,
+    "created_at": "2026-10-22T06:53:12.746948+00:00",
+    "updated_at": "2026-10-22T06:54:40.393+00:00"
+  },
+  {
     "id": "871112ca-0243-45b9-9a65-a45c64388acc",
     "name": "Gymnatics",
     "slug": "gymnatics",
     "icon": "https://res.cloudinary.com/nvho1sss/image/upload/v1792133103/growing_fit/categories/zu1pdfh58rqwbmp2nigq.png",
-    "sort_order": 9,
+    "sort_order": 10,
     "is_active": true,
     "created_at": "2026-10-16T06:45:06.609032+00:00",
-    "updated_at": "2026-10-16T06:45:06.609032+00:00"
+    "updated_at": "2026-10-22T06:55:59.388+00:00"
+  },
+  {
+    "id": "c1537a55-81ca-4467-b394-faf4b3770335",
+    "name": "Chess",
+    "slug": "chess",
+    "icon": "https://res.cloudinary.com/nvho1sss/image/upload/v1792652131/growing_fit/categories/asajhobib9roofxo7opz.webp",
+    "sort_order": 11,
+    "is_active": true,
+    "created_at": "2026-10-22T06:55:43.075057+00:00",
+    "updated_at": "2026-10-22T06:56:25.396+00:00"
+  },
+  {
+    "id": "fbf1cb6c-6c74-4fb9-9b1d-dc2ace8e8ca6",
+    "name": "Badminton",
+    "slug": "badminton",
+    "icon": "https://res.cloudinary.com/nvho1sss/image/upload/v1792652206/growing_fit/categories/umon4nmeans2eb0yg9gz.webp",
+    "sort_order": 12,
+    "is_active": true,
+    "created_at": "2026-10-22T06:57:42.026222+00:00",
+    "updated_at": "2026-10-22T06:57:42.026222+00:00"
   }
 ]

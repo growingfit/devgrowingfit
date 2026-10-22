@@ -41,7 +41,7 @@ export const heroSectionSchema = z.object({
   image_focal_position: z.string().default('center'),
   is_visible: z.boolean().default(true),
   slides: z.array(heroSlideSchema).optional(),
-  slide_interval: z.number().optional().default(5000),
+  slide_interval: z.number().optional().default(3200),
 });
 
 export const heroBenefitSchema = z.object({
